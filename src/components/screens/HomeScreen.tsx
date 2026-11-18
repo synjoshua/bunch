@@ -134,10 +134,10 @@ export function HomeScreen() {
               </span>
               <div className="min-w-0">
                 <p className="font-display text-lg leading-tight text-white drop-shadow">
-                  Friends&apos; meals
+                  Shared meals
                 </p>
                 <p className="mt-0.5 text-[11px] font-semibold leading-snug text-white/90">
-                  Get inspired by what your squad cooked
+                  Get inspired by plates your squad logged
                 </p>
               </div>
             </div>

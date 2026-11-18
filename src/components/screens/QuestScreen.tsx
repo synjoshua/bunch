@@ -20,8 +20,8 @@ export function QuestScreen() {
   return (
     <div className="px-5 pb-8 pt-6 animate-rise">
       <ScreenHeader
-        title="Friends' meals"
-        subtitle="Browse what your squad cooked and steal ideas for your next plate"
+        title="Shared meals"
+        subtitle="Browse plates your squad logged and steal ideas for your next one"
         onBack={() => goTo("home")}
       />
 
