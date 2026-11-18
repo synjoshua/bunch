@@ -51,18 +51,61 @@ export function QuestScreen() {
       </div>
 
       <SectionCard className="p-4" glass={false}>
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-xs font-bold uppercase tracking-wide text-[var(--ink-faint)]">
+            This week&apos;s shares
+          </p>
+          <p className="text-xs font-bold text-[var(--ink-muted)]">
+            {squad.mealIdeas.length}/{squad.questTarget}
+          </p>
+        </div>
         <ProgressBar
+          className="mt-2"
           value={squad.mealIdeas.length}
           max={squad.questTarget}
           tone="sky"
         />
-        <div className="lime-blob mt-4 px-3.5 py-3">
-          <p className="text-sm font-extrabold text-[var(--ink-on-bright)]">
-            Quest bonus · +$1 grocery
-          </p>
-          <p className="muted mt-1 text-xs leading-relaxed">
-            Finish 3 of 4 weekly kitchen quests this season for an extra $1.
-            Progress: {squad.questsCompletedThisSeason}/4.
+
+        <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.04] p-3.5">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <p className="text-sm font-bold text-[var(--ink)]">
+                Season bonus · +$1 grocery
+              </p>
+              <p className="mt-1 text-xs leading-relaxed text-[var(--ink-muted)]">
+                Hit shared-meal weeks 3 out of 4 this season for an extra dollar
+                on your gift card.
+              </p>
+            </div>
+            <span className="shrink-0 rounded-full bg-[var(--lime)] px-2.5 py-1 text-[11px] font-extrabold text-[var(--ink-on-bright)]">
+              +$1
+            </span>
+          </div>
+          <div className="mt-3 flex items-center gap-2">
+            {[0, 1, 2, 3].map((i) => {
+              const done = i < squad.questsCompletedThisSeason;
+              const needed = i < 3;
+              return (
+                <div
+                  key={i}
+                  className={`h-2.5 flex-1 rounded-full ${
+                    done
+                      ? "bg-[var(--lime)]"
+                      : needed
+                        ? "bg-white/15"
+                        : "bg-white/8"
+                  }`}
+                  title={`Week ${i + 1}`}
+                />
+              );
+            })}
+          </div>
+          <p className="mt-2 text-[11px] text-[var(--ink-faint)]">
+            {squad.questsCompletedThisSeason >= 3
+              ? "Bonus unlocked for this season"
+              : `${Math.max(0, 3 - squad.questsCompletedThisSeason)} more week${
+                  3 - squad.questsCompletedThisSeason === 1 ? "" : "s"
+                } to unlock · ${squad.questsCompletedThisSeason}/4 done`}
           </p>
         </div>
       </SectionCard>
