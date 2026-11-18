@@ -163,7 +163,7 @@ export default function LivePage() {
                   type="button"
                   disabled={filling}
                   onClick={() => void autofill()}
-                  className="rounded-full border border-[var(--ink-on-bright)]/30 bg-transparent px-5 py-3.5 text-sm font-extrabold text-[var(--ink-on-bright)] disabled:opacity-50"
+                  className="rounded-full bg-white px-5 py-3.5 text-sm font-extrabold text-[var(--ink-on-bright)] disabled:opacity-50"
                 >
                   {filling ? "Filling…" : "Autofill room (test)"}
                 </button>
