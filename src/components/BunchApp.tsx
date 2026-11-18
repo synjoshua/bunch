@@ -11,13 +11,77 @@ import { BunchProvider, useBunch } from "@/lib/bunch-context";
 import { Gift, Home, MessageCircle, Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
 
+function GooeySvgDefs() {
+  return (
+    <svg
+      aria-hidden
+      width="0"
+      height="0"
+      style={{ position: "absolute" }}
+    >
+      <defs>
+        <filter id="bunch-gooey" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="7" result="blur" />
+          <feColorMatrix
+            in="blur"
+            mode="matrix"
+            values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -9"
+            result="goo"
+          />
+          <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+        </filter>
+      </defs>
+    </svg>
+  );
+}
+
 function Shell() {
   const { screen, goTo, memberId, squad } = useBunch();
   const showNav = Boolean(memberId) && screen !== "join" && screen !== "log";
   const chatCount = squad?.messages.filter((m) => m.kind === "chat").length ?? 0;
 
+  const items: Array<{
+    id: string;
+    label: string;
+    active: boolean;
+    onClick: () => void;
+    icon: ReactNode;
+    badge?: boolean;
+  }> = [
+    {
+      id: "home",
+      label: "Table",
+      active: screen === "home" || screen === "recap",
+      onClick: () => goTo("home"),
+      icon: <Home />,
+    },
+    {
+      id: "chat",
+      label: "Chat",
+      active: screen === "chat",
+      onClick: () => goTo("chat"),
+      icon: <MessageCircle />,
+      badge: chatCount > 0 && screen !== "chat",
+    },
+    {
+      id: "quest",
+      label: "Cook",
+      active: screen === "quest",
+      onClick: () => goTo("quest"),
+      icon: <Sparkles />,
+    },
+    {
+      id: "rank",
+      label: "Loot",
+      active: screen === "rank",
+      onClick: () => goTo("rank"),
+      icon: <Gift />,
+    },
+  ];
+
   return (
     <div className="phone-shell">
+      <GooeySvgDefs />
       <div className="phone-notch" aria-hidden />
       <div className="phone-scroll">
         {screen === "join" && <JoinScreen />}
@@ -30,68 +94,32 @@ function Shell() {
       </div>
 
       {showNav ? (
-        <nav className="phone-nav">
-          <NavBtn
-            active={screen === "home" || screen === "recap"}
-            label="Table"
-            onClick={() => goTo("home")}
-            icon={<Home className="h-4 w-4" />}
-          />
-          <NavBtn
-            active={screen === "chat"}
-            label="Chat"
-            onClick={() => goTo("chat")}
-            icon={
-              <span className="relative">
-                <MessageCircle className="h-4 w-4" />
-                {chatCount > 0 && screen !== "chat" ? (
-                  <span className="absolute -right-1.5 -top-1 h-2 w-2 rounded-full bg-[var(--peach)]" />
-                ) : null}
-              </span>
-            }
-          />
-          <NavBtn
-            active={screen === "quest"}
-            label="Cook"
-            onClick={() => goTo("quest")}
-            icon={<Sparkles className="h-4 w-4" />}
-          />
-          <NavBtn
-            active={screen === "rank"}
-            label="Loot"
-            onClick={() => goTo("rank")}
-            icon={<Gift className="h-4 w-4" />}
-          />
+        <nav className="phone-nav" aria-label="Main">
+          <div className="gooey-nav">
+            <div className="gooey-nav-blobs" aria-hidden>
+              {items.map((item) => (
+                <span key={item.id} className="gooey-nav-blob" />
+              ))}
+            </div>
+            <div className="gooey-nav-items">
+              {items.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  aria-label={item.label}
+                  aria-current={item.active ? "page" : undefined}
+                  className={`gooey-nav-btn${item.active ? " is-active" : ""}`}
+                  onClick={item.onClick}
+                >
+                  {item.icon}
+                  {item.badge ? <span className="gooey-nav-dot" /> : null}
+                </button>
+              ))}
+            </div>
+          </div>
         </nav>
       ) : null}
     </div>
-  );
-}
-
-function NavBtn({
-  active,
-  label,
-  onClick,
-  icon,
-}: {
-  active: boolean;
-  label: string;
-  onClick: () => void;
-  icon: ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`flex flex-1 flex-col items-center gap-1 py-1 text-[10px] font-bold transition ${
-        active ? "text-[var(--ink-on-bright)]" : "text-[var(--ink-faint)]"
-      }`}
-    >
-      <span className={active ? "nav-active-pill" : "inline-flex h-9 w-9 items-center justify-center"}>
-        {icon}
-      </span>
-      <span className={active ? "text-[var(--lime)]" : undefined}>{label}</span>
-    </button>
   );
 }
 

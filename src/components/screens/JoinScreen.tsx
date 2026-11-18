@@ -1,9 +1,8 @@
 "use client";
 
-import { Button } from "@/components/ui";
+import { GooeyCta } from "@/components/ui";
 import { DEFAULT_SESSION_CODE, FOOD_SHOTS, SAMPLE_MEALS } from "@/lib/types";
 import { useBunch } from "@/lib/bunch-context";
-import { ArrowRight } from "lucide-react";
 import { useState } from "react";
 
 export function JoinScreen() {
@@ -85,17 +84,13 @@ export function JoinScreen() {
         ) : null}
       </div>
 
-      <Button
-        className="mt-6 w-full"
-        size="lg"
-        variant="lime"
-        organic
+      <GooeyCta
+        className="mt-6"
         disabled={loading || name.trim().length < 2}
         onClick={() => void joinSquad(name, code)}
       >
         {loading ? "Finding your table…" : "Sit down at the table"}
-        <ArrowRight className="h-4 w-4" />
-      </Button>
+      </GooeyCta>
       <p className="mt-3 text-center text-xs text-[var(--ink-faint)]">
         Same name brings you back · no passwords
       </p>

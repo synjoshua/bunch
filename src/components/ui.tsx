@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { ArrowUpRight } from "lucide-react";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 export function Button({
@@ -36,6 +37,28 @@ export function Button({
       )}
       {...props}
     />
+  );
+}
+
+/** Lime pill + arrow bubble connected with the gooey metaball filter */
+export function GooeyCta({
+  className,
+  children,
+  ...props
+}: ButtonHTMLAttributes<HTMLButtonElement>) {
+  return (
+    <button type="button" className={cn("gooey-cta", className)} {...props}>
+      <span className="gooey-cta-blobs" aria-hidden>
+        <span className="gooey-cta-pill" />
+        <span className="gooey-cta-circle" />
+      </span>
+      <span className="gooey-cta-content">
+        <span className="gooey-cta-label">{children}</span>
+        <span className="gooey-cta-arrow">
+          <ArrowUpRight className="h-5 w-5" strokeWidth={2.5} />
+        </span>
+      </span>
+    </button>
   );
 }
 
