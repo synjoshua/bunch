@@ -178,7 +178,7 @@ export function QuestScreen() {
               You already dropped a plate today
             </Button>
             <Button className="w-full" size="lg" organic onClick={() => goTo("chat")}>
-              Talk food in table chat
+              Talk food in bunch chat
             </Button>
           </>
         ) : (
