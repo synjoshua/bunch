@@ -16,7 +16,8 @@ export function WaitingRoomScreen() {
     );
   }
 
-  const people = squad.members.filter((m) => !m.isBot);
+  // Include demo seats while autofill is enabled for testing
+  const people = squad.members;
   const openSeats = Math.max(0, SQUAD_SIZE - people.length);
   const roomPeople = sessionStats?.humanCount ?? people.length;
   const roomBunches = sessionStats?.squadCount ?? 1;
@@ -51,7 +52,7 @@ export function WaitingRoomScreen() {
                 <Avatar short={m.short} color={m.color} size="lg" ring={m.isYou} />
               </div>
               <p className="mt-1.5 truncate text-[11px] font-semibold text-[var(--ink)]">
-                {m.isYou ? "You" : m.name}
+                {m.isYou ? "You" : m.isBot ? `${m.name}*` : m.name}
               </p>
             </div>
           ))}

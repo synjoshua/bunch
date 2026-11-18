@@ -20,6 +20,7 @@ export default function LivePage() {
   const [board, setBoard] = useState<LiveBoard | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [starting, setStarting] = useState(false);
+  const [filling, setFilling] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -72,6 +73,29 @@ export default function LivePage() {
       setError(err instanceof Error ? err.message : "Could not start");
     } finally {
       setStarting(false);
+    }
+  };
+
+  // TEMP — remove autofill before real class demo
+  const autofill = async () => {
+    setFilling(true);
+    try {
+      const res = await fetch("/api/live", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionCode: code,
+          action: "autofill",
+          targetPeople: 12,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Could not autofill");
+      setBoard(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not autofill");
+    } finally {
+      setFilling(false);
     }
   };
 
@@ -134,14 +158,24 @@ export default function LivePage() {
                   Start when groups look ready (e.g. 12 people → 3 bunches of 4).
                 </p>
               </div>
-              <button
-                type="button"
-                disabled={starting || (board?.humanCount ?? 0) < 1}
-                onClick={() => void start()}
-                className="rounded-full bg-[var(--ink-on-bright)] px-6 py-3.5 text-base font-extrabold text-[var(--lime)] disabled:opacity-50"
-              >
-                {starting ? "Starting…" : "Start demo"}
-              </button>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  disabled={filling}
+                  onClick={() => void autofill()}
+                  className="rounded-full border border-[var(--ink-on-bright)]/30 bg-transparent px-5 py-3.5 text-sm font-extrabold text-[var(--ink-on-bright)] disabled:opacity-50"
+                >
+                  {filling ? "Filling…" : "Autofill room (test)"}
+                </button>
+                <button
+                  type="button"
+                  disabled={starting || (board?.humanCount ?? 0) < 1}
+                  onClick={() => void start()}
+                  className="rounded-full bg-[var(--ink-on-bright)] px-6 py-3.5 text-base font-extrabold text-[var(--lime)] disabled:opacity-50"
+                >
+                  {starting ? "Starting…" : "Start demo"}
+                </button>
+              </div>
             </div>
           </div>
         ) : (

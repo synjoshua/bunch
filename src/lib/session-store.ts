@@ -372,7 +372,8 @@ export function getMemberState(sessionCode: string, memberId: string) {
   const squad = session.squads[member.squadId!];
   touch(session);
 
-  const humanCount = Object.values(session.members).filter((m) => !m.isBot).length;
+  // Count demo seats too while autofill testing is enabled
+  const humanCount = Object.keys(session.members).length;
   const squadCount = Object.keys(session.squads).length;
 
   return {
@@ -568,6 +569,85 @@ export function redeemGiftCard(sessionCode: string, memberId: string) {
   return getMemberState(session.code, memberId);
 }
 
+const DEMO_NAMES = [
+  "Maya",
+  "Leo",
+  "Sam",
+  "Jordan",
+  "Avery",
+  "Riley",
+  "Casey",
+  "Quinn",
+  "Harper",
+  "Reese",
+  "Morgan",
+  "Skyler",
+  "Drew",
+  "Cameron",
+  "Parker",
+];
+
+/** TEMP test helper — fill the room with demo classmates (remove later). */
+export function fillDemoRoom(sessionCode: string, targetPeople = 12) {
+  const session = ensureSession(sessionCode);
+  const usedNames = new Set(
+    Object.values(session.members).map((m) => m.name.toLowerCase()),
+  );
+
+  const nextName = () => {
+    for (const name of DEMO_NAMES) {
+      if (!usedNames.has(name.toLowerCase())) {
+        usedNames.add(name.toLowerCase());
+        return name;
+      }
+    }
+    const fallback = `Guest ${Object.keys(session.members).length + 1}`;
+    usedNames.add(fallback.toLowerCase());
+    return fallback;
+  };
+
+  const seatCount = () => Object.keys(session.members).length;
+
+  while (seatCount() < targetPeople) {
+    let squad = findOpenSquad(session);
+    if (!squad) squad = createSquad(session);
+
+    const botName = nextName();
+    const bot: Member = {
+      id: randomUUID(),
+      name: botName,
+      short: initials(botName),
+      color: AVATAR_COLORS[squad.memberIds.length % AVATAR_COLORS.length],
+      squadId: squad.id,
+      isBot: true,
+      proteinTarget: DEFAULT_PROTEIN_TARGET,
+      personalProtein: 40,
+      goalDayComplete: false,
+      goalDaysDone: 2,
+      goalDaysPlanned: GOAL_DAYS_PER_PERSON,
+      sharedQuestToday: false,
+      mealLogged: false,
+      weeksParticipated: 1,
+      joinedAt: Date.now(),
+      lastSeenAt: Date.now(),
+    };
+    session.members[bot.id] = bot;
+    squad.memberIds.push(bot.id);
+    pushMessage(squad, {
+      authorId: "system",
+      authorName: "bunch",
+      authorShort: "B",
+      authorColor: "#5B50E8",
+      text: `${bot.name} joined ${squad.name} (demo seat).`,
+      kind: "system",
+    });
+    if (squad.memberIds.length >= SQUAD_SIZE) squad.open = false;
+  }
+
+  touch(session);
+  return getLiveBoard(session.code);
+}
+
 export function fillDemoTeammates(sessionCode: string, memberId: string) {
   const session = ensureSession(sessionCode);
   const member = session.members[memberId];
@@ -575,7 +655,7 @@ export function fillDemoTeammates(sessionCode: string, memberId: string) {
   const squad = session.squads[member.squadId];
   if (!squad) throw new Error("Bunch not found.");
 
-  const botNames = ["Maya", "Leo", "Sam", "Jordan", "Avery"];
+  const botNames = DEMO_NAMES.slice(0, 5);
   let i = 0;
   while (squad.memberIds.length < SQUAD_SIZE && i < botNames.length) {
     const botName = botNames[i++];
@@ -771,6 +851,7 @@ export function getLiveBoard(sessionCode: string): {
         .map((id) => session.members[id])
         .filter(Boolean);
       const humans = members.filter((m) => !m.isBot);
+      const bots = members.filter((m) => m.isBot);
       const rank = rankForPoints(squad.rankPoints);
       const target = Math.max(
         weeklyTargetFor(squad, session),
@@ -779,8 +860,11 @@ export function getLiveBoard(sessionCode: string): {
       return {
         id: squad.id,
         name: squad.name,
-        memberCount: humans.length,
-        memberNames: humans.map((m) => m.name),
+        memberCount: members.length,
+        memberNames: [
+          ...humans.map((m) => m.name),
+          ...bots.map((m) => `${m.name} (demo)`),
+        ],
         weeklyGoalDays: tableProgressFor(squad, session),
         weeklyGoalTarget: target || SQUAD_SIZE * GOAL_DAYS_PER_PERSON,
         questCount: squad.mealIdeas.length,
@@ -795,15 +879,19 @@ export function getLiveBoard(sessionCode: string): {
         : b.memberCount - a.memberCount,
     );
 
-  const humanCount = Object.values(session.members).filter((m) => !m.isBot).length;
+  const humans = Object.values(session.members).filter((m) => !m.isBot);
+  const bots = Object.values(session.members).filter((m) => m.isBot);
+  const seated = humans.length + bots.length;
   const seatsTarget = Math.max(squads.length * SQUAD_SIZE, SQUAD_SIZE);
 
   return {
     sessionCode: session.code,
-    humanCount,
+    humanCount: seated,
+    realHumanCount: humans.length,
+    demoSeatCount: bots.length,
     squadCount: squads.length,
     demoStarted: isDemoStarted(session),
-    seatsFilled: humanCount,
+    seatsFilled: seated,
     seatsTarget,
     squads,
   };
