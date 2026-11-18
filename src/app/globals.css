@@ -182,6 +182,12 @@ body {
   padding-bottom: 96px;
 }
 
+/* Chat fills the phone shell; messages scroll inside */
+.phone-shell:has(.phone-nav) .phone-scroll:has(.chat-composer) {
+  padding-bottom: 0;
+  overflow: hidden;
+}
+
 .gooey-nav {
   --slot: 68px;
   --blob: 56px;

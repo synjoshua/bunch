@@ -1,8 +1,8 @@
 "use client";
 
-import { Avatar, Button, ScreenHeader } from "@/components/ui";
+import { Avatar, Button } from "@/components/ui";
 import { useBunch } from "@/lib/bunch-context";
-import { Send } from "lucide-react";
+import { ArrowLeft, Send } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 const QUICK = [
@@ -30,33 +30,44 @@ export function ChatScreen() {
     await sendChat(value);
   };
 
-  return (
-    <div className="flex h-full min-h-full flex-col animate-rise">
-      <div className="px-5 pt-6">
-        <ScreenHeader
-          title="Table chat"
-          subtitle={`${squad.name} — trade recipes, hype plates, check in`}
-          onBack={() => goTo("home")}
-        />
-        <div className="mb-3 flex -space-x-2">
-          {squad.members.map((m) => (
-            <Avatar key={m.id} short={m.short} color={m.color} size="sm" ring />
-          ))}
-          <span className="ml-3 self-center text-xs text-[var(--ink-muted)]">
-            {squad.members.length} in this chat
-          </span>
-        </div>
-      </div>
+  const people = squad.members.filter((m) => !m.isBot);
 
-      <div className="flex-1 space-y-3 overflow-y-auto px-5 pb-4 min-h-0">
+  return (
+    <div className="absolute inset-0 z-20 flex flex-col bg-[#12101c] animate-rise">
+      <header className="shrink-0 border-b border-white/8 px-4 pb-2.5 pt-5">
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => goTo("home")}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/8 text-[var(--lime)]"
+            aria-label="Back"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </button>
+          <div className="min-w-0 flex-1">
+            <p className="font-display text-xl leading-none text-[var(--ink)]">
+              {squad.name}
+            </p>
+            <p className="mt-1 truncate text-[11px] text-[var(--ink-muted)]">
+              Table chat · {people.length} classmates
+            </p>
+          </div>
+          <div className="flex -space-x-2">
+            {people.slice(0, 4).map((m) => (
+              <Avatar key={m.id} short={m.short} color={m.color} size="sm" ring />
+            ))}
+          </div>
+        </div>
+      </header>
+
+      <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-3">
         {squad.messages.length === 0 ? (
           <div className="rounded-[22px] border border-[var(--card-border)] bg-[var(--card)] p-4">
             <p className="text-sm font-semibold text-[var(--ink)]">
               Start the conversation
             </p>
             <p className="mt-1 text-xs text-[var(--ink-muted)]">
-              Tap a quick message below or type your own. Meal logs also show up
-              here automatically.
+              Tap a quick message below or type your own.
             </p>
           </div>
         ) : (
@@ -109,8 +120,8 @@ export function ChatScreen() {
         <div ref={bottomRef} />
       </div>
 
-      <div className="chat-composer px-4 pb-24 pt-3">
-        <div className="mb-2 flex gap-2 overflow-x-auto pb-1">
+      <div className="chat-composer shrink-0 px-3 pb-[5.75rem] pt-2">
+        <div className="mb-2 flex gap-2 overflow-x-auto pb-0.5">
           {QUICK.map((q) => (
             <button
               key={q}
@@ -146,9 +157,6 @@ export function ChatScreen() {
             <Send className="h-4 w-4" />
           </Button>
         </div>
-        <p className="mt-2 text-center text-[11px] text-[var(--ink-faint)]">
-          Next: keep chatting, or head Home to log a meal / help the quest
-        </p>
       </div>
     </div>
   );
