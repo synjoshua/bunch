@@ -31,7 +31,7 @@ export function JoinScreen() {
               key={item}
               className="flex items-center gap-3 rounded-2xl border border-[var(--card-border)] bg-[var(--card)] px-3 py-2.5"
             >
-              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--lime)] text-xs font-extrabold text-[#15141f]">
+              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--lime)] text-xs font-extrabold text-[var(--ink-on-bright)]">
                 {i + 1}
               </span>
               <span className="text-sm font-medium text-[var(--ink)]">{item}</span>

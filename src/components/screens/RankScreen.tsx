@@ -132,7 +132,7 @@ export function RankScreen() {
         </div>
       </SectionCard>
 
-      <div className="mt-4 rounded-2xl bg-white/70 px-4 py-3 text-xs leading-relaxed text-[var(--ink-muted)] border border-white/80">
+      <div className="mt-4 rounded-2xl border border-[var(--card-border)] bg-[var(--card)] px-4 py-3 text-xs leading-relaxed text-[var(--ink-muted)]">
         Weekly score = % of scheduled personal goal-days completed. Extra food
         does not add rank points. Private logs are never penalized.
       </div>
@@ -150,7 +150,7 @@ function EligibilityRow({ ok, label }: { ok: boolean; label: string }) {
       <span
         className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full ${
           ok
-            ? "bg-[var(--lime)] text-[var(--ink)]"
+            ? "bg-[var(--lime)] text-[var(--ink-on-bright)]"
             : "bg-[var(--line)] text-[var(--ink-faint)]"
         }`}
       >

@@ -3,29 +3,31 @@
 @tailwind utilities;
 
 :root {
-  /* bunch palette — dark mode */
-  --ralli: #7c74f0;
+  /* bunch palette — dark mode (AA-minded contrast) */
+  --ralli: #8b84f3;
   --ralli-deep: #5b50e8;
   --lime: #dfff83;
   --cream: #f7f6f2;
   --ink: #f7f6f2;
+  --ink-on-bright: #15141f;
   --lavender: #3a3658;
-  --peach: #ffae98;
+  --peach: #ffb9a6;
 
   --mist: #15141f;
   --mist-deep: #0f0e18;
   --surface: #1c1b2b;
-  --ink-muted: #b7b4cc;
-  --ink-faint: #817e9a;
-  --line: #2f2d45;
+  /* ~4.5:1+ on #222134 / #1c1b2b */
+  --ink-muted: #c9c6da;
+  --ink-faint: #b0adc4;
+  --line: #3a3754;
 
   --leaf: var(--ralli);
-  --leaf-deep: #a59ef7;
+  --leaf-deep: #c4bffb;
   --leaf-soft: #2a2744;
   --amber: var(--lime);
-  --amber-deep: #dfff83;
+  --amber-deep: #15141f;
   --amber-soft: #2f3420;
-  --sky: #9b93f5;
+  --sky: #aea8f8;
   --sky-soft: #2a2744;
   --coral: var(--peach);
   --coral-soft: #3a2a28;
@@ -33,9 +35,9 @@
   --background: var(--mist);
   --foreground: var(--ink);
   --card: #222134;
-  --card-border: rgba(124, 116, 240, 0.22);
+  --card-border: rgba(139, 132, 243, 0.35);
   --bubble-me: #5b50e8;
-  --bubble-them: #2a2744;
+  --bubble-them: #2f2c48;
 }
 
 html,
@@ -214,8 +216,17 @@ body {
   letter-spacing: 0.04em;
   text-transform: uppercase;
   background: var(--lime);
-  color: #15141f;
-  border: 1px solid rgba(223, 255, 131, 0.35);
+  color: var(--ink-on-bright);
+  border: 1px solid rgba(21, 20, 31, 0.2);
+}
+
+.on-lime {
+  background: var(--lime);
+  color: var(--ink-on-bright);
+}
+
+.on-lime .muted {
+  color: #3a3d28;
 }
 
 .chat-composer {

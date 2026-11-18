@@ -49,11 +49,11 @@ export function QuestScreen() {
           max={squad.questTarget}
           tone="sky"
         />
-        <div className="mt-4 rounded-2xl bg-[var(--lime)] px-3.5 py-3">
-          <p className="text-sm font-semibold text-[var(--ink)]">
+        <div className="on-lime mt-4 rounded-2xl px-3.5 py-3">
+          <p className="text-sm font-semibold text-[var(--ink-on-bright)]">
             Quest bonus · +$1
           </p>
-          <p className="mt-1 text-xs leading-relaxed text-[var(--ink-muted)]">
+          <p className="muted mt-1 text-xs leading-relaxed">
             Finish 3 of 4 weekly quests this season for an extra $1.
             Progress: {squad.questsCompletedThisSeason}/4.
           </p>

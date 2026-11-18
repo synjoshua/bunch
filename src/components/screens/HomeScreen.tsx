@@ -189,7 +189,7 @@ export function HomeScreen() {
 
         <SectionCard className="p-4" onClick={() => goTo("chat")}>
           <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--lime)] text-[#15141f]">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--lime)] text-[var(--ink-on-bright)]">
               <MessageCircle className="h-5 w-5" />
             </div>
             <div className="min-w-0 flex-1">
@@ -254,7 +254,7 @@ export function HomeScreen() {
             </p>
           </SectionCard>
           <SectionCard className="p-4" onClick={() => goTo("rank")}>
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--lime)] text-[#15141f]">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--lime)] text-[var(--ink-on-bright)]">
               <Gift className="h-4 w-4" />
             </div>
             <p className="mt-3 text-xs text-[var(--ink-faint)]">Squad rank</p>
@@ -289,8 +289,8 @@ export function HomeScreen() {
       </section>
 
       {you.goalDayComplete && you.sharedQuestToday ? (
-        <SectionCard className="mt-3 p-4 border-[var(--lime)]/35 bg-[var(--amber-soft)]">
-          <p className="text-sm font-semibold text-[var(--lime)]">
+        <SectionCard className="mt-3 p-4 border-[var(--lime)]/45 bg-[var(--amber-soft)]">
+          <p className="text-sm font-semibold text-[var(--cream)]">
             Nice work with {squad.name}
           </p>
           <p className="mt-1 text-xs text-[var(--ink-muted)]">

@@ -168,7 +168,7 @@ function SquadCard({ squad }: { squad: LiveSquadCard }) {
             {squad.memberCount} members · {squad.rankLabel} · ${squad.reward}
           </p>
         </div>
-        <span className="rounded-full bg-[var(--lime)] px-2.5 py-1 text-xs font-bold text-[#15141f]">
+        <span className="rounded-full bg-[var(--lime)] px-2.5 py-1 text-xs font-bold text-[var(--ink-on-bright)]">
           {weekPct}%
         </span>
       </div>
