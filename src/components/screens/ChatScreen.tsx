@@ -191,7 +191,7 @@ export function ChatScreen() {
         <div ref={bottomRef} />
       </div>
 
-      <div className="chat-composer shrink-0 px-3 pb-[5.75rem] pt-2">
+      <div className="chat-composer shrink-0 px-3 pb-[6.25rem] pt-2">
         <div className="mb-2 flex gap-2 overflow-x-auto pb-0.5">
           {QUICK.map((q) => (
             <button
