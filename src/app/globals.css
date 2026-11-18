@@ -1,0 +1,179 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --mist: #e7f0ea;
+  --mist-deep: #d5e4db;
+  --surface: #f7fbf8;
+  --ink: #1c3428;
+  --ink-muted: #5b7264;
+  --ink-faint: #8aa093;
+  --line: #d7e3db;
+  --leaf: #2f6b4f;
+  --leaf-deep: #1f4d38;
+  --leaf-soft: #d8eee2;
+  --amber: #e0a045;
+  --amber-deep: #9a6320;
+  --amber-soft: #f8e7c8;
+  --sky: #3d7ea6;
+  --sky-soft: #d7ebf5;
+  --background: var(--mist);
+  --foreground: var(--ink);
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  color: var(--foreground);
+  background:
+    radial-gradient(1200px 600px at 10% -10%, #f3faf5 0%, transparent 55%),
+    radial-gradient(900px 500px at 100% 0%, #dff0e6 0%, transparent 50%),
+    linear-gradient(165deg, #eef6f1 0%, #e3ede7 45%, #dce8e1 100%);
+  font-family: var(--font-body), system-ui, sans-serif;
+}
+
+.font-display {
+  font-family: var(--font-display), Georgia, serif;
+}
+
+.app-stage {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.75rem;
+  padding: 1.25rem 1rem 2rem;
+}
+
+@media (min-width: 900px) {
+  .app-stage {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 3.5rem;
+    padding: 2rem;
+  }
+}
+
+.stage-copy {
+  text-align: center;
+  max-width: 22rem;
+}
+
+@media (min-width: 900px) {
+  .stage-copy {
+    text-align: left;
+  }
+}
+
+.phone-shell {
+  position: relative;
+  width: min(100%, 390px);
+  height: min(84dvh, 820px);
+  border-radius: 36px;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(247, 251, 248, 0.92)),
+    radial-gradient(800px 400px at 50% -10%, #ffffff 0%, transparent 60%);
+  box-shadow:
+    0 30px 80px rgba(28, 52, 40, 0.18),
+    0 0 0 1px rgba(255, 255, 255, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  animation: phone-in 0.7s ease-out both;
+}
+
+.phone-notch {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  z-index: 30;
+  width: 118px;
+  height: 28px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: #1c3428;
+  opacity: 0.92;
+}
+
+.phone-scroll {
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+.phone-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.phone-nav {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  display: flex;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(215, 227, 219, 0.9);
+  box-shadow: 0 10px 30px rgba(28, 52, 40, 0.1);
+  backdrop-filter: blur(10px);
+  padding-bottom: 2px;
+}
+
+.phone-shell:has(.phone-nav) .phone-scroll {
+  padding-bottom: 76px;
+}
+
+@keyframes phone-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-rise {
+  animation: rise 0.45s ease-out both;
+}
+
+@media (max-width: 899px) {
+  .stage-copy {
+    display: none;
+  }
+
+  .app-stage {
+    padding: 0;
+    min-height: 100dvh;
+  }
+
+  .phone-shell {
+    width: 100%;
+    height: 100dvh;
+    max-width: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .phone-notch {
+    display: none;
+  }
+}
