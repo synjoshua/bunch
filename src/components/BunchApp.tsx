@@ -8,7 +8,7 @@ import { QuestScreen } from "@/components/screens/QuestScreen";
 import { RankScreen } from "@/components/screens/RankScreen";
 import { RecapScreen } from "@/components/screens/RecapScreen";
 import { BunchProvider, useBunch } from "@/lib/bunch-context";
-import { Camera, Gift, Home, MessageCircle, Sparkles } from "lucide-react";
+import { Camera, ChefHat, Gift, Home, MessageCircle } from "lucide-react";
 import type { ReactNode } from "react";
 
 function Shell() {
@@ -51,7 +51,7 @@ function Shell() {
       label: "Cook",
       active: screen === "quest",
       onClick: () => goTo("quest"),
-      icon: <Sparkles className="h-5 w-5" />,
+      icon: <ChefHat className="h-5 w-5" />,
     },
     {
       id: "rank",
