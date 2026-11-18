@@ -31,18 +31,18 @@ function Shell() {
       icon: <Home className="h-5 w-5" />,
     },
     {
-      id: "log",
-      label: "Log meal",
-      active: screen === "log",
-      onClick: () => goTo("log"),
-      icon: <Camera className="h-5 w-5" />,
-    },
-    {
       id: "quest",
       label: "Cook",
       active: screen === "quest",
       onClick: () => goTo("quest"),
       icon: <ChefHat className="h-5 w-5" />,
+    },
+    {
+      id: "log",
+      label: "Log meal",
+      active: screen === "log",
+      onClick: () => goTo("log"),
+      icon: <Camera className="h-5 w-5" />,
     },
     {
       id: "rank",
