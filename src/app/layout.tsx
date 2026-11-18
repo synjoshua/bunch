@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Fraunces, Nunito_Sans } from "next/font/google";
+import { Nunito_Sans, Sora } from "next/font/google";
 import "./globals.css";
 
-const display = Fraunces({
+const display = Sora({
   variable: "--font-display",
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
+  weight: ["600", "700", "800"],
 });
 
 const body = Nunito_Sans({
@@ -15,9 +15,9 @@ const body = Nunito_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "nori — social nutrition prototype",
+  title: "bunch — social nutrition prototype",
   description:
-    "Clickable class prototype for nori: log meals, help your squad, complete quests, and climb ranks together.",
+    "Class prototype for bunch: join a session, get matched into a squad, log meals, complete quests, and climb ranks together.",
 };
 
 export default function RootLayout({

@@ -20,7 +20,7 @@ export function Button({
         size === "md" && "px-4 py-3 text-[15px]",
         size === "lg" && "px-5 py-3.5 text-base",
         variant === "primary" &&
-          "bg-[var(--leaf)] text-white shadow-[0_10px_24px_rgba(47,107,79,0.28)] hover:bg-[var(--leaf-deep)]",
+          "bg-[var(--coral)] text-white shadow-[0_10px_24px_rgba(255,90,61,0.3)] hover:brightness-105 btn-glow",
         variant === "secondary" &&
           "bg-white text-[var(--ink)] border border-[var(--line)] shadow-sm",
         variant === "soft" && "bg-[var(--leaf-soft)] text-[var(--leaf-deep)]",
@@ -47,16 +47,19 @@ export function ProgressBar({
   return (
     <div
       className={cn(
-        "h-2.5 w-full overflow-hidden rounded-full bg-black/8",
+        "h-3.5 w-full overflow-hidden rounded-full bg-black/8 border border-black/5",
         className,
       )}
     >
       <div
         className={cn(
           "h-full rounded-full transition-all duration-700 ease-out",
-          tone === "leaf" && "bg-[var(--leaf)]",
-          tone === "amber" && "bg-[var(--amber)]",
-          tone === "sky" && "bg-[var(--sky)]",
+          tone === "leaf" &&
+            "bg-gradient-to-r from-[var(--leaf-deep)] to-[var(--leaf)]",
+          tone === "amber" &&
+            "bg-gradient-to-r from-[var(--amber-deep)] to-[var(--amber)]",
+          tone === "sky" &&
+            "bg-gradient-to-r from-[#2563eb] to-[var(--sky)]",
         )}
         style={{ width: `${pct}%` }}
       />

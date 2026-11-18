@@ -10,7 +10,7 @@ export async function POST(request: Request) {
       sessionCode?: string;
       name?: string;
     };
-    const result = joinSession(body.sessionCode ?? "NORI", body.name ?? "");
+    const result = joinSession(body.sessionCode ?? "BUNCH", body.name ?? "");
     return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json(

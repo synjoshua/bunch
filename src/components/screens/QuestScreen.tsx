@@ -1,7 +1,7 @@
 "use client";
 
 import { Avatar, Button, ProgressBar, ScreenHeader, SectionCard } from "@/components/ui";
-import { useNori } from "@/lib/nori-context";
+import { useBunch } from "@/lib/bunch-context";
 
 export function QuestScreen() {
   const {
@@ -10,7 +10,7 @@ export function QuestScreen() {
     you,
     shareExistingIdea,
     loading,
-  } = useNori();
+  } = useBunch();
 
   if (!squad || !you) return null;
 

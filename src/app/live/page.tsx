@@ -59,7 +59,7 @@ export default function LivePage() {
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="font-display text-4xl text-[var(--leaf-deep)] md:text-5xl">
-              nori live
+              bunch live
             </p>
             <p className="mt-2 max-w-xl text-sm text-[var(--ink-muted)] md:text-base">
               Projector view for the class. Squads fill as people join session{" "}
@@ -119,7 +119,7 @@ export default function LivePage() {
             <div className="rounded-[28px] border border-white/70 bg-white/80 p-6 text-[var(--ink-muted)] shadow-sm sm:col-span-2 xl:col-span-3">
               Waiting for the first people to join. Ask the room to open the
               player app, enter a name, and use code{" "}
-              <strong className="text-[var(--ink)]">{code || "NORI"}</strong>.
+              <strong className="text-[var(--ink)]">{code || "BUNCH"}</strong>.
             </div>
           ) : (
             board?.squads.map((squad) => <SquadCard key={squad.id} squad={squad} />)

@@ -1,7 +1,7 @@
 "use client";
 
 import { Avatar, Button, Pill, ProgressBar, SectionCard } from "@/components/ui";
-import { useNori } from "@/lib/nori-context";
+import { useBunch } from "@/lib/bunch-context";
 import { nextRank, rankForPoints } from "@/lib/types";
 import { Gift, Sparkles, Utensils, Users } from "lucide-react";
 
@@ -14,7 +14,7 @@ export function HomeScreen() {
     goTo,
     fillDemoTeammates,
     loading,
-  } = useNori();
+  } = useBunch();
 
   if (!squad || !you) {
     return (
@@ -36,7 +36,7 @@ export function HomeScreen() {
       <div className="flex items-center justify-between">
         <div>
           <p className="font-display text-[1.75rem] leading-none text-[var(--leaf-deep)]">
-            nori
+            bunch
           </p>
           <p className="mt-1 text-xs font-medium text-[var(--ink-faint)]">
             Session {sessionCode} · Week {squad.weekNumber} of 4
@@ -53,13 +53,18 @@ export function HomeScreen() {
         </button>
       </div>
 
-      {sessionStats ? (
-        <p className="mt-3 text-xs text-[var(--ink-muted)]">
-          Class live: {sessionStats.humanCount} people in{" "}
-          {sessionStats.squadCount} squad
-          {sessionStats.squadCount === 1 ? "" : "s"}
-        </p>
-      ) : null}
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        <span className="xp-chip">{squad.rankPoints} XP</span>
+        <span className="rounded-full bg-[var(--sky-soft)] px-2.5 py-1 text-[11px] font-bold text-[var(--sky)]">
+          Quest {squad.mealIdeas.length}/{squad.questTarget}
+        </span>
+        {sessionStats ? (
+          <span className="text-xs text-[var(--ink-muted)]">
+            Class live: {sessionStats.humanCount} in {sessionStats.squadCount}{" "}
+            squad{sessionStats.squadCount === 1 ? "" : "s"}
+          </span>
+        ) : null}
+      </div>
 
       <SectionCard className="mt-4 p-4">
         <div className="flex items-start justify-between gap-3">

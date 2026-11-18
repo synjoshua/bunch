@@ -1,12 +1,12 @@
 "use client";
 
 import { Button, ProgressBar, ScreenHeader, SectionCard } from "@/components/ui";
-import { DEMO_LUNCH, useNori } from "@/lib/nori-context";
+import { DEMO_LUNCH, useBunch } from "@/lib/bunch-context";
 import { Camera, Minus, Plus } from "lucide-react";
 import { useState } from "react";
 
 export function LogMealScreen() {
-  const { goTo, saveMeal, you, loading } = useNori();
+  const { goTo, saveMeal, you, loading } = useBunch();
   const [name, setName] = useState(DEMO_LUNCH.name);
   const [protein, setProtein] = useState(DEMO_LUNCH.protein);
   const [share, setShare] = useState(true);

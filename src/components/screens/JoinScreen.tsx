@@ -2,11 +2,11 @@
 
 import { Button } from "@/components/ui";
 import { DEFAULT_SESSION_CODE } from "@/lib/types";
-import { useNori } from "@/lib/nori-context";
+import { useBunch } from "@/lib/bunch-context";
 import { useState } from "react";
 
 export function JoinScreen() {
-  const { joinSquad, loading, error, sessionStats } = useNori();
+  const { joinSquad, loading, error, sessionStats } = useBunch();
   const [name, setName] = useState("");
   const [code, setCode] = useState(DEFAULT_SESSION_CODE);
 
@@ -14,11 +14,11 @@ export function JoinScreen() {
     <div className="flex min-h-full flex-col px-5 pb-8 pt-10 animate-rise">
       <div className="flex-1">
         <p className="font-display text-4xl tracking-tight text-[var(--leaf-deep)]">
-          nori
+          bunch
         </p>
         <p className="mt-2 max-w-[17rem] text-[15px] leading-relaxed text-[var(--ink-muted)]">
-          Enter your name. We&apos;ll drop you into a squad of friends so the
-          whole class can play at once.
+          Enter your name. We&apos;ll drop you into a squad so the whole class
+          can play the week together.
         </p>
 
         <div className="mt-8 rounded-[28px] bg-white/85 p-5 shadow-[0_16px_40px_rgba(28,52,40,0.08)] border border-white/80 space-y-4">

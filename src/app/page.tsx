@@ -1,5 +1,5 @@
-import { NoriApp } from "@/components/NoriApp";
+import { BunchApp } from "@/components/BunchApp";
 
 export default function Home() {
-  return <NoriApp />;
+  return <BunchApp />;
 }

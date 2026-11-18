@@ -1,11 +1,11 @@
 "use client";
 
 import { Button, ProgressBar, ScreenHeader, SectionCard } from "@/components/ui";
-import { useNori } from "@/lib/nori-context";
+import { useBunch } from "@/lib/bunch-context";
 import { rankForPoints } from "@/lib/types";
 
 export function RecapScreen() {
-  const { goTo, squad, you, startNextWeek, leaveSession, loading } = useNori();
+  const { goTo, squad, you, startNextWeek, leaveSession, loading } = useBunch();
   if (!squad || !you) return null;
 
   const weekPct = Math.round(

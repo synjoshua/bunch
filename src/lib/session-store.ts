@@ -30,7 +30,7 @@ type StoreFile = {
 
 declare global {
   // eslint-disable-next-line no-var
-  var __noriStore: StoreFile | undefined;
+  var __bunchStore: StoreFile | undefined;
 }
 
 function emptyStore(): StoreFile {
@@ -38,23 +38,23 @@ function emptyStore(): StoreFile {
 }
 
 function loadStore(): StoreFile {
-  if (global.__noriStore) return global.__noriStore;
+  if (global.__bunchStore) return global.__bunchStore;
   try {
     if (existsSync(DATA_FILE)) {
       const parsed = JSON.parse(readFileSync(DATA_FILE, "utf8")) as StoreFile;
-      global.__noriStore = parsed;
+      global.__bunchStore = parsed;
       return parsed;
     }
   } catch {
     // fall through
   }
   const store = emptyStore();
-  global.__noriStore = store;
+  global.__bunchStore = store;
   return store;
 }
 
 function saveStore(store: StoreFile) {
-  global.__noriStore = store;
+  global.__bunchStore = store;
   if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true });
   writeFileSync(DATA_FILE, JSON.stringify(store, null, 2), "utf8");
 }

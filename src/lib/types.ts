@@ -110,7 +110,7 @@ export const GOAL_DAYS_PER_PERSON = 5;
 export const SQUAD_SIZE = 4;
 export const SQUAD_MAX = 5;
 export const DEFAULT_PROTEIN_TARGET = 120;
-export const DEFAULT_SESSION_CODE = "NORI";
+export const DEFAULT_SESSION_CODE = "BUNCH";
 export const SEASON_WEEKS = 4;
 
 export const SQUAD_NAMES = [
@@ -118,28 +118,28 @@ export const SQUAD_NAMES = [
   "Leaf League",
   "Macro Mates",
   "Bite Crew",
-  "Green Goalers",
+  "Goal Bunch",
   "Plate Patrol",
   "Fuel Friends",
   "Snack Squad",
   "Bowl Bunch",
-  "Nori Nest",
-  "Daily Dozen",
   "Quest Quartet",
   "Rank Raisers",
   "Meal Movers",
+  "Daily Dozen",
+  "XP Pack",
   "Consistency Club",
 ];
 
 export const AVATAR_COLORS = [
-  "#2F6B4F",
-  "#C46B3A",
-  "#3A6EA5",
-  "#7A5C9E",
-  "#B4534B",
-  "#2F8F7B",
-  "#8A6D3B",
-  "#4C6FA8",
+  "#00B89A",
+  "#FF5A3D",
+  "#3B82F6",
+  "#FFB020",
+  "#8B5CF6",
+  "#14B8A6",
+  "#F97316",
+  "#0EA5E9",
 ];
 
 export const SAMPLE_MEALS = [

@@ -1,6 +1,6 @@
-# nori
+# bunch
 
-Class prototype for **nori** — social nutrition and accountability for friend squads.
+Class prototype for **bunch** — social nutrition and accountability for friend squads.
 
 People join the same session code, get auto-matched into groups of about four, log meals toward personal protein goals, and help finish a shared weekly quest. Consistency drives squad rank and a sample end-of-season gift-card reward.
 
@@ -18,9 +18,9 @@ npm run dev
 
 ## Class demo flow
 
-1. Put `/live` on the projector with session code `NORI` (or your own code).
+1. Put `/live` on the projector with session code `BUNCH` (or your own code).
 2. Everyone opens the player app, enters a name, and uses the same code.
-3. nori places people into squads of ~4 as they join.
+3. bunch places people into squads of ~4 as they join.
 4. Each person logs a meal (optionally share to Recipe Relay).
 5. Squad home and the live board update together every couple of seconds.
 6. If a squad is short a few people, tap **Fill open seats with demo friends**.

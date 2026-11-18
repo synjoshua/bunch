@@ -6,12 +6,12 @@ import { LogMealScreen } from "@/components/screens/LogMealScreen";
 import { QuestScreen } from "@/components/screens/QuestScreen";
 import { RankScreen } from "@/components/screens/RankScreen";
 import { RecapScreen } from "@/components/screens/RecapScreen";
-import { NoriProvider, useNori } from "@/lib/nori-context";
+import { BunchProvider, useBunch } from "@/lib/bunch-context";
 import { Gift, Home, Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
 
 function Shell() {
-  const { screen, goTo, memberId } = useNori();
+  const { screen, goTo, memberId } = useBunch();
   const showNav = Boolean(memberId) && screen !== "join" && screen !== "log";
 
   return (
@@ -77,13 +77,13 @@ function NavBtn({
   );
 }
 
-export function NoriApp() {
+export function BunchApp() {
   return (
-    <NoriProvider>
+    <BunchProvider>
       <main className="app-stage">
         <div className="stage-copy">
           <p className="font-display text-3xl text-[var(--leaf-deep)] md:text-4xl">
-            nori
+            bunch
           </p>
           <p className="mt-2 max-w-sm text-sm leading-relaxed text-[var(--ink-muted)]">
             Class demo for ~50 people. Everyone joins the same session code,
@@ -99,6 +99,6 @@ export function NoriApp() {
         </div>
         <Shell />
       </main>
-    </NoriProvider>
+    </BunchProvider>
   );
 }

@@ -3,21 +3,24 @@
 @tailwind utilities;
 
 :root {
-  --mist: #e7f0ea;
-  --mist-deep: #d5e4db;
-  --surface: #f7fbf8;
-  --ink: #1c3428;
-  --ink-muted: #5b7264;
-  --ink-faint: #8aa093;
-  --line: #d7e3db;
-  --leaf: #2f6b4f;
-  --leaf-deep: #1f4d38;
-  --leaf-soft: #d8eee2;
-  --amber: #e0a045;
-  --amber-deep: #9a6320;
-  --amber-soft: #f8e7c8;
-  --sky: #3d7ea6;
-  --sky-soft: #d7ebf5;
+  /* Gamified light HUD — teal XP, gold ranks, quest blue */
+  --mist: #e8f2ff;
+  --mist-deep: #d5e6fb;
+  --surface: #f7fbff;
+  --ink: #13233f;
+  --ink-muted: #51607a;
+  --ink-faint: #8492a8;
+  --line: #d4e0f2;
+  --leaf: #00b89a;
+  --leaf-deep: #008f78;
+  --leaf-soft: #d2f7ef;
+  --amber: #ffb020;
+  --amber-deep: #c77d00;
+  --amber-soft: #fff1cc;
+  --sky: #3b82f6;
+  --sky-soft: #dbeafe;
+  --coral: #ff5a3d;
+  --coral-soft: #ffe2db;
   --background: var(--mist);
   --foreground: var(--ink);
 }
@@ -30,14 +33,16 @@ body {
 body {
   color: var(--foreground);
   background:
-    radial-gradient(1200px 600px at 10% -10%, #f3faf5 0%, transparent 55%),
-    radial-gradient(900px 500px at 100% 0%, #dff0e6 0%, transparent 50%),
-    linear-gradient(165deg, #eef6f1 0%, #e3ede7 45%, #dce8e1 100%);
+    radial-gradient(1100px 560px at 8% -8%, #fff7e8 0%, transparent 52%),
+    radial-gradient(900px 500px at 100% 0%, #d9fff5 0%, transparent 48%),
+    radial-gradient(700px 420px at 70% 100%, #dce9ff 0%, transparent 45%),
+    linear-gradient(165deg, #eef5ff 0%, #e7f8f3 48%, #e8eefc 100%);
   font-family: var(--font-body), system-ui, sans-serif;
 }
 
 .font-display {
-  font-family: var(--font-display), Georgia, serif;
+  font-family: var(--font-display), system-ui, sans-serif;
+  letter-spacing: -0.03em;
 }
 
 .app-stage {
@@ -78,12 +83,12 @@ body {
   border-radius: 36px;
   overflow: hidden;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(247, 251, 248, 0.92)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(247, 251, 255, 0.94)),
     radial-gradient(800px 400px at 50% -10%, #ffffff 0%, transparent 60%);
   box-shadow:
-    0 30px 80px rgba(28, 52, 40, 0.18),
-    0 0 0 1px rgba(255, 255, 255, 0.7),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    0 30px 80px rgba(19, 35, 63, 0.18),
+    0 0 0 1px rgba(255, 255, 255, 0.75),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
   animation: phone-in 0.7s ease-out both;
 }
 
@@ -96,7 +101,7 @@ body {
   height: 28px;
   transform: translateX(-50%);
   border-radius: 999px;
-  background: #1c3428;
+  background: #13233f;
   opacity: 0.92;
 }
 
@@ -118,9 +123,9 @@ body {
   bottom: 12px;
   display: flex;
   border-radius: 22px;
-  background: rgba(255, 255, 255, 0.92);
-  border: 1px solid rgba(215, 227, 219, 0.9);
-  box-shadow: 0 10px 30px rgba(28, 52, 40, 0.1);
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(212, 224, 242, 0.95);
+  box-shadow: 0 10px 30px rgba(19, 35, 63, 0.12);
   backdrop-filter: blur(10px);
   padding-bottom: 2px;
 }
@@ -151,8 +156,22 @@ body {
   }
 }
 
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 10px 24px rgba(0, 184, 154, 0.28);
+  }
+  50% {
+    box-shadow: 0 12px 30px rgba(255, 90, 61, 0.28);
+  }
+}
+
 .animate-rise {
   animation: rise 0.45s ease-out both;
+}
+
+.btn-glow {
+  animation: pulse-glow 2.8s ease-in-out infinite;
 }
 
 @media (max-width: 899px) {
@@ -180,7 +199,22 @@ body {
 
 .live-stage {
   background:
-    radial-gradient(1000px 500px at 0% 0%, #f4faf6 0%, transparent 55%),
-    radial-gradient(800px 420px at 100% 10%, #dff0e6 0%, transparent 50%),
-    linear-gradient(165deg, #eef6f1 0%, #e3ede7 45%, #dce8e1 100%);
+    radial-gradient(1000px 500px at 0% 0%, #fff4df 0%, transparent 55%),
+    radial-gradient(800px 420px at 100% 10%, #d6fff4 0%, transparent 50%),
+    linear-gradient(165deg, #eef5ff 0%, #e7f8f3 45%, #e8eefc 100%);
+}
+
+.xp-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 999px;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #fff1cc, #ffe2db);
+  color: #9a4b18;
+  border: 1px solid rgba(255, 176, 32, 0.35);
 }

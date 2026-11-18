@@ -30,7 +30,7 @@ type SessionStats = {
   capacityHint: string;
 };
 
-type NoriState = {
+type BunchState = {
   screen: Screen;
   loading: boolean;
   error: string | null;
@@ -53,9 +53,9 @@ type NoriState = {
   refresh: () => Promise<void>;
 };
 
-const STORAGE_KEY = "nori-demo-identity";
+const STORAGE_KEY = "bunch-demo-identity";
 
-const NoriContext = createContext<NoriState | null>(null);
+const BunchContext = createContext<BunchState | null>(null);
 
 async function parseJson(res: Response) {
   const data = await res.json();
@@ -63,7 +63,7 @@ async function parseJson(res: Response) {
   return data;
 }
 
-export function NoriProvider({ children }: { children: ReactNode }) {
+export function BunchProvider({ children }: { children: ReactNode }) {
   const [screen, setScreen] = useState<Screen>("join");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -315,12 +315,12 @@ export function NoriProvider({ children }: { children: ReactNode }) {
     ],
   );
 
-  return <NoriContext.Provider value={value}>{children}</NoriContext.Provider>;
+  return <BunchContext.Provider value={value}>{children}</BunchContext.Provider>;
 }
 
-export function useNori() {
-  const ctx = useContext(NoriContext);
-  if (!ctx) throw new Error("useNori must be used within NoriProvider");
+export function useBunch() {
+  const ctx = useContext(BunchContext);
+  if (!ctx) throw new Error("useBunch must be used within BunchProvider");
   return ctx;
 }
 

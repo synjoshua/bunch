@@ -1,12 +1,12 @@
 "use client";
 
 import { Button, ProgressBar, ScreenHeader, SectionCard } from "@/components/ui";
-import { useNori } from "@/lib/nori-context";
+import { useBunch } from "@/lib/bunch-context";
 import { RANKS, nextRank, rankForPoints } from "@/lib/types";
 import { Check } from "lucide-react";
 
 export function RankScreen() {
-  const { goTo, squad, you } = useNori();
+  const { goTo, squad, you } = useBunch();
   if (!squad || !you) return null;
 
   const rank = rankForPoints(squad.rankPoints);
