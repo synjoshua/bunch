@@ -9,7 +9,7 @@ import { RankScreen } from "@/components/screens/RankScreen";
 import { RecapScreen } from "@/components/screens/RecapScreen";
 import { BunchProvider, useBunch } from "@/lib/bunch-context";
 import { Gift, Home, MessageCircle, Sparkles } from "lucide-react";
-import type { CSSProperties, ReactNode } from "react";
+import type { ReactNode } from "react";
 
 function GooeySvgDefs() {
   return (
@@ -101,18 +101,7 @@ function Shell() {
                 <span key={item.id} className="gooey-nav-blob" />
               ))}
             </div>
-            <div
-              className="gooey-nav-items"
-              style={
-                {
-                  ["--active-index" as string]: Math.max(
-                    0,
-                    items.findIndex((item) => item.active),
-                  ),
-                } as CSSProperties
-              }
-            >
-              <span className="gooey-nav-active" aria-hidden />
+            <div className="gooey-nav-items">
               {items.map((item) => (
                 <button
                   key={item.id}
