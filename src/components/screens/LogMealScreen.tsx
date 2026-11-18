@@ -3,7 +3,7 @@
 import { Button, ProgressBar, ScreenHeader, SectionCard } from "@/components/ui";
 import { useBunch } from "@/lib/bunch-context";
 import { fileToMealDataUrl } from "@/lib/image";
-import { Camera, ImagePlus, Loader2, Minus, Plus, Sparkles } from "lucide-react";
+import { ImagePlus, Loader2, Minus, Plus, Sparkles } from "lucide-react";
 import { useRef, useState } from "react";
 
 type Macros = {
