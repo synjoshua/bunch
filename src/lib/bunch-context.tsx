@@ -23,7 +23,8 @@ export type Screen =
   | "quest"
   | "rank"
   | "recap"
-  | "chat";
+  | "chat"
+  | "profile";
 
 type SessionStats = {
   humanCount: number;

@@ -4,17 +4,17 @@ import { ChatScreen } from "@/components/screens/ChatScreen";
 import { HomeScreen } from "@/components/screens/HomeScreen";
 import { JoinScreen } from "@/components/screens/JoinScreen";
 import { LogMealScreen } from "@/components/screens/LogMealScreen";
+import { ProfileScreen } from "@/components/screens/ProfileScreen";
 import { QuestScreen } from "@/components/screens/QuestScreen";
 import { RankScreen } from "@/components/screens/RankScreen";
 import { RecapScreen } from "@/components/screens/RecapScreen";
 import { BunchProvider, useBunch } from "@/lib/bunch-context";
-import { Camera, ChefHat, Gift, Home, MessageCircle } from "lucide-react";
+import { Camera, ChefHat, Gift, Home, UserRound } from "lucide-react";
 import type { ReactNode } from "react";
 
 function Shell() {
-  const { screen, goTo, memberId, squad } = useBunch();
+  const { screen, goTo, memberId } = useBunch();
   const showNav = Boolean(memberId) && screen !== "join";
-  const chatCount = squad?.messages.filter((m) => m.kind === "chat").length ?? 0;
 
   const items: Array<{
     id: string;
@@ -22,22 +22,13 @@ function Shell() {
     active: boolean;
     onClick: () => void;
     icon: ReactNode;
-    badge?: boolean;
   }> = [
     {
       id: "home",
       label: "Table",
-      active: screen === "home" || screen === "recap",
+      active: screen === "home" || screen === "chat" || screen === "recap",
       onClick: () => goTo("home"),
       icon: <Home className="h-5 w-5" />,
-    },
-    {
-      id: "chat",
-      label: "Chat",
-      active: screen === "chat",
-      onClick: () => goTo("chat"),
-      icon: <MessageCircle className="h-5 w-5" />,
-      badge: chatCount > 0 && screen !== "chat",
     },
     {
       id: "log",
@@ -60,6 +51,13 @@ function Shell() {
       onClick: () => goTo("rank"),
       icon: <Gift className="h-5 w-5" />,
     },
+    {
+      id: "profile",
+      label: "Profile",
+      active: screen === "profile",
+      onClick: () => goTo("profile"),
+      icon: <UserRound className="h-5 w-5" />,
+    },
   ];
 
   return (
@@ -73,6 +71,7 @@ function Shell() {
         {screen === "rank" && <RankScreen />}
         {screen === "recap" && <RecapScreen />}
         {screen === "chat" && <ChatScreen />}
+        {screen === "profile" && <ProfileScreen />}
       </div>
 
       {showNav ? (
@@ -85,10 +84,7 @@ function Shell() {
               aria-current={item.active ? "page" : undefined}
               className={`nav-tab${item.active ? " is-active" : ""}`}
             >
-              <span className="nav-tab-icon">
-                {item.icon}
-                {item.badge ? <span className="gooey-nav-dot" /> : null}
-              </span>
+              <span className="nav-tab-icon">{item.icon}</span>
               <span className="nav-tab-label">{item.label}</span>
             </button>
           ))}
@@ -110,9 +106,9 @@ export function BunchApp() {
           </p>
           <ol className="mt-5 hidden space-y-2 text-sm text-[var(--ink-muted)] md:block">
             <li>1. Sit down with your name</li>
-            <li>2. Tap Log meal in the bottom bar</li>
-            <li>3. Photo food, quest, and chat</li>
-            <li>4. Watch the room cook on /live</li>
+            <li>2. Tap Log meal</li>
+            <li>3. Chat lives on Table home</li>
+            <li>4. Watch the room on /live</li>
           </ol>
         </div>
         <Shell />

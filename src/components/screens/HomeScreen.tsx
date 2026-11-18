@@ -12,10 +12,12 @@ import { FOOD_SHOTS, SAMPLE_MEALS, rankForPoints } from "@/lib/types";
 import {
   ArrowRight,
   Camera,
+  ChefHat,
   Gift,
   MessageCircle,
-  Sparkles,
+  Send,
 } from "lucide-react";
+import { useState } from "react";
 
 type NextStep = {
   step: number;
@@ -26,7 +28,9 @@ type NextStep = {
 };
 
 export function HomeScreen() {
-  const { squad, you, sessionCode, sessionStats, goTo } = useBunch();
+  const { squad, you, sessionCode, sessionStats, goTo, sendChat, loading } =
+    useBunch();
+  const [chatDraft, setChatDraft] = useState("");
 
   if (!squad || !you) {
     return (
@@ -40,10 +44,12 @@ export function HomeScreen() {
   const people = squad.members.filter((m) => !m.isBot);
   const needsTeammates = people.length < 4;
   const checkedIn = people.filter((m) => m.checkedInToday).length;
-  const lastChat = [...squad.messages].reverse().find((m) => m.kind === "chat");
   const saidHi = squad.messages.some(
     (m) => m.authorId === you.id && m.kind === "chat",
   );
+  const recentChat = [...squad.messages]
+    .filter((m) => m.kind !== "system")
+    .slice(-4);
   const weekPct = Math.round(
     (squad.weeklyGoalDays / Math.max(1, squad.weeklyGoalTarget)) * 100,
   );
@@ -221,43 +227,117 @@ export function HomeScreen() {
         </div>
       </section>
 
-      <div className="bento mt-4">
-        <SectionCard className="overflow-hidden p-0" onClick={() => goTo("chat")} glass={false}>
-          <div className="relative h-16">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={FOOD_SHOTS[5]} alt="" className="h-full w-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[var(--card-solid)] to-transparent" />
-            <div className="absolute bottom-2 left-3 flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--lime)] text-[var(--ink-on-bright)]">
-              <MessageCircle className="h-4 w-4" />
+      <SectionCard
+        className="mt-4 overflow-hidden p-0"
+        onClick={() => goTo("quest")}
+        glass={false}
+      >
+        <div className="relative h-20">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={FOOD_SHOTS[1]} alt="" className="h-full w-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[var(--card-solid)] to-transparent" />
+          <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
+            <div className="flex items-center gap-2">
+              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--ralli-deep)] text-[var(--cream)]">
+                <ChefHat className="h-4 w-4" />
+              </span>
+              <div>
+                <p className="font-display text-lg text-white">Kitchen quest</p>
+                <p className="text-[11px] text-white/75">Recipe Relay</p>
+              </div>
             </div>
-          </div>
-          <div className="p-3 pt-2">
-            <p className="font-display text-lg text-[var(--ink)]">Table chat</p>
-            <p className="mt-0.5 line-clamp-2 text-xs text-[var(--ink-muted)]">
-              {lastChat
-                ? `${lastChat.authorName}: ${lastChat.text}`
-                : "Ask what’s for dinner"}
-            </p>
-          </div>
-        </SectionCard>
-
-        <SectionCard className="overflow-hidden p-0" onClick={() => goTo("quest")} glass={false}>
-          <div className="relative h-16">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={FOOD_SHOTS[1]} alt="" className="h-full w-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[var(--card-solid)] to-transparent" />
-            <div className="absolute bottom-2 left-3 flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--ralli-deep)] text-[var(--cream)]">
-              <Sparkles className="h-4 w-4" />
-            </div>
-          </div>
-          <div className="p-3 pt-2">
-            <p className="font-display text-lg text-[var(--ink)]">Kitchen quest</p>
-            <p className="font-display text-xl text-[var(--peach)]">
+            <p className="font-display text-2xl text-[var(--lime)]">
               {squad.mealIdeas.length}/{squad.questTarget}
             </p>
           </div>
-        </SectionCard>
-      </div>
+        </div>
+      </SectionCard>
+
+      <SectionCard className="mt-3 p-4" glass={false}>
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <MessageCircle className="h-4 w-4 text-[var(--lime)]" />
+            <p className="font-display text-lg text-[var(--ink)]">Table chat</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => goTo("chat")}
+            className="text-xs font-bold text-[var(--peach)]"
+          >
+            Full chat
+          </button>
+        </div>
+        <div className="mt-3 space-y-2.5">
+          {recentChat.length === 0 ? (
+            <p className="text-xs text-[var(--ink-muted)]">
+              No messages yet — say what you&apos;re eating.
+            </p>
+          ) : (
+            recentChat.map((msg) => (
+              <div key={msg.id} className="flex items-start gap-2">
+                <Avatar
+                  short={msg.authorShort}
+                  color={msg.authorColor}
+                  size="sm"
+                />
+                <div className="min-w-0 flex-1 rounded-2xl bg-white/5 px-3 py-2">
+                  <p className="text-[11px] font-bold text-[var(--peach)]">
+                    {msg.authorId === you.id ? "You" : msg.authorName}
+                    {msg.kind === "meal" ? " · plated" : ""}
+                  </p>
+                  {msg.kind === "meal" && msg.image ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={msg.image}
+                      alt={msg.mealTitle || "meal"}
+                      className="mt-1.5 h-20 w-full rounded-xl object-cover"
+                    />
+                  ) : null}
+                  <p className="mt-0.5 line-clamp-2 text-xs text-[var(--ink)]">
+                    {msg.kind === "meal"
+                      ? `${msg.mealTitle || "Meal"}${
+                          typeof msg.protein === "number"
+                            ? ` · +${msg.protein}g`
+                            : ""
+                        }`
+                      : msg.text}
+                  </p>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+        <div className="mt-3 flex items-center gap-2">
+          <input
+            value={chatDraft}
+            onChange={(e) => setChatDraft(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && chatDraft.trim()) {
+                e.preventDefault();
+                const text = chatDraft.trim();
+                setChatDraft("");
+                void sendChat(text);
+              }
+            }}
+            placeholder="Message the table…"
+            maxLength={280}
+            className="min-w-0 flex-1 rounded-2xl border border-[var(--line)] bg-[var(--surface)] px-3 py-2.5 text-sm text-[var(--ink)] outline-none placeholder:text-[var(--ink-faint)] focus:border-[var(--ralli)]"
+          />
+          <Button
+            size="sm"
+            disabled={loading || !chatDraft.trim()}
+            aria-label="Send"
+            onClick={() => {
+              const text = chatDraft.trim();
+              if (!text) return;
+              setChatDraft("");
+              void sendChat(text);
+            }}
+          >
+            <Send className="h-4 w-4" />
+          </Button>
+        </div>
+      </SectionCard>
 
       <SectionCard className="mt-3 p-4" glass={false}>
         <div className="flex items-center justify-between">
@@ -339,18 +419,7 @@ export function HomeScreen() {
         </SectionCard>
       </div>
 
-      {!needsMeal ? (
-        <Button
-          className="mt-5 w-full"
-          size="lg"
-          variant="secondary"
-          organic
-          onClick={() => goTo("chat")}
-        >
-          Back to table chat
-          <MessageCircle className="h-4 w-4" />
-        </Button>
-      ) : (
+      {needsMeal ? (
         <div className="sticky bottom-24 z-30 mt-6">
           <button
             type="button"
@@ -362,7 +431,7 @@ export function HomeScreen() {
             <ArrowRight className="h-5 w-5" />
           </button>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }
