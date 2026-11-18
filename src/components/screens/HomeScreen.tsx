@@ -9,7 +9,13 @@ import {
 } from "@/components/ui";
 import { useBunch } from "@/lib/bunch-context";
 import { FOOD_SHOTS, SAMPLE_MEALS, rankForPoints } from "@/lib/types";
-import { ArrowRight, Gift, MessageCircle, Sparkles } from "lucide-react";
+import {
+  ArrowRight,
+  Camera,
+  Gift,
+  MessageCircle,
+  Sparkles,
+} from "lucide-react";
 
 type NextStep = {
   step: number;
@@ -41,6 +47,7 @@ export function HomeScreen() {
   const weekPct = Math.round(
     (squad.weeklyGoalDays / Math.max(1, squad.weeklyGoalTarget)) * 100,
   );
+  const needsMeal = !you.mealLogged;
   const pantry = squad.mealIdeas.length
     ? squad.mealIdeas.slice(0, 6)
     : SAMPLE_MEALS.map((m, i) => ({
@@ -51,48 +58,42 @@ export function HomeScreen() {
         authorName: "kitchen",
       }));
 
-  const next: NextStep = needsTeammates
+  const next: NextStep = needsMeal
     ? {
         step: 1,
-        title: "Waiting for classmates",
-        detail: `${people.length}/4 real seats at ${squad.name}. Same code ${sessionCode} — they'll land here automatically.`,
-        cta: you.mealLogged ? "Open table chat" : "Log a plate while you wait",
-        action: () => goTo(you.mealLogged ? "chat" : "log"),
+        title: "Log your meal",
+        detail: needsTeammates
+          ? `Photo your food — AI reads the macros. Your squad is filling (${people.length}/4).`
+          : `Photo your food — AI estimates protein and adds it to your ${you.proteinTarget}g goal.`,
+        cta: "Log my meal now",
+        action: () => goTo("log"),
       }
-    : !you.mealLogged
+    : !you.sharedQuestToday
       ? {
           step: 2,
-          title: "Log today's plate",
-          detail: `Hit ${you.proteinTarget}g protein — pick a real photo from your camera roll.`,
-          cta: "Snap / log lunch",
-          action: () => goTo("log"),
+          title: "Drop a recipe in the quest",
+          detail: `Recipe Relay is ${squad.mealIdeas.length}/${squad.questTarget} plates.`,
+          cta: "Open kitchen quest",
+          action: () => goTo("quest"),
         }
-      : !you.sharedQuestToday
+      : !saidHi
         ? {
             step: 3,
-            title: "Drop a recipe in the quest",
-            detail: `Recipe Relay is ${squad.mealIdeas.length}/${squad.questTarget} plates.`,
-            cta: "Open kitchen quest",
-            action: () => goTo("quest"),
+            title: "Talk food in chat",
+            detail: "Trade tips, hype check-ins, ask what's for dinner.",
+            cta: "Open squad chat",
+            action: () => goTo("chat"),
           }
-        : !saidHi
-          ? {
-              step: 4,
-              title: "Talk food in chat",
-              detail: "Trade tips, hype check-ins, ask what's for dinner.",
-              cta: "Open squad chat",
-              action: () => goTo("chat"),
-            }
-          : {
-              step: 5,
-              title: "Table's looking good",
-              detail: "Peek at rewards or keep trading meal ideas.",
-              cta: "See food rewards",
-              action: () => goTo("rank"),
-            };
+        : {
+            step: 4,
+            title: "Table's looking good",
+            detail: "Peek at rewards or keep trading meal ideas.",
+            cta: "See food rewards",
+            action: () => goTo("rank"),
+          };
 
   return (
-    <div className="px-5 pb-8 pt-6 animate-rise">
+    <div className={`px-5 pt-6 animate-rise ${needsMeal ? "pb-28" : "pb-8"}`}>
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <Avatar short={you.short} color={you.color} size="lg" ring />
@@ -106,6 +107,30 @@ export function HomeScreen() {
         <span className="xp-chip">{squad.rankPoints} XP</span>
       </div>
 
+      {needsMeal ? (
+        <button
+          type="button"
+          onClick={() => goTo("log")}
+          className="mt-4 flex w-full items-center gap-3 rounded-[28px] bg-[var(--lime)] px-4 py-4 text-left shadow-[0_18px_40px_rgba(223,255,131,0.35)] transition active:scale-[0.99]"
+        >
+          <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[var(--ink-on-bright)] text-[var(--lime)]">
+            <Camera className="h-7 w-7" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[11px] font-extrabold uppercase tracking-[0.14em] text-[var(--ink-on-bright)]/70">
+              Do this first
+            </span>
+            <span className="mt-0.5 block font-display text-[1.55rem] leading-none text-[var(--ink-on-bright)]">
+              Log your meal
+            </span>
+            <span className="mt-1 block text-sm font-semibold text-[var(--ink-on-bright)]/80">
+              Tap here → pick a food photo → AI adds macros
+            </span>
+          </span>
+          <ArrowRight className="h-6 w-6 shrink-0 text-[var(--ink-on-bright)]" />
+        </button>
+      ) : null}
+
       {/* Food strip */}
       <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
         {(pantry as Array<{ id: string; title?: string; name?: string; image: string; protein?: number }>).map(
@@ -113,7 +138,7 @@ export function HomeScreen() {
             <button
               key={item.id}
               type="button"
-              onClick={() => goTo("quest")}
+              onClick={() => goTo(needsMeal ? "log" : "quest")}
               className="relative h-20 w-28 shrink-0 overflow-hidden rounded-[18px] border border-white/10"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -132,7 +157,9 @@ export function HomeScreen() {
         )}
       </div>
       <p className="mt-1.5 text-[11px] text-[var(--ink-faint)]">
-        Squad pantry · tap for Recipe Relay · code {sessionCode}
+        {needsMeal
+          ? "Tap Log your meal above to use your camera roll"
+          : `Squad pantry · code ${sessionCode}`}
       </p>
 
       <section className="lime-blob wavy-top mt-4 overflow-hidden p-0 shadow-[0_20px_50px_rgba(223,255,131,0.2)]">
@@ -145,7 +172,7 @@ export function HomeScreen() {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[var(--lime)] via-[var(--lime)]/70 to-transparent" />
           <p className="absolute bottom-2 left-4 text-[11px] font-extrabold uppercase tracking-[0.14em] text-[var(--ink-on-bright)]/80">
-            Mission {next.step}/5
+            {needsMeal ? "Step 1 · Log food" : `Mission ${next.step}`}
           </p>
         </div>
         <div className="px-4 pb-4 pt-1">
@@ -181,12 +208,13 @@ export function HomeScreen() {
             striped
           />
           <Button
-            className="mt-3 w-full"
+            className={`mt-3 w-full ${needsMeal ? "rounded-full text-base" : ""}`}
             size="lg"
-            variant="primary"
-            organic
+            variant={needsMeal ? "primary" : "primary"}
+            organic={!needsMeal}
             onClick={next.action}
           >
+            {needsMeal ? <Camera className="h-5 w-5" /> : null}
             {next.cta}
             <ArrowRight className="h-4 w-4" />
           </Button>
@@ -270,7 +298,6 @@ export function HomeScreen() {
           <p className="mt-3 text-xs leading-relaxed text-[var(--ink-muted)]">
             Open seats fill with real classmates who join code{" "}
             <span className="font-semibold text-[var(--ink)]">{sessionCode}</span>.
-            No fake teammates.
           </p>
         ) : null}
       </SectionCard>
@@ -312,20 +339,30 @@ export function HomeScreen() {
         </SectionCard>
       </div>
 
-      <Button
-        className="mt-5 w-full"
-        size="lg"
-        variant={you.mealLogged ? "secondary" : "lime"}
-        organic
-        onClick={() => goTo(you.mealLogged ? "chat" : "log")}
-      >
-        {you.mealLogged ? "Back to table chat" : "Log today’s plate"}
-        {you.mealLogged ? (
+      {!needsMeal ? (
+        <Button
+          className="mt-5 w-full"
+          size="lg"
+          variant="secondary"
+          organic
+          onClick={() => goTo("chat")}
+        >
+          Back to table chat
           <MessageCircle className="h-4 w-4" />
-        ) : (
-          <ArrowRight className="h-4 w-4" />
-        )}
-      </Button>
+        </Button>
+      ) : (
+        <div className="sticky bottom-24 z-30 mt-6">
+          <button
+            type="button"
+            onClick={() => goTo("log")}
+            className="flex w-full items-center justify-center gap-2 rounded-full bg-[var(--lime)] px-5 py-4 text-base font-extrabold text-[var(--ink-on-bright)] shadow-[0_16px_40px_rgba(223,255,131,0.45)]"
+          >
+            <Camera className="h-5 w-5" />
+            Log my meal — tap to start
+            <ArrowRight className="h-5 w-5" />
+          </button>
+        </div>
+      )}
     </div>
   );
 }
