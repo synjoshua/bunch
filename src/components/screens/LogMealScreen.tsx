@@ -22,7 +22,7 @@ export function LogMealScreen() {
     <div className="px-5 pb-10 pt-6 animate-rise">
       <ScreenHeader
         title="Log lunch"
-        subtitle="Photo or quick entry — private by default"
+        subtitle="Step 1 for today: add a meal. Sharing helps the squad quest."
         onBack={() => goTo("home")}
       />
 
@@ -143,10 +143,14 @@ export function LogMealScreen() {
           })
         }
       >
-        {loading ? "Saving…" : "Save meal"}
+        {loading
+          ? "Saving…"
+          : share && !shareLocked
+            ? "Save & share with squad"
+            : "Save to my day"}
       </Button>
       <p className="mt-3 text-center text-xs text-[var(--ink-faint)]">
-        Extra protein past your target doesn&apos;t add rank points.
+        After this: Home will tell you the next step (quest or chat).
       </p>
     </div>
   );

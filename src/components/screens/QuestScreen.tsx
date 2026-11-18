@@ -19,8 +19,8 @@ export function QuestScreen() {
   return (
     <div className="px-5 pb-8 pt-6 animate-rise">
       <ScreenHeader
-        title="Recipe Relay"
-        subtitle="Share meal ideas your squad can reuse"
+        title="Squad quest"
+        subtitle="Recipe Relay — everyone adds meal ideas the group can reuse"
         onBack={() => goTo("home")}
       />
 
@@ -111,9 +111,14 @@ export function QuestScreen() {
 
       <div className="mt-5 space-y-2">
         {you.sharedQuestToday ? (
-          <Button className="w-full" variant="soft" disabled>
-            Already shared today
-          </Button>
+          <>
+            <Button className="w-full" variant="soft" disabled>
+              You already contributed today
+            </Button>
+            <Button className="w-full" size="lg" onClick={() => goTo("chat")}>
+              Celebrate in squad chat
+            </Button>
+          </>
         ) : (
           <Button
             className="w-full"
@@ -121,7 +126,7 @@ export function QuestScreen() {
             disabled={loading}
             onClick={() => void shareExistingIdea()}
           >
-            Share a meal idea
+            Share one idea for the squad
           </Button>
         )}
         <Button
@@ -129,7 +134,7 @@ export function QuestScreen() {
           variant="secondary"
           onClick={() => goTo("log")}
         >
-          Log a meal instead
+          Need a meal first? Log lunch
         </Button>
       </div>
     </div>

@@ -58,7 +58,7 @@ function Shell() {
           />
           <NavBtn
             active={screen === "rank"}
-            label="Rank"
+            label="Rewards"
             onClick={() => goTo("rank")}
             icon={<Gift className="h-4 w-4" />}
           />
@@ -102,15 +102,15 @@ export function BunchApp() {
             bunch
           </p>
           <p className="mt-2 max-w-sm text-sm leading-relaxed text-[var(--ink-muted)]">
-            Dark-mode class demo for ~50 people. Join a session, land in a
-            squad, chat live, and chase the weekly quest together.
+            Follow the purple &quot;Do this next&quot; card on Home — it always
+            points to the clearest social action.
           </p>
           <ol className="mt-5 hidden space-y-2 text-sm text-[var(--ink-muted)] md:block">
-            <li>1. Enter your name + session code</li>
-            <li>2. Get placed in a squad of ~4</li>
-            <li>3. Log lunch and talk it out in chat</li>
-            <li>4. Watch teammates update in realtime</li>
-            <li>5. Projector board at /live</li>
+            <li>1. Join with your name</li>
+            <li>2. Fill the squad if seats are open</li>
+            <li>3. Log lunch / help the quest</li>
+            <li>4. Keep the energy in Chat</li>
+            <li>5. Watch the class board at /live</li>
           </ol>
         </div>
         <Shell />

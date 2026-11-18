@@ -223,7 +223,7 @@ export function BunchProvider({ children }: { children: ReactNode }) {
       });
       const data = await parseJson(res);
       applyState(data);
-      setScreen("quest");
+      setScreen("chat");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not share idea");
     } finally {
