@@ -44,9 +44,16 @@ Session state is stored on the server disk under `.data/`. One Railway service =
 5. Squad home and the live board update together every couple of seconds.
 6. Squads fill with **real classmates** who join the same code (groups of ~4). Open seats wait for people — no fake teammates.
 
+## AI meal macros
+
+After someone picks a food photo, bunch calls `/api/analyze-meal` to estimate name + protein/carbs/fat/calories, then protein is added to their daily goal on save.
+
+- Set `OPENAI_API_KEY` in Railway (Variables) for real vision AI.
+- Without a key, a **demo estimate** still fills macros so class demos never block.
+
 ## What is simulated
 
-Shared in-room session state (file-backed on the server), protein estimates you type in, fixed rank tiers, and sample gift-card amounts. Meal photos come from each person’s **camera roll**. No real accounts, nutrition API, payments, or sponsors.
+Shared in-room session state (file-backed on the server), AI/demo macro estimates (not a clinical nutrition API), fixed rank tiers, and sample gift-card amounts. Meal photos come from each person’s **camera roll**. No real accounts, payments, or sponsors.
 
 ## Stack
 

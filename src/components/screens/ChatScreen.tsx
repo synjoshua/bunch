@@ -142,11 +142,14 @@ export function ChatScreen() {
                       </p>
                       <p className="mt-0.5 font-display text-base text-[var(--ink)]">
                         {msg.mealTitle || "Meal"}
-                        {typeof msg.protein === "number" ? (
-                          <span className="ml-2 text-sm text-[var(--lime)]">
-                            +{msg.protein}g
-                          </span>
-                        ) : null}
+                      </p>
+                      <p className="mt-1 text-xs font-semibold text-[var(--lime)]">
+                        {typeof msg.protein === "number" ? `P ${msg.protein}g` : null}
+                        {typeof msg.carbs === "number" ? ` · C ${msg.carbs}g` : null}
+                        {typeof msg.fat === "number" ? ` · F ${msg.fat}g` : null}
+                        {typeof msg.calories === "number" && msg.calories > 0
+                          ? ` · ${msg.calories} kcal`
+                          : null}
                       </p>
                       <p className="mt-0.5 text-xs text-[var(--ink-muted)]">{msg.text}</p>
                     </div>

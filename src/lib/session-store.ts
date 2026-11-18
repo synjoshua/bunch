@@ -136,6 +136,9 @@ function pushMessage(
     image: message.image,
     mealTitle: message.mealTitle,
     protein: message.protein,
+    carbs: message.carbs,
+    fat: message.fat,
+    calories: message.calories,
   });
   if (messages.length > 80) {
     squad.messages = messages.slice(-80);
@@ -301,6 +304,9 @@ export function logMeal(input: {
   protein: number;
   shareToQuest: boolean;
   imageDataUrl?: string;
+  carbs?: number;
+  fat?: number;
+  calories?: number;
 }) {
   const session = ensureSession(input.sessionCode);
   const member = session.members[input.memberId];
@@ -331,6 +337,13 @@ export function logMeal(input: {
       ? input.imageDataUrl
       : SAMPLE_MEALS[0].image;
 
+  const carbs = Math.max(0, Math.min(120, Math.round(input.carbs ?? 0)));
+  const fat = Math.max(0, Math.min(80, Math.round(input.fat ?? 0)));
+  const calories = Math.max(
+    0,
+    Math.min(1500, Math.round(input.calories ?? protein * 4 + carbs * 4 + fat * 9)),
+  );
+
   pushMessage(squad, {
     authorId: member.id,
     authorName: member.name,
@@ -338,11 +351,14 @@ export function logMeal(input: {
     authorColor: member.color,
     text: member.goalDayComplete
       ? `Finished today's goal-day with ${mealTitle}.`
-      : `Logged ${mealTitle}.`,
+      : `Logged ${mealTitle} · P ${protein}g · C ${carbs}g · F ${fat}g`,
     kind: "meal",
     image: mealImage,
     mealTitle,
     protein,
+    carbs,
+    fat,
+    calories,
   });
 
   if (input.shareToQuest && !member.sharedQuestToday) {

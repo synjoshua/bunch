@@ -32,6 +32,9 @@ export type ChatMessage = {
   image?: string;
   mealTitle?: string;
   protein?: number;
+  carbs?: number;
+  fat?: number;
+  calories?: number;
 };
 
 export type Member = {

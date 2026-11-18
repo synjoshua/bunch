@@ -47,6 +47,9 @@ type BunchState = {
     protein: number;
     name: string;
     imageDataUrl?: string;
+    carbs?: number;
+    fat?: number;
+    calories?: number;
   }) => Promise<void>;
   shareExistingIdea: () => Promise<void>;
   sendChat: (text: string) => Promise<void>;
@@ -186,6 +189,9 @@ export function BunchProvider({ children }: { children: ReactNode }) {
       protein: number;
       name: string;
       imageDataUrl?: string;
+      carbs?: number;
+      fat?: number;
+      calories?: number;
     }) => {
       if (!memberId) return;
       setLoading(true);
@@ -200,6 +206,9 @@ export function BunchProvider({ children }: { children: ReactNode }) {
             protein: opts.protein,
             shareToQuest: opts.shareToQuest,
             imageDataUrl: opts.imageDataUrl,
+            carbs: opts.carbs,
+            fat: opts.fat,
+            calories: opts.calories,
           }),
         });
         const data = await parseJson(res);
