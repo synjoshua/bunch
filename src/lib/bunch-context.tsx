@@ -46,9 +46,9 @@ type BunchState = {
     shareToQuest: boolean;
     protein: number;
     name: string;
+    imageDataUrl?: string;
   }) => Promise<void>;
   shareExistingIdea: () => Promise<void>;
-  fillDemoTeammates: () => Promise<void>;
   sendChat: (text: string) => Promise<void>;
   startNextWeek: () => Promise<void>;
   leaveSession: () => void;
@@ -185,6 +185,7 @@ export function BunchProvider({ children }: { children: ReactNode }) {
       shareToQuest: boolean;
       protein: number;
       name: string;
+      imageDataUrl?: string;
     }) => {
       if (!memberId) return;
       setLoading(true);
@@ -198,6 +199,7 @@ export function BunchProvider({ children }: { children: ReactNode }) {
             mealName: opts.name,
             protein: opts.protein,
             shareToQuest: opts.shareToQuest,
+            imageDataUrl: opts.imageDataUrl,
           }),
         });
         const data = await parseJson(res);
@@ -226,24 +228,6 @@ export function BunchProvider({ children }: { children: ReactNode }) {
       setScreen("chat");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not share idea");
-    } finally {
-      setLoading(false);
-    }
-  }, [applyState, memberId, sessionCode]);
-
-  const fillDemoTeammates = useCallback(async () => {
-    if (!memberId) return;
-    setLoading(true);
-    try {
-      const res = await fetch("/api/fill-bots", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sessionCode, memberId }),
-      });
-      const data = await parseJson(res);
-      applyState(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not fill squad");
     } finally {
       setLoading(false);
     }
@@ -313,7 +297,6 @@ export function BunchProvider({ children }: { children: ReactNode }) {
       joinSquad,
       saveMeal,
       shareExistingIdea,
-      fillDemoTeammates,
       sendChat,
       startNextWeek,
       leaveSession,
@@ -332,7 +315,6 @@ export function BunchProvider({ children }: { children: ReactNode }) {
       joinSquad,
       saveMeal,
       shareExistingIdea,
-      fillDemoTeammates,
       sendChat,
       startNextWeek,
       leaveSession,

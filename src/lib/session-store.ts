@@ -181,10 +181,6 @@ function assignToSquad(session: Session, member: Member) {
     kind: "system",
   });
   if (squad.memberIds.length >= SQUAD_SIZE) squad.open = false;
-  // Keep open until SQUAD_SIZE; allow late joiners up to SQUAD_MAX via reopen if under max
-  if (squad.memberIds.length < SQUAD_MAX && squad.memberIds.length >= SQUAD_SIZE) {
-    // closed at target size; presenter can still fill bots into open slots below
-  }
 }
 
 export function joinSession(rawCode: string, rawName: string) {
@@ -301,6 +297,7 @@ export function logMeal(input: {
   mealName: string;
   protein: number;
   shareToQuest: boolean;
+  imageDataUrl?: string;
 }) {
   const session = ensureSession(input.sessionCode);
   const member = session.members[input.memberId];
@@ -323,7 +320,14 @@ export function logMeal(input: {
     );
   }
 
-  const mealTitle = input.mealName.trim() || SAMPLE_MEALS[0].name;
+  const mealTitle = input.mealName.trim() || "My plate";
+  const mealImage =
+    input.imageDataUrl &&
+    input.imageDataUrl.startsWith("data:image/") &&
+    input.imageDataUrl.length < 1_200_000
+      ? input.imageDataUrl
+      : SAMPLE_MEALS[0].image;
+
   pushMessage(squad, {
     authorId: member.id,
     authorName: member.name,
@@ -337,15 +341,14 @@ export function logMeal(input: {
 
   if (input.shareToQuest && !member.sharedQuestToday) {
     member.sharedQuestToday = true;
-    const sample = SAMPLE_MEALS[0];
     const idea: MealIdea = {
       id: randomUUID(),
       authorId: member.id,
       authorName: member.name,
       title: mealTitle,
       protein,
-      tip: sample.tip,
-      image: sample.image,
+      tip: "From my camera roll — try it this week.",
+      image: mealImage,
       dayLabel: "Today",
       createdAt: Date.now(),
     };

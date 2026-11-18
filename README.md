@@ -42,11 +42,11 @@ Session state is stored on the server disk under `.data/`. One Railway service =
 3. bunch places people into squads of ~4 as they join.
 4. Each person logs a meal (optionally share to Recipe Relay).
 5. Squad home and the live board update together every couple of seconds.
-6. If a squad is short a few people, tap **Fill open seats with demo friends**.
+6. Squads fill with **real classmates** who join the same code (groups of ~4). Open seats wait for people — no fake teammates.
 
 ## What is simulated
 
-Shared in-room session state (file-backed on the server), fake meal photos/protein estimates, fixed rank tiers, and sample gift-card amounts. No real accounts, nutrition API, payments, or sponsors.
+Shared in-room session state (file-backed on the server), protein estimates you type in, fixed rank tiers, and sample gift-card amounts. Meal photos come from each person’s **camera roll**. No real accounts, nutrition API, payments, or sponsors.
 
 ## Stack
 

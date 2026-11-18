@@ -12,6 +12,7 @@ export async function POST(request: Request) {
       mealName?: string;
       protein?: number;
       shareToQuest?: boolean;
+      imageDataUrl?: string;
     };
     const state = logMeal({
       sessionCode: body.sessionCode ?? "",
@@ -19,6 +20,7 @@ export async function POST(request: Request) {
       mealName: body.mealName ?? "Logged meal",
       protein: body.protein ?? 30,
       shareToQuest: Boolean(body.shareToQuest),
+      imageDataUrl: body.imageDataUrl,
     });
     return NextResponse.json(state);
   } catch (error) {

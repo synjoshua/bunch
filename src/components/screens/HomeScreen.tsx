@@ -9,13 +9,7 @@ import {
 } from "@/components/ui";
 import { useBunch } from "@/lib/bunch-context";
 import { FOOD_SHOTS, SAMPLE_MEALS, rankForPoints } from "@/lib/types";
-import {
-  ArrowRight,
-  Gift,
-  MessageCircle,
-  Sparkles,
-  Users,
-} from "lucide-react";
+import { ArrowRight, Gift, MessageCircle, Sparkles } from "lucide-react";
 
 type NextStep = {
   step: number;
@@ -26,15 +20,7 @@ type NextStep = {
 };
 
 export function HomeScreen() {
-  const {
-    squad,
-    you,
-    sessionCode,
-    sessionStats,
-    goTo,
-    fillDemoTeammates,
-    loading,
-  } = useBunch();
+  const { squad, you, sessionCode, sessionStats, goTo } = useBunch();
 
   if (!squad || !you) {
     return (
@@ -45,8 +31,9 @@ export function HomeScreen() {
   }
 
   const rank = rankForPoints(squad.rankPoints);
-  const needsTeammates = squad.members.length < 4;
-  const checkedIn = squad.members.filter((m) => m.checkedInToday).length;
+  const people = squad.members.filter((m) => !m.isBot);
+  const needsTeammates = people.length < 4;
+  const checkedIn = people.filter((m) => m.checkedInToday).length;
   const lastChat = [...squad.messages].reverse().find((m) => m.kind === "chat");
   const saidHi = squad.messages.some(
     (m) => m.authorId === you.id && m.kind === "chat",
@@ -67,16 +54,16 @@ export function HomeScreen() {
   const next: NextStep = needsTeammates
     ? {
         step: 1,
-        title: "Fill the table",
-        detail: `${squad.members.length}/4 seats at ${squad.name}.`,
-        cta: "Add kitchen friends",
-        action: () => void fillDemoTeammates(),
+        title: "Waiting for classmates",
+        detail: `${people.length}/4 real seats at ${squad.name}. Same code ${sessionCode} — they'll land here automatically.`,
+        cta: you.mealLogged ? "Open table chat" : "Log a plate while you wait",
+        action: () => goTo(you.mealLogged ? "chat" : "log"),
       }
     : !you.mealLogged
       ? {
           step: 2,
           title: "Log today's plate",
-          detail: `Hit ${you.proteinTarget}g protein — the squad levels up with you.`,
+          detail: `Hit ${you.proteinTarget}g protein — pick a real photo from your camera roll.`,
           cta: "Snap / log lunch",
           action: () => goTo("log"),
         }
@@ -169,7 +156,7 @@ export function HomeScreen() {
               </h2>
               <p className="muted mt-1 text-sm leading-relaxed">{next.detail}</p>
             </div>
-            <AvatarStack members={squad.members} />
+            <AvatarStack members={people} />
           </div>
           <div className="mt-3 flex items-end justify-between">
             <div>
@@ -198,7 +185,6 @@ export function HomeScreen() {
             size="lg"
             variant="primary"
             organic
-            disabled={loading && needsTeammates}
             onClick={next.action}
           >
             {next.cta}
@@ -249,12 +235,12 @@ export function HomeScreen() {
         <div className="flex items-center justify-between">
           <p className="text-sm font-bold text-[var(--ink)]">At the table</p>
           <p className="text-xs text-[var(--ink-faint)]">
-            {checkedIn}/{squad.members.length} ate / checked in
+            {checkedIn}/{people.length} ate / checked in
             {sessionStats ? ` · ${sessionStats.humanCount} in class` : ""}
           </p>
         </div>
         <div className="mt-3 flex gap-3 overflow-x-auto pb-1">
-          {squad.members.map((m) => (
+          {people.map((m) => (
             <div key={m.id} className="w-16 shrink-0 text-center">
               <div className="relative mx-auto w-fit">
                 <Avatar short={m.short} color={m.color} size="lg" />
@@ -269,19 +255,23 @@ export function HomeScreen() {
               </p>
             </div>
           ))}
+          {needsTeammates
+            ? Array.from({ length: 4 - people.length }).map((_, i) => (
+                <div key={`empty-${i}`} className="w-16 shrink-0 text-center">
+                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-dashed border-white/25 text-[10px] text-[var(--ink-faint)]">
+                    open
+                  </div>
+                  <p className="mt-1.5 text-[11px] text-[var(--ink-faint)]">Seat</p>
+                </div>
+              ))
+            : null}
         </div>
         {needsTeammates ? (
-          <Button
-            className="mt-3 w-full"
-            variant="soft"
-            size="sm"
-            organic
-            disabled={loading}
-            onClick={() => void fillDemoTeammates()}
-          >
-            <Users className="h-4 w-4" />
-            Pull up more seats
-          </Button>
+          <p className="mt-3 text-xs leading-relaxed text-[var(--ink-muted)]">
+            Open seats fill with real classmates who join code{" "}
+            <span className="font-semibold text-[var(--ink)]">{sessionCode}</span>.
+            No fake teammates.
+          </p>
         ) : null}
       </SectionCard>
 
