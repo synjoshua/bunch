@@ -20,8 +20,8 @@ export function QuestScreen() {
   return (
     <div className="px-5 pb-8 pt-6 animate-rise">
       <ScreenHeader
-        title="Kitchen quest"
-        subtitle="Recipe Relay — post real meals your friends can cook later"
+        title="Friends' meals"
+        subtitle="Browse what your squad cooked and steal ideas for your next plate"
         onBack={() => goTo("home")}
       />
 
@@ -32,20 +32,20 @@ export function QuestScreen() {
             <img key={src} src={src} alt="" className="h-full w-full object-cover" />
           ))}
         </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-[#12101c] via-[#12101c]/40 to-transparent" />
-        <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0d0b14] via-[#0d0b14]/70 to-black/30" />
+        <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between gap-3">
           <div>
-            <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-[var(--peach)]">
-              Recipe Relay
+            <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-[var(--lime)]">
+              Squad cookbook
             </p>
-            <p className="font-display text-2xl text-white">
-              {squad.mealIdeas.length}/{squad.questTarget} plates
+            <p className="font-display text-2xl text-white drop-shadow">
+              {squad.mealIdeas.length}/{squad.questTarget} shared
             </p>
           </div>
-          <p className="max-w-[7.5rem] text-right text-[11px] font-semibold text-white/80">
+          <p className="max-w-[8rem] rounded-2xl bg-black/45 px-2.5 py-1.5 text-right text-[11px] font-semibold text-white backdrop-blur-sm">
             {complete
-              ? "Quest complete"
-              : `${squad.questTarget - squad.mealIdeas.length} more to cook`}
+              ? "Cookbook full"
+              : `${squad.questTarget - squad.mealIdeas.length} more ideas`}
           </p>
         </div>
       </div>

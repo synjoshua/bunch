@@ -122,21 +122,26 @@ export function HomeScreen() {
         onClick={() => goTo("quest")}
         glass={false}
       >
-        <div className="relative h-20">
+        <div className="relative h-24">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={FOOD_SHOTS[1]} alt="" className="h-full w-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[var(--card-solid)] to-transparent" />
-          <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
-            <div className="flex items-center gap-2">
-              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--ralli-deep)] text-[var(--cream)]">
+          <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/65 to-black/35" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
+          <div className="absolute inset-0 flex items-center justify-between gap-3 px-3.5">
+            <div className="flex min-w-0 items-center gap-2.5">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--ralli-deep)] text-[var(--cream)] shadow-lg">
                 <ChefHat className="h-4 w-4" />
               </span>
-              <div>
-                <p className="font-display text-lg text-white">Kitchen quest</p>
-                <p className="text-[11px] text-white/75">Recipe Relay</p>
+              <div className="min-w-0">
+                <p className="font-display text-lg leading-tight text-white drop-shadow">
+                  Friends&apos; meals
+                </p>
+                <p className="mt-0.5 text-[11px] font-semibold leading-snug text-white/90">
+                  Get inspired by what your squad cooked
+                </p>
               </div>
             </div>
-            <p className="font-display text-2xl text-[var(--lime)]">
+            <p className="shrink-0 rounded-full bg-[var(--lime)] px-2.5 py-1 font-display text-base text-[var(--ink-on-bright)]">
               {squad.mealIdeas.length}/{squad.questTarget}
             </p>
           </div>
