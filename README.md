@@ -19,6 +19,22 @@ For local iteration you can use `npm run dev` instead.
 - Player app: [http://127.0.0.1:43123](http://127.0.0.1:43123)
 - Projector / audience board: [http://127.0.0.1:43123/live](http://127.0.0.1:43123/live)
 
+## Deploy on Railway (class demo)
+
+Use [Railway](https://railway.com) so everyone shares one always-on Node server (needed for live multiplayer).
+
+1. Push this repo to GitHub (or create the repo from Cursor’s **Create repo** pill).
+2. Open [railway.com/new](https://railway.com/new) → sign up → **Deploy from GitHub repo** → pick this project.
+3. Railway should detect Next.js. Set:
+   - **Build command:** `npm run build`
+   - **Start command:** `npm run start`
+4. Click **Deploy**. When it’s green, open the service → **Settings** → **Networking** → **Generate domain**.
+5. Player URL = that domain (e.g. `https://bunch-production-xxxx.up.railway.app`).
+6. Projector = same domain + `/live`.
+7. Make a QR code that points at the **player URL** (code stays `BUNCH`).
+
+Session state is stored on the server disk under `.data/`. One Railway service = one shared classroom room.
+
 ## Class demo flow
 
 1. Put `/live` on the projector with session code `BUNCH` (or your own code).
