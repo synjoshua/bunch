@@ -133,6 +133,9 @@ function pushMessage(
     authorColor: message.authorColor,
     text: message.text,
     kind: message.kind,
+    image: message.image,
+    mealTitle: message.mealTitle,
+    protein: message.protein,
   });
   if (messages.length > 80) {
     squad.messages = messages.slice(-80);
@@ -334,9 +337,12 @@ export function logMeal(input: {
     authorShort: member.short,
     authorColor: member.color,
     text: member.goalDayComplete
-      ? `Logged ${mealTitle} (+${protein}g) and finished today's goal-day.`
-      : `Logged ${mealTitle} (+${protein}g protein).`,
+      ? `Finished today's goal-day with ${mealTitle}.`
+      : `Logged ${mealTitle}.`,
     kind: "meal",
+    image: mealImage,
+    mealTitle,
+    protein,
   });
 
   if (input.shareToQuest && !member.sharedQuestToday) {

@@ -28,6 +28,10 @@ export type ChatMessage = {
   text: string;
   kind: "chat" | "system" | "meal";
   createdAt: number;
+  /** Meal photo (data URL or remote) when kind === "meal" */
+  image?: string;
+  mealTitle?: string;
+  protein?: number;
 };
 
 export type Member = {

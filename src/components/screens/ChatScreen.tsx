@@ -1,6 +1,6 @@
 "use client";
 
-import { Avatar, Button } from "@/components/ui";
+import { Avatar, Button, ProgressBar } from "@/components/ui";
 import { useBunch } from "@/lib/bunch-context";
 import { ArrowLeft, Send } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -31,10 +31,14 @@ export function ChatScreen() {
   };
 
   const people = squad.members.filter((m) => !m.isBot);
+  const weekPct = Math.round(
+    (squad.weeklyGoalDays / Math.max(1, squad.weeklyGoalTarget)) * 100,
+  );
+  const checkedIn = people.filter((m) => m.checkedInToday).length;
 
   return (
     <div className="absolute inset-0 z-20 flex flex-col bg-[#12101c] animate-rise">
-      <header className="shrink-0 border-b border-white/8 px-4 pb-2.5 pt-5">
+      <header className="shrink-0 border-b border-white/8 px-4 pb-3 pt-5">
         <div className="flex items-center gap-3">
           <button
             type="button"
@@ -58,6 +62,27 @@ export function ChatScreen() {
             ))}
           </div>
         </div>
+
+        <div className="mt-3 rounded-[18px] border border-white/10 bg-white/5 px-3 py-2.5">
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-[var(--lime)]">
+              Shared weekly goal
+            </p>
+            <p className="text-xs font-bold text-[var(--ink)]">
+              {squad.weeklyGoalDays}/{squad.weeklyGoalTarget} · {weekPct}%
+            </p>
+          </div>
+          <ProgressBar
+            className="mt-2 h-2.5"
+            value={squad.weeklyGoalDays}
+            max={Math.max(1, squad.weeklyGoalTarget)}
+            striped
+          />
+          <p className="mt-1.5 text-[11px] text-[var(--ink-muted)]">
+            {checkedIn}/{people.length} checked in today · Recipe Relay{" "}
+            {squad.mealIdeas.length}/{squad.questTarget}
+          </p>
+        </div>
       </header>
 
       <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-3">
@@ -67,7 +92,7 @@ export function ChatScreen() {
               Start the conversation
             </p>
             <p className="mt-1 text-xs text-[var(--ink-muted)]">
-              Tap a quick message below or type your own.
+              Tap a quick message below or type your own. Meal photos show up here.
             </p>
           </div>
         ) : (
@@ -84,6 +109,52 @@ export function ChatScreen() {
             }
 
             const mine = msg.authorId === you.id;
+
+            if (msg.kind === "meal") {
+              return (
+                <div
+                  key={msg.id}
+                  className={`flex items-end gap-2 ${mine ? "justify-end" : "justify-start"}`}
+                >
+                  {!mine ? (
+                    <Avatar
+                      short={msg.authorShort}
+                      color={msg.authorColor}
+                      size="sm"
+                    />
+                  ) : null}
+                  <div
+                    className={`max-w-[82%] overflow-hidden rounded-[20px] border border-[var(--lime)]/25 bg-[var(--bubble-them)] ${
+                      mine ? "rounded-br-md" : "rounded-bl-md"
+                    }`}
+                  >
+                    {msg.image ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={msg.image}
+                        alt={msg.mealTitle || "Logged meal"}
+                        className="aspect-[4/3] w-full object-cover"
+                      />
+                    ) : null}
+                    <div className="px-3 py-2.5">
+                      <p className="text-[11px] font-bold text-[var(--peach)]">
+                        {mine ? "You" : msg.authorName} · plated
+                      </p>
+                      <p className="mt-0.5 font-display text-base text-[var(--ink)]">
+                        {msg.mealTitle || "Meal"}
+                        {typeof msg.protein === "number" ? (
+                          <span className="ml-2 text-sm text-[var(--lime)]">
+                            +{msg.protein}g
+                          </span>
+                        ) : null}
+                      </p>
+                      <p className="mt-0.5 text-xs text-[var(--ink-muted)]">{msg.text}</p>
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+
             return (
               <div
                 key={msg.id}
@@ -100,15 +171,12 @@ export function ChatScreen() {
                   className={`max-w-[78%] rounded-[18px] px-3.5 py-2.5 ${
                     mine
                       ? "rounded-br-md bg-[var(--bubble-me)] text-white"
-                      : msg.kind === "meal"
-                        ? "rounded-bl-md border border-[var(--lime)]/30 bg-[var(--amber-soft)] text-[var(--ink)]"
-                        : "rounded-bl-md bg-[var(--bubble-them)] text-[var(--ink)]"
+                      : "rounded-bl-md bg-[var(--bubble-them)] text-[var(--ink)]"
                   }`}
                 >
                   {!mine ? (
                     <p className="mb-0.5 text-[11px] font-bold text-[var(--peach)]">
                       {msg.authorName}
-                      {msg.kind === "meal" ? " · logged a meal" : ""}
                     </p>
                   ) : null}
                   <p className="text-sm leading-snug">{msg.text}</p>
