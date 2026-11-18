@@ -87,8 +87,8 @@ export function LogMealScreen() {
   return (
     <div className="px-5 pb-10 pt-6 animate-rise">
       <ScreenHeader
-        title="Log your plate"
-        subtitle="Snap food — AI estimates macros and adds protein to your goal."
+        title="Log your meal"
+        subtitle="1) Add a food photo  2) AI fills macros  3) Save to your goal"
         onBack={() => goTo("home")}
       />
 

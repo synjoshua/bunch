@@ -8,7 +8,7 @@ import { QuestScreen } from "@/components/screens/QuestScreen";
 import { RankScreen } from "@/components/screens/RankScreen";
 import { RecapScreen } from "@/components/screens/RecapScreen";
 import { BunchProvider, useBunch } from "@/lib/bunch-context";
-import { Gift, Home, MessageCircle, Sparkles } from "lucide-react";
+import { Camera, Gift, Home, MessageCircle, Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
 
 function GooeySvgDefs() {
@@ -36,9 +36,10 @@ function GooeySvgDefs() {
 }
 
 function Shell() {
-  const { screen, goTo, memberId, squad } = useBunch();
-  const showNav = Boolean(memberId) && screen !== "join" && screen !== "log";
+  const { screen, goTo, memberId, squad, you } = useBunch();
+  const showNav = Boolean(memberId) && screen !== "join";
   const chatCount = squad?.messages.filter((m) => m.kind === "chat").length ?? 0;
+  const needsMeal = Boolean(you && !you.mealLogged);
 
   const items: Array<{
     id: string;
@@ -47,6 +48,7 @@ function Shell() {
     onClick: () => void;
     icon: ReactNode;
     badge?: boolean;
+    primary?: boolean;
   }> = [
     {
       id: "home",
@@ -62,6 +64,14 @@ function Shell() {
       onClick: () => goTo("chat"),
       icon: <MessageCircle />,
       badge: chatCount > 0 && screen !== "chat",
+    },
+    {
+      id: "log",
+      label: "Log meal",
+      active: screen === "log",
+      onClick: () => goTo("log"),
+      icon: <Camera />,
+      primary: true,
     },
     {
       id: "quest",
@@ -98,7 +108,10 @@ function Shell() {
           <div className="gooey-nav">
             <div className="gooey-nav-blobs" aria-hidden>
               {items.map((item) => (
-                <span key={item.id} className="gooey-nav-blob" />
+                <span
+                  key={item.id}
+                  className={`gooey-nav-blob${item.primary ? " gooey-nav-blob-primary" : ""}`}
+                />
               ))}
             </div>
             <div className="gooey-nav-items">
@@ -108,10 +121,15 @@ function Shell() {
                   type="button"
                   aria-label={item.label}
                   aria-current={item.active ? "page" : undefined}
-                  className={`gooey-nav-btn${item.active ? " is-active" : ""}`}
+                  className={`gooey-nav-btn${item.active ? " is-active" : ""}${
+                    item.primary ? " is-log" : ""
+                  }${item.primary && needsMeal && screen !== "log" ? " is-log-pulse" : ""}`}
                   onClick={item.onClick}
                 >
                   {item.icon}
+                  {item.primary ? (
+                    <span className="gooey-nav-log-label">Log</span>
+                  ) : null}
                   {item.badge ? <span className="gooey-nav-dot" /> : null}
                 </button>
               ))}
@@ -135,8 +153,8 @@ export function BunchApp() {
           </p>
           <ol className="mt-5 hidden space-y-2 text-sm text-[var(--ink-muted)] md:block">
             <li>1. Sit down with your name</li>
-            <li>2. Follow the lime mission card</li>
-            <li>3. Log food, quest, and chat</li>
+            <li>2. Tap the green Log button</li>
+            <li>3. Photo food, quest, and chat</li>
             <li>4. Watch the room cook on /live</li>
           </ol>
         </div>
