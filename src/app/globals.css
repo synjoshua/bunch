@@ -138,19 +138,6 @@ body {
   z-index: 0;
 }
 
-.phone-notch {
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  z-index: 30;
-  width: 118px;
-  height: 28px;
-  transform: translateX(-50%);
-  border-radius: 999px;
-  background: #07060d;
-  opacity: 0.95;
-}
-
 .phone-scroll {
   position: relative;
   z-index: 1;
@@ -387,9 +374,6 @@ body {
     box-shadow: none;
   }
 
-  .phone-notch {
-    display: none;
-  }
 }
 
 .live-stage {

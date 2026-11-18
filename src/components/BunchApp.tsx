@@ -62,7 +62,6 @@ function Shell() {
 
   return (
     <div className="phone-shell">
-      <div className="phone-notch" aria-hidden />
       <div className="phone-scroll">
         {screen === "join" && <JoinScreen />}
         {screen === "home" && <HomeScreen />}
