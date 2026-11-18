@@ -29,7 +29,7 @@ export function LogMealScreen() {
   };
 
   return (
-    <div className="px-5 pb-8 pt-6 animate-rise">
+    <div className="px-5 pb-10 pt-6 animate-rise">
       <ScreenHeader
         title="Log lunch"
         subtitle="Photo or quick entry — private by default"

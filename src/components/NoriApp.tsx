@@ -7,13 +7,14 @@ import { QuestScreen } from "@/components/screens/QuestScreen";
 import { RankScreen } from "@/components/screens/RankScreen";
 import { RecapScreen } from "@/components/screens/RecapScreen";
 import { NoriProvider, useNori } from "@/lib/nori-context";
-import { Gift, Home, Sparkles, Utensils } from "lucide-react";
+import { Gift, Home, Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
 
 function Shell() {
   const { screen, goTo, joined } = useNori();
 
-  const showNav = joined && screen !== "join";
+  const showNav =
+    joined && screen !== "join" && screen !== "log";
 
   return (
     <div className="phone-shell">
@@ -30,7 +31,7 @@ function Shell() {
       {showNav ? (
         <nav className="phone-nav">
           <NavBtn
-            active={screen === "home"}
+            active={screen === "home" || screen === "recap"}
             label="Home"
             onClick={() => goTo("home")}
             icon={<Home className="h-4 w-4" />}
@@ -40,12 +41,6 @@ function Shell() {
             label="Quest"
             onClick={() => goTo("quest")}
             icon={<Sparkles className="h-4 w-4" />}
-          />
-          <NavBtn
-            active={screen === "log"}
-            label="Log"
-            onClick={() => goTo("log")}
-            icon={<Utensils className="h-4 w-4" />}
           />
           <NavBtn
             active={screen === "rank"}
