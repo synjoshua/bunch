@@ -35,8 +35,8 @@ export function LogMealScreen() {
             className="h-full w-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/35 to-transparent" />
-          <div className="absolute bottom-3 left-3 flex items-center gap-2 rounded-full bg-white/90 px-3 py-1.5 text-xs font-semibold text-[var(--ink)]">
-            <Camera className="h-3.5 w-3.5" />
+          <div className="absolute bottom-3 left-3 flex items-center gap-2 rounded-full bg-[var(--lime)] px-3 py-1.5 text-xs font-extrabold text-[var(--ink-on-bright)] shadow-[0_6px_16px_rgba(0,0,0,0.35)]">
+            <Camera className="h-3.5 w-3.5" aria-hidden />
             Demo photo ready
           </div>
         </div>
