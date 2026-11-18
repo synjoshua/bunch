@@ -55,6 +55,7 @@ type BunchState = {
   shareExistingIdea: () => Promise<void>;
   sendChat: (text: string) => Promise<void>;
   startNextWeek: () => Promise<void>;
+  redeemGift: () => Promise<void>;
   leaveSession: () => void;
   refresh: () => Promise<void>;
 };
@@ -283,6 +284,25 @@ export function BunchProvider({ children }: { children: ReactNode }) {
     }
   }, [applyState, memberId, sessionCode]);
 
+  const redeemGift = useCallback(async () => {
+    if (!memberId) return;
+    setLoading(true);
+    try {
+      const res = await fetch("/api/redeem", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionCode, memberId }),
+      });
+      const data = await parseJson(res);
+      applyState(data);
+      setScreen("rank");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not redeem");
+    } finally {
+      setLoading(false);
+    }
+  }, [applyState, memberId, sessionCode]);
+
   const leaveSession = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY);
     setMemberId(null);
@@ -309,6 +329,7 @@ export function BunchProvider({ children }: { children: ReactNode }) {
       shareExistingIdea,
       sendChat,
       startNextWeek,
+      redeemGift,
       leaveSession,
       refresh,
     }),
@@ -327,6 +348,7 @@ export function BunchProvider({ children }: { children: ReactNode }) {
       shareExistingIdea,
       sendChat,
       startNextWeek,
+      redeemGift,
       leaveSession,
       refresh,
     ],

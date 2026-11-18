@@ -6,6 +6,7 @@ import {
   DEFAULT_PROTEIN_TARGET,
   DEFAULT_SESSION_CODE,
   GOAL_DAYS_PER_PERSON,
+  GOLD_GIFT_AMOUNT,
   QUEST_TARGET,
   SAMPLE_MEALS,
   SQUAD_MAX,
@@ -119,6 +120,44 @@ function ensureMessages(squad: Squad) {
   return squad.messages;
 }
 
+function humansOnSquad(squad: Squad, session: Session) {
+  return squad.memberIds
+    .map((id) => session.members[id])
+    .filter((m): m is Member => Boolean(m && !m.isBot));
+}
+
+/** Share + 100% goals from multiple people → XP toward Gold gift card */
+function applyTeamProgressBoost(
+  squad: Squad,
+  session: Session,
+  opts?: { justCompletedGoal?: boolean; justShared?: boolean },
+) {
+  if (opts?.justCompletedGoal) {
+    squad.rankPoints += 2;
+  }
+  if (opts?.justShared) {
+    squad.rankPoints += 1;
+  }
+
+  const humans = humansOnSquad(squad, session);
+  const goalsHit = humans.filter((m) => m.goalDayComplete).length;
+  const shared = humans.filter((m) => m.sharedQuestToday).length;
+  const teamReady = goalsHit >= 2 && shared >= 2;
+
+  if (teamReady && !squad.teamGoalBoostClaimed) {
+    squad.teamGoalBoostClaimed = true;
+    squad.rankPoints += 4;
+    pushMessage(squad, {
+      authorId: "system",
+      authorName: "bunch",
+      authorShort: "B",
+      authorColor: "#5B50E8",
+      text: `${goalsHit} teammates hit 100% goals and shared plates — +4 XP toward Gold gift card!`,
+      kind: "system",
+    });
+  }
+}
+
 function pushMessage(
   squad: Squad,
   message: Omit<ChatMessage, "id" | "createdAt"> & { createdAt?: number },
@@ -168,6 +207,9 @@ function createSquad(session: Session): Squad {
     questsCompletedThisSeason: 2,
     weekNumber: 3,
     open: true,
+    teamGoalBoostClaimed: false,
+    giftRedeemed: false,
+    giftCode: null,
   };
   session.squads[squad.id] = squad;
   return squad;
@@ -250,6 +292,14 @@ function toSquadView(session: Session, squad: Squad, youId: string): SquadView {
       goalDayComplete: m.goalDayComplete,
     }));
 
+  const humans = members.filter((m) => !m.isBot);
+  const goalsHitToday = humans.filter((m) => m.goalDayComplete).length;
+  const sharedToday = humans.filter((m) => {
+    const full = session.members[m.id];
+    return Boolean(full?.sharedQuestToday);
+  }).length;
+  const rank = rankForPoints(squad.rankPoints);
+
   return {
     id: squad.id,
     name: squad.name,
@@ -267,6 +317,13 @@ function toSquadView(session: Session, squad: Squad, youId: string): SquadView {
     questsCompletedThisSeason: squad.questsCompletedThisSeason,
     weekNumber: squad.weekNumber,
     open: squad.open,
+    goalsHitToday,
+    sharedToday,
+    humanCount: humans.length,
+    canRedeemGift: rank.id === "gold" || rank.id === "platinum",
+    giftRedeemed: Boolean(squad.giftRedeemed),
+    giftCode: squad.giftCode ?? null,
+    giftAmount: rank.id === "platinum" ? 15 : GOLD_GIFT_AMOUNT,
   };
 }
 
@@ -321,8 +378,10 @@ export function logMeal(input: {
   );
   member.mealLogged = true;
 
+  let justCompletedGoal = false;
   if (!member.goalDayComplete && member.personalProtein >= member.proteinTarget) {
     member.goalDayComplete = true;
+    justCompletedGoal = true;
     member.goalDaysDone = Math.min(
       member.goalDaysPlanned,
       member.goalDaysDone + 1,
@@ -361,8 +420,10 @@ export function logMeal(input: {
     calories,
   });
 
+  let justShared = false;
   if (input.shareToQuest && !member.sharedQuestToday) {
     member.sharedQuestToday = true;
+    justShared = true;
     const idea: MealIdea = {
       id: randomUUID(),
       authorId: member.id,
@@ -380,7 +441,7 @@ export function logMeal(input: {
       authorName: "bunch",
       authorShort: "B",
       authorColor: "#5B50E8",
-      text: `${member.name} shared a meal idea to Recipe Relay (${squad.mealIdeas.length}/${QUEST_TARGET}).`,
+      text: `${member.name} shared a meal with the squad (${squad.mealIdeas.length}/${QUEST_TARGET}).`,
       kind: "system",
     });
     if (squad.mealIdeas.length >= QUEST_TARGET) {
@@ -390,6 +451,8 @@ export function logMeal(input: {
       );
     }
   }
+
+  applyTeamProgressBoost(squad, session, { justCompletedGoal, justShared });
 
   touch(session);
   return getMemberState(session.code, member.id);
@@ -423,8 +486,43 @@ export function shareIdea(sessionCode: string, memberId: string) {
     authorName: member.name,
     authorShort: member.short,
     authorColor: member.color,
-    text: `Shared ${sample.name} to the Recipe Relay (${squad.mealIdeas.length}/${QUEST_TARGET}). Tip: ${sample.tip}`,
+    text: `Shared ${sample.name} with the squad (${squad.mealIdeas.length}/${QUEST_TARGET}). Tip: ${sample.tip}`,
     kind: "meal",
+  });
+  applyTeamProgressBoost(squad, session, { justShared: true });
+  touch(session);
+  return getMemberState(session.code, memberId);
+}
+
+export function redeemGiftCard(sessionCode: string, memberId: string) {
+  const session = ensureSession(sessionCode);
+  const member = session.members[memberId];
+  if (!member || !member.squadId) throw new Error("Member not found.");
+  const squad = session.squads[member.squadId];
+  if (!squad) throw new Error("Squad not found.");
+
+  const rank = rankForPoints(squad.rankPoints);
+  if (rank.id !== "gold" && rank.id !== "platinum") {
+    throw new Error("Reach Gold rank to redeem your gift card.");
+  }
+  if (squad.giftRedeemed && squad.giftCode) {
+    return getMemberState(session.code, memberId);
+  }
+
+  const amount = rank.id === "platinum" ? 15 : GOLD_GIFT_AMOUNT;
+  const code = `BUNCH-${rank.label.toUpperCase()}-${Math.random()
+    .toString(36)
+    .slice(2, 6)
+    .toUpperCase()}`;
+  squad.giftRedeemed = true;
+  squad.giftCode = code;
+  pushMessage(squad, {
+    authorId: "system",
+    authorName: "bunch",
+    authorShort: "B",
+    authorColor: "#5B50E8",
+    text: `${member.name} redeemed the $${amount} Gold gift card · code ${code}`,
+    kind: "system",
   });
   touch(session);
   return getMemberState(session.code, memberId);
@@ -610,6 +708,7 @@ export function advanceWeek(sessionCode: string, memberId: string) {
     m.goalDaysDone = 0;
   }
   squad.mealIdeas = [];
+  squad.teamGoalBoostClaimed = false;
   squad.weekNumber = Math.min(4, squad.weekNumber + 1);
   touch(session);
   return getMemberState(session.code, memberId);

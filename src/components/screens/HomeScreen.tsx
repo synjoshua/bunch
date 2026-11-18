@@ -309,7 +309,9 @@ export function HomeScreen() {
           <p className="mt-3 text-xs text-[var(--ink-faint)]">Loot rank</p>
           <p className="font-display text-xl text-[var(--ink)]">{rank.label} medal</p>
           <p className="text-[11px] text-[var(--ink-muted)]">
-            ${rank.reward} gift card path
+            {rank.id === "gold" || rank.id === "platinum"
+              ? "Gift card ready to redeem"
+              : "Share + 100% goals → Gold"}
           </p>
         </SectionCard>
       </div>

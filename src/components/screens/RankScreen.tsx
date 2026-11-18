@@ -3,41 +3,39 @@
 import { Button, ProgressBar, ScreenHeader, SectionCard } from "@/components/ui";
 import { useBunch } from "@/lib/bunch-context";
 import {
+  GOLD_GIFT_AMOUNT,
   RANKS,
   type RankId,
   type RankInfo,
   nextRank,
   rankForPoints,
 } from "@/lib/types";
-import { Medal } from "lucide-react";
+import { Check, Medal, Share2, Target } from "lucide-react";
+import type { ReactNode } from "react";
 
 const MEDAL_LOOK: Record<
   RankId,
-  { face: string; rim: string; glow: string; label: string }
+  { face: string; rim: string; glow: string }
 > = {
   bronze: {
     face: "linear-gradient(145deg, #F0C08A 0%, #CD7F32 45%, #8B5A2B 100%)",
     rim: "#6B3F1A",
     glow: "rgba(205, 127, 50, 0.45)",
-    label: "Bronze",
   },
   silver: {
     face: "linear-gradient(145deg, #F5F7FA 0%, #C0C7D1 48%, #8A93A0 100%)",
     rim: "#5C6570",
     glow: "rgba(192, 199, 209, 0.5)",
-    label: "Silver",
   },
   gold: {
     face: "linear-gradient(145deg, #FFE9A8 0%, #F5C518 42%, #C99700 100%)",
     rim: "#8A6A00",
     glow: "rgba(245, 197, 24, 0.55)",
-    label: "Gold",
   },
   platinum: {
     face: "linear-gradient(145deg, #E8F4FF 0%, #A8C5E8 45%, #6E8FB8 100%)",
     rim: "#3D5A80",
     glow: "rgba(168, 197, 232, 0.5)",
-    label: "Platinum",
   },
 };
 
@@ -75,13 +73,11 @@ function RankMedal({
 }
 
 export function RankScreen() {
-  const { goTo, squad, you } = useBunch();
+  const { goTo, squad, you, redeemGift, loading, error } = useBunch();
   if (!squad || !you) return null;
 
   const rank = rankForPoints(squad.rankPoints);
   const upcoming = nextRank(squad.rankPoints);
-  const questBonusReady = squad.questsCompletedThisSeason >= 3;
-  const projected = rank.reward + (questBonusReady ? 1 : 0);
   const mainRanks = RANKS.filter((r) => r.id !== "platinum");
   const progressMax = upcoming
     ? Math.max(1, upcoming.pointsNeeded - rank.pointsNeeded)
@@ -89,12 +85,15 @@ export function RankScreen() {
   const progressValue = upcoming
     ? Math.max(0, squad.rankPoints - rank.pointsNeeded)
     : 1;
+  const isGoldPlus = rank.id === "gold" || rank.id === "platinum";
+  const goalsNeeded = Math.max(0, 2 - squad.goalsHitToday);
+  const sharesNeeded = Math.max(0, 2 - squad.sharedToday);
 
   return (
     <div className="px-5 pb-8 pt-6 animate-rise">
       <ScreenHeader
         title="Loot & ranks"
-        subtitle="Climb medals → bigger grocery gift cards"
+        subtitle={`Share + hit 100% goals together → Gold → $${GOLD_GIFT_AMOUNT} gift card`}
         onBack={() => goTo("home")}
       />
 
@@ -114,15 +113,18 @@ export function RankScreen() {
               {rank.label}
             </h2>
             <p className="mt-1.5 text-sm text-[var(--ink-muted)]">
-              {squad.rankPoints} XP · ${rank.reward} gift card path
+              {squad.rankPoints} XP
+              {isGoldPlus
+                ? ` · $${squad.giftAmount} gift card unlocked`
+                : ` · unlock Gold for $${GOLD_GIFT_AMOUNT}`}
             </p>
           </div>
 
-          {upcoming ? (
+          {upcoming && upcoming.id !== "platinum" ? (
             <div className="mt-5">
               <div className="flex items-center justify-between text-xs text-[var(--ink-muted)]">
                 <span>
-                  Next medal: <strong className="text-[var(--ink)]">{upcoming.label}</strong>
+                  Next: <strong className="text-[var(--ink)]">{upcoming.label}</strong>
                 </span>
                 <span>
                   {squad.rankPoints}/{upcoming.pointsNeeded} XP
@@ -134,18 +136,114 @@ export function RankScreen() {
                 max={progressMax}
                 tone="amber"
               />
-              <p className="mt-2 text-center text-[11px] text-[var(--ink-faint)]">
-                {upcoming.pointsNeeded - squad.rankPoints} XP to unlock {upcoming.label} ($
-                {upcoming.reward})
+            </div>
+          ) : null}
+        </div>
+      </SectionCard>
+
+      <SectionCard className="mt-3 p-4" glass={false}>
+        <p className="text-sm font-bold text-[var(--ink)]">Path to Gold gift card</p>
+        <p className="mt-1 text-xs leading-relaxed text-[var(--ink-muted)]">
+          When multiple teammates share plates and hit 100% of their protein
+          goal, your squad earns XP. Reach Gold to redeem.
+        </p>
+
+        <div className="mt-4 space-y-2.5">
+          <PathRow
+            icon={<Target className="h-4 w-4" />}
+            ok={squad.goalsHitToday >= 2}
+            title="Hit 100% goals"
+            detail={
+              squad.goalsHitToday >= 2
+                ? `${squad.goalsHitToday} teammates at 100% today`
+                : `${goalsNeeded} more teammate${goalsNeeded === 1 ? "" : "s"} need 100% today`
+            }
+          />
+          <PathRow
+            icon={<Share2 className="h-4 w-4" />}
+            ok={squad.sharedToday >= 2}
+            title="Share meals"
+            detail={
+              squad.sharedToday >= 2
+                ? `${squad.sharedToday} shared plates today`
+                : `${sharesNeeded} more share${sharesNeeded === 1 ? "" : "s"} today`
+            }
+          />
+          <PathRow
+            icon={<Medal className="h-4 w-4" />}
+            ok={isGoldPlus}
+            title="Reach Gold medal"
+            detail={
+              isGoldPlus
+                ? "Gold unlocked — redeem below"
+                : `${Math.max(0, 16 - squad.rankPoints)} XP to Gold`
+            }
+          />
+        </div>
+      </SectionCard>
+
+      {isGoldPlus ? (
+        <SectionCard className="mt-3 p-4" glass={false}>
+          <div className="flex items-center gap-3">
+            <RankMedal rankId="gold" size="sm" active />
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-bold text-[var(--ink)]">
+                ${squad.giftAmount} grocery gift card
+              </p>
+              <p className="text-[11px] text-[var(--ink-muted)]">
+                Demo redeem — show this code in class
+              </p>
+            </div>
+          </div>
+          {squad.giftRedeemed && squad.giftCode ? (
+            <div className="mt-3 rounded-2xl border border-[var(--lime)]/40 bg-[var(--lime)]/10 px-3 py-3 text-center">
+              <p className="text-[11px] font-bold uppercase tracking-wide text-[var(--ink-faint)]">
+                Redeemed code
+              </p>
+              <p className="mt-1 font-display text-2xl tracking-wide text-[var(--lime)]">
+                {squad.giftCode}
               </p>
             </div>
           ) : (
-            <p className="mt-4 text-center text-sm text-[var(--lime)]">
-              Top medal unlocked — Platinum path.
-            </p>
+            <Button
+              className="mt-3 w-full"
+              size="lg"
+              variant="lime"
+              disabled={loading}
+              onClick={() => void redeemGift()}
+            >
+              Redeem ${squad.giftAmount} gift card
+            </Button>
           )}
-        </div>
-      </SectionCard>
+          {error ? (
+            <p className="mt-2 text-center text-xs text-[var(--peach)]">{error}</p>
+          ) : null}
+        </SectionCard>
+      ) : (
+        <SectionCard className="mt-3 p-4" glass={false}>
+          <p className="text-sm font-bold text-[var(--ink)]">Gift card locked</p>
+          <p className="mt-1 text-xs text-[var(--ink-muted)]">
+            Log meals, share with the table, and hit 100% goals as a group to
+            climb to Gold.
+          </p>
+          <div className="mt-3 flex gap-2">
+            <Button
+              className="flex-1"
+              variant="secondary"
+              onClick={() => goTo("log")}
+            >
+              Log meal
+            </Button>
+            <Button
+              className="flex-1"
+              variant="secondary"
+              onClick={() => goTo("quest")}
+            >
+              Shared meals
+            </Button>
+          </div>
+        </SectionCard>
+      )}
 
       <p className="mt-5 text-xs font-extrabold uppercase tracking-[0.14em] text-[var(--peach)]">
         Medal ladder
@@ -156,69 +254,39 @@ export function RankScreen() {
         ))}
       </div>
 
-      <SectionCard className="mt-3 p-4" glass={false}>
-        <div className="flex items-center gap-3">
-          <RankMedal rankId="platinum" size="sm" active={rank.id === "platinum"} />
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-bold text-[var(--ink)]">Platinum</p>
-            <p className="text-[11px] text-[var(--ink-muted)]">
-              24+ XP · $5 gift card · highest tier
-            </p>
-          </div>
-          <span
-            className={`rounded-full px-2.5 py-1 text-[11px] font-extrabold ${
-              rank.id === "platinum"
-                ? "bg-[var(--lime)] text-[var(--ink-on-bright)]"
-                : squad.rankPoints >= 24
-                  ? "bg-white/10 text-[var(--ink)]"
-                  : "bg-white/5 text-[var(--ink-faint)]"
-            }`}
-          >
-            {rank.id === "platinum" ? "Yours" : "$5"}
-          </span>
-        </div>
-      </SectionCard>
-
-      <SectionCard className="mt-3 p-4" glass={false}>
-        <p className="text-sm font-bold text-[var(--ink)]">Projected grocery loot</p>
-        <p className="mt-1 font-display text-3xl text-[var(--ink)]">
-          ${projected}
-          <span className="ml-2 text-sm font-sans font-medium text-[var(--ink-muted)]">
-            gift card
-          </span>
-        </p>
-        <p className="mt-2 text-xs leading-relaxed text-[var(--ink-muted)]">
-          Base ${rank.reward} from {rank.label} medal
-          {questBonusReady
-            ? " · quest bonus included"
-            : " · finish 3/4 shared-meal weeks for +$1"}
-          .
-        </p>
-
-        <div className="mt-4 space-y-2">
-          <EligibilityRow
-            ok={squad.seasonWeeksHit >= 2}
-            label={`Squad weeks on target · ${squad.seasonWeeksHit}/4 (need 3)`}
-          />
-          <EligibilityRow
-            ok={you.weeksParticipated >= 2}
-            label={`Your participation · ${you.weeksParticipated}/4 (need 3)`}
-          />
-          <EligibilityRow
-            ok={questBonusReady}
-            label={`Shared-meal bonus · ${squad.questsCompletedThisSeason}/4 weeks`}
-          />
-        </div>
-      </SectionCard>
-
-      <div className="mt-4 rounded-2xl border border-[var(--card-border)] bg-[var(--card)] px-4 py-3 text-xs leading-relaxed text-[var(--ink-muted)]">
-        Hit personal goal-days with your squad to earn XP and climb medals.
-        Extra food beyond the goal does not add rank points.
-      </div>
-
       <Button className="mt-5 w-full" variant="secondary" onClick={() => goTo("recap")}>
         See weekly recap
       </Button>
+    </div>
+  );
+}
+
+function PathRow({
+  icon,
+  ok,
+  title,
+  detail,
+}: {
+  icon: ReactNode;
+  ok: boolean;
+  title: string;
+  detail: string;
+}) {
+  return (
+    <div className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-3 py-2.5">
+      <span
+        className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${
+          ok
+            ? "bg-[var(--lime)] text-[var(--ink-on-bright)]"
+            : "bg-white/10 text-[var(--ink-muted)]"
+        }`}
+      >
+        {ok ? <Check className="h-4 w-4" /> : icon}
+      </span>
+      <div className="min-w-0">
+        <p className="text-sm font-bold text-[var(--ink)]">{title}</p>
+        <p className="text-[11px] text-[var(--ink-muted)]">{detail}</p>
+      </div>
     </div>
   );
 }
@@ -234,6 +302,8 @@ function MedalTierCard({
 }) {
   const reached = points >= rank.pointsNeeded;
   const active = rank.id === currentId;
+  const giftLabel =
+    rank.id === "gold" ? `$${GOLD_GIFT_AMOUNT} card` : rank.id === "bronze" ? "Start" : "Climb";
 
   return (
     <div
@@ -251,9 +321,7 @@ function MedalTierCard({
       <p className="mt-2 font-display text-lg leading-none text-[var(--ink)]">
         {rank.label}
       </p>
-      <p className="mt-1 text-[11px] font-bold text-[var(--ink-muted)]">
-        ${rank.reward}
-      </p>
+      <p className="mt-1 text-[11px] font-bold text-[var(--ink-muted)]">{giftLabel}</p>
       <p className="mt-0.5 text-[10px] text-[var(--ink-faint)]">
         {rank.pointsNeeded === 0 ? "Start here" : `${rank.pointsNeeded}+ XP`}
       </p>
@@ -266,23 +334,6 @@ function MedalTierCard({
       ) : (
         <p className="mt-2 text-[10px] font-bold text-[var(--ink-faint)]">Locked</p>
       )}
-    </div>
-  );
-}
-
-function EligibilityRow({ ok, label }: { ok: boolean; label: string }) {
-  return (
-    <div className="flex items-start gap-2 text-xs">
-      <span
-        className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full ${
-          ok
-            ? "bg-[var(--lime)] text-[var(--ink-on-bright)]"
-            : "bg-[var(--line)] text-[var(--ink-faint)]"
-        }`}
-      >
-        {ok ? "✓" : "·"}
-      </span>
-      <span className="text-[var(--ink)]">{label}</span>
     </div>
   );
 }

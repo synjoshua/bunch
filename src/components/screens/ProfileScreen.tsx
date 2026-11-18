@@ -75,7 +75,10 @@ export function ProfileScreen() {
           <p className="mt-2 text-xs text-[var(--ink-faint)]">Squad medal</p>
           <p className="font-display text-xl text-[var(--ink)]">{rank.label}</p>
           <p className="text-[11px] text-[var(--ink-muted)]">
-            {squad.rankPoints} XP · ${rank.reward} gift card
+            {squad.rankPoints} XP
+            {rank.id === "gold" || rank.id === "platinum"
+              ? " · gift card unlocked"
+              : " · climb to Gold"}
           </p>
         </SectionCard>
         <SectionCard className="p-4" glass={false}>

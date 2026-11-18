@@ -70,43 +70,45 @@ export function QuestScreen() {
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               <p className="text-sm font-bold text-[var(--ink)]">
-                Season bonus · +$1 grocery
+                Team progress today
               </p>
               <p className="mt-1 text-xs leading-relaxed text-[var(--ink-muted)]">
-                Hit shared-meal weeks 3 out of 4 this season for an extra dollar
-                on your gift card.
+                When 2+ teammates share and hit 100% goals, you earn XP toward
+                Gold — then redeem the grocery gift card.
               </p>
             </div>
-            <span className="shrink-0 rounded-full bg-[var(--lime)] px-2.5 py-1 text-[11px] font-extrabold text-[var(--ink-on-bright)]">
-              +$1
-            </span>
           </div>
-          <div className="mt-3 flex items-center gap-2">
-            {[0, 1, 2, 3].map((i) => {
-              const done = i < squad.questsCompletedThisSeason;
-              const needed = i < 3;
-              return (
-                <div
-                  key={i}
-                  className={`h-2.5 flex-1 rounded-full ${
-                    done
-                      ? "bg-[var(--lime)]"
-                      : needed
-                        ? "bg-white/15"
-                        : "bg-white/8"
-                  }`}
-                  title={`Week ${i + 1}`}
-                />
-              );
-            })}
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <div className="rounded-xl bg-white/5 px-3 py-2">
+              <p className="text-[10px] font-bold uppercase tracking-wide text-[var(--ink-faint)]">
+                100% goals
+              </p>
+              <p className="font-display text-xl text-[var(--ink)]">
+                {squad.goalsHitToday}
+                <span className="text-sm text-[var(--ink-muted)]">
+                  /{Math.max(2, squad.humanCount)}
+                </span>
+              </p>
+            </div>
+            <div className="rounded-xl bg-white/5 px-3 py-2">
+              <p className="text-[10px] font-bold uppercase tracking-wide text-[var(--ink-faint)]">
+                Shared
+              </p>
+              <p className="font-display text-xl text-[var(--ink)]">
+                {squad.sharedToday}
+                <span className="text-sm text-[var(--ink-muted)]">
+                  /{Math.max(2, squad.humanCount)}
+                </span>
+              </p>
+            </div>
           </div>
-          <p className="mt-2 text-[11px] text-[var(--ink-faint)]">
-            {squad.questsCompletedThisSeason >= 3
-              ? "Bonus unlocked for this season"
-              : `${Math.max(0, 3 - squad.questsCompletedThisSeason)} more week${
-                  3 - squad.questsCompletedThisSeason === 1 ? "" : "s"
-                } to unlock · ${squad.questsCompletedThisSeason}/4 done`}
-          </p>
+          <button
+            type="button"
+            onClick={() => goTo("rank")}
+            className="mt-3 w-full text-left text-[11px] font-bold text-[var(--peach)]"
+          >
+            See Gold gift card path →
+          </button>
         </div>
       </SectionCard>
 

@@ -67,6 +67,10 @@ export type Squad = {
   questsCompletedThisSeason: number;
   weekNumber: number;
   open: boolean;
+  /** One-time XP boost after 2+ people hit 100% goal + share today */
+  teamGoalBoostClaimed?: boolean;
+  giftRedeemed?: boolean;
+  giftCode?: string | null;
 };
 
 export type Session = {
@@ -103,6 +107,13 @@ export type SquadView = {
   questsCompletedThisSeason: number;
   weekNumber: number;
   open: boolean;
+  goalsHitToday: number;
+  sharedToday: number;
+  humanCount: number;
+  canRedeemGift: boolean;
+  giftRedeemed: boolean;
+  giftCode: string | null;
+  giftAmount: number;
 };
 
 export type LiveSquadCard = {
@@ -119,11 +130,14 @@ export type LiveSquadCard = {
 };
 
 export const RANKS: RankInfo[] = [
-  { id: "bronze", label: "Bronze", reward: 1, pointsNeeded: 0 },
-  { id: "silver", label: "Silver", reward: 2, pointsNeeded: 8 },
-  { id: "gold", label: "Gold", reward: 3, pointsNeeded: 16 },
-  { id: "platinum", label: "Platinum", reward: 5, pointsNeeded: 24 },
+  { id: "bronze", label: "Bronze", reward: 0, pointsNeeded: 0 },
+  { id: "silver", label: "Silver", reward: 0, pointsNeeded: 8 },
+  { id: "gold", label: "Gold", reward: 10, pointsNeeded: 16 },
+  { id: "platinum", label: "Platinum", reward: 15, pointsNeeded: 28 },
 ];
+
+/** Gift card unlocked at Gold when the squad shares + hits goals together */
+export const GOLD_GIFT_AMOUNT = 10;
 
 export const QUEST_TARGET = 12;
 export const GOAL_DAYS_PER_PERSON = 5;
