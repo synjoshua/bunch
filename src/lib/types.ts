@@ -67,6 +67,8 @@ export type Squad = {
   questsCompletedThisSeason: number;
   weekNumber: number;
   open: boolean;
+  /** Visible table progress — bumps on each meal log */
+  weeklyProgress?: number;
   /** One-time XP boost after 2+ people hit 100% goal + share today */
   teamGoalBoostClaimed?: boolean;
   giftRedeemed?: boolean;

@@ -107,6 +107,29 @@ function weeklyDoneFor(squad: Squad, session: Session) {
   return members.reduce((sum, m) => sum + m.goalDaysDone, 0);
 }
 
+function tableProgressFor(squad: Squad, session: Session) {
+  const target = Math.max(
+    weeklyTargetFor(squad, session),
+    squad.memberIds.length * GOAL_DAYS_PER_PERSON,
+    1,
+  );
+  if (typeof squad.weeklyProgress !== "number") {
+    squad.weeklyProgress = weeklyDoneFor(squad, session);
+  }
+  return Math.min(target, Math.max(0, squad.weeklyProgress));
+}
+
+function bumpTableProgress(squad: Squad, session: Session, by = 1) {
+  const target = Math.max(
+    weeklyTargetFor(squad, session),
+    squad.memberIds.length * GOAL_DAYS_PER_PERSON,
+    1,
+  );
+  const current = tableProgressFor(squad, session);
+  squad.weeklyProgress = Math.min(target, current + by);
+  return squad.weeklyProgress;
+}
+
 function findOpenSquad(session: Session): Squad | null {
   const open = Object.values(session.squads).filter(
     (s) => s.open && s.memberIds.length < SQUAD_SIZE,
@@ -207,6 +230,7 @@ function createSquad(session: Session): Squad {
     questsCompletedThisSeason: 2,
     weekNumber: 3,
     open: true,
+    weeklyProgress: 6,
     teamGoalBoostClaimed: false,
     giftRedeemed: false,
     giftCode: null,
@@ -257,7 +281,7 @@ export function joinSession(rawCode: string, rawName: string) {
     squadId: null,
     isBot: false,
     proteinTarget: DEFAULT_PROTEIN_TARGET,
-    personalProtein: 82,
+    personalProtein: 95,
     goalDayComplete: false,
     goalDaysDone: 3,
     goalDaysPlanned: GOAL_DAYS_PER_PERSON,
@@ -304,7 +328,7 @@ function toSquadView(session: Session, squad: Squad, youId: string): SquadView {
     id: squad.id,
     name: squad.name,
     members,
-    weeklyGoalDays: weeklyDoneFor(squad, session),
+    weeklyGoalDays: tableProgressFor(squad, session),
     weeklyGoalTarget: Math.max(
       weeklyTargetFor(squad, session),
       members.length * GOAL_DAYS_PER_PERSON,
@@ -377,6 +401,9 @@ export function logMeal(input: {
     member.personalProtein + protein,
   );
   member.mealLogged = true;
+
+  // Every logged plate moves table progress (demo-visible feedback)
+  bumpTableProgress(squad, session, 1);
 
   let justCompletedGoal = false;
   if (!member.goalDayComplete && member.personalProtein >= member.proteinTarget) {
@@ -709,6 +736,7 @@ export function advanceWeek(sessionCode: string, memberId: string) {
   }
   squad.mealIdeas = [];
   squad.teamGoalBoostClaimed = false;
+  squad.weeklyProgress = 0;
   squad.weekNumber = Math.min(4, squad.weekNumber + 1);
   touch(session);
   return getMemberState(session.code, memberId);
@@ -739,7 +767,7 @@ export function getLiveBoard(sessionCode: string): {
         memberNames: humans.map((m) => m.name).concat(
           members.filter((m) => m.isBot).map((m) => `${m.name} (demo)`),
         ),
-        weeklyGoalDays: weeklyDoneFor(squad, session),
+        weeklyGoalDays: tableProgressFor(squad, session),
         weeklyGoalTarget: target || SQUAD_SIZE * GOAL_DAYS_PER_PERSON,
         questCount: squad.mealIdeas.length,
         questTarget: QUEST_TARGET,

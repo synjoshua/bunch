@@ -104,6 +104,9 @@ export function HomeScreen() {
                 /{squad.weeklyGoalTarget}
               </span>
             </p>
+            <p className="mt-1 text-[11px] text-[var(--ink-muted)]">
+              Goes up each time someone logs a meal
+            </p>
           </div>
           <p className="rounded-full bg-[var(--lime)] px-3 py-1 text-sm font-extrabold text-[var(--ink-on-bright)]">
             {weekPct}%
