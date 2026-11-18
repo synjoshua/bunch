@@ -10,8 +10,11 @@ Built for a live classroom demo (~50 people at once).
 
 ```bash
 npm install
-npm run dev
+npm run build
+npm run start
 ```
+
+For local iteration you can use `npm run dev` instead.
 
 - Player app: [http://127.0.0.1:43123](http://127.0.0.1:43123)
 - Projector / audience board: [http://127.0.0.1:43123/live](http://127.0.0.1:43123/live)
