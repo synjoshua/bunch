@@ -20,7 +20,7 @@ export function Button({
         size === "md" && "px-4 py-3 text-[15px]",
         size === "lg" && "px-5 py-3.5 text-base",
         variant === "primary" &&
-          "bg-[var(--coral)] text-white shadow-[0_10px_24px_rgba(255,90,61,0.3)] hover:brightness-105 btn-glow",
+          "bg-[var(--coral)] text-white shadow-[0_10px_24px_rgba(255,90,61,0.3)] hover:brightness-105",
         variant === "secondary" &&
           "bg-white text-[var(--ink)] border border-[var(--line)] shadow-sm",
         variant === "soft" && "bg-[var(--leaf-soft)] text-[var(--leaf-deep)]",
