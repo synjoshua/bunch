@@ -134,6 +134,8 @@ export function LogMealScreen() {
       <Button
         className="mt-5 w-full"
         size="lg"
+        variant="lime"
+        organic
         disabled={loading || !name.trim()}
         onClick={() =>
           void saveMeal({

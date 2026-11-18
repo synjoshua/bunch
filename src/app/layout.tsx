@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
-import { Nunito_Sans, Sora } from "next/font/google";
+import { Plus_Jakarta_Sans, Syne } from "next/font/google";
 import "./globals.css";
 
-const display = Sora({
+const display = Syne({
   variable: "--font-display",
   subsets: ["latin"],
   weight: ["600", "700", "800"],
 });
 
-const body = Nunito_Sans({
+const body = Plus_Jakarta_Sans({
   variable: "--font-body",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],

@@ -3,41 +3,42 @@
 @tailwind utilities;
 
 :root {
-  /* bunch palette — dark mode (AA-minded contrast) */
   --ralli: #8b84f3;
   --ralli-deep: #5b50e8;
   --lime: #dfff83;
   --cream: #f7f6f2;
-  --ink: #f7f6f2;
-  --ink-on-bright: #15141f;
+  --ink: #f4f2ff;
+  --ink-on-bright: #17151f;
   --lavender: #3a3658;
   --peach: #ffb9a6;
+  --teal: #7ef0d8;
 
-  --mist: #15141f;
-  --mist-deep: #0f0e18;
-  --surface: #1c1b2b;
-  /* ~4.5:1+ on #222134 / #1c1b2b */
-  --ink-muted: #c9c6da;
-  --ink-faint: #b0adc4;
-  --line: #3a3754;
+  --mist: #100f18;
+  --mist-deep: #0b0a12;
+  --surface: #1a1830;
+  --ink-muted: #cbc7e0;
+  --ink-faint: #b3afc9;
+  --line: #3d3958;
 
   --leaf: var(--ralli);
-  --leaf-deep: #c4bffb;
-  --leaf-soft: #2a2744;
+  --leaf-deep: #c8c2ff;
+  --leaf-soft: #2a2648;
   --amber: var(--lime);
-  --amber-deep: #15141f;
-  --amber-soft: #2f3420;
+  --amber-deep: #17151f;
+  --amber-soft: #2c311c;
   --sky: #aea8f8;
-  --sky-soft: #2a2744;
+  --sky-soft: #2a2648;
   --coral: var(--peach);
   --coral-soft: #3a2a28;
 
   --background: var(--mist);
   --foreground: var(--ink);
-  --card: #222134;
-  --card-border: rgba(139, 132, 243, 0.35);
+  --card: rgba(36, 33, 62, 0.72);
+  --card-solid: #241f3e;
+  --card-border: rgba(255, 255, 255, 0.1);
   --bubble-me: #5b50e8;
-  --bubble-them: #2f2c48;
+  --bubble-them: #2c2944;
+  --glass: rgba(255, 255, 255, 0.07);
 }
 
 html,
@@ -48,16 +49,16 @@ body {
 body {
   color: var(--foreground);
   background:
-    radial-gradient(900px 500px at 10% -10%, rgba(91, 80, 232, 0.28) 0%, transparent 55%),
-    radial-gradient(800px 460px at 100% 0%, rgba(255, 174, 152, 0.14) 0%, transparent 50%),
-    radial-gradient(700px 420px at 60% 110%, rgba(223, 255, 131, 0.08) 0%, transparent 45%),
-    linear-gradient(165deg, #12111c 0%, #171625 45%, #1a1524 100%);
+    radial-gradient(ellipse 80% 50% at 0% 0%, rgba(91, 80, 232, 0.45), transparent 55%),
+    radial-gradient(ellipse 60% 40% at 100% 10%, rgba(126, 240, 216, 0.12), transparent 50%),
+    radial-gradient(ellipse 50% 35% at 70% 100%, rgba(223, 255, 131, 0.1), transparent 45%),
+    #100f18;
   font-family: var(--font-body), system-ui, sans-serif;
 }
 
 .font-display {
   font-family: var(--font-display), system-ui, sans-serif;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.04em;
 }
 
 .app-stage {
@@ -95,16 +96,45 @@ body {
   position: relative;
   width: min(100%, 390px);
   height: min(84dvh, 820px);
-  border-radius: 36px;
+  border-radius: 40px;
   overflow: hidden;
   background:
-    linear-gradient(180deg, rgba(34, 33, 52, 0.98), rgba(22, 21, 37, 0.99)),
-    radial-gradient(700px 360px at 50% -10%, rgba(91, 80, 232, 0.25) 0%, transparent 60%);
+    radial-gradient(120% 80% at 10% -10%, rgba(91, 80, 232, 0.55), transparent 50%),
+    radial-gradient(90% 60% at 110% 20%, rgba(223, 255, 131, 0.12), transparent 45%),
+    linear-gradient(180deg, #1a1730 0%, #12101f 55%, #0e0d18 100%);
   box-shadow:
-    0 30px 80px rgba(0, 0, 0, 0.45),
-    0 0 0 1px rgba(124, 116, 240, 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    0 40px 90px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
   animation: phone-in 0.7s ease-out both;
+}
+
+.phone-shell::before {
+  content: "";
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  right: -70px;
+  top: 18%;
+  border-radius: 60% 40% 55% 45%;
+  background: rgba(91, 80, 232, 0.28);
+  filter: blur(2px);
+  pointer-events: none;
+  z-index: 0;
+  animation: blob-drift 12s ease-in-out infinite;
+}
+
+.phone-shell::after {
+  content: "";
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  left: -60px;
+  bottom: 22%;
+  border-radius: 45% 55% 40% 60%;
+  background: rgba(223, 255, 131, 0.08);
+  pointer-events: none;
+  z-index: 0;
 }
 
 .phone-notch {
@@ -116,11 +146,13 @@ body {
   height: 28px;
   transform: translateX(-50%);
   border-radius: 999px;
-  background: #0b0a12;
+  background: #07060d;
   opacity: 0.95;
 }
 
 .phone-scroll {
+  position: relative;
+  z-index: 1;
   height: 100%;
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -133,20 +165,33 @@ body {
 
 .phone-nav {
   position: absolute;
-  left: 12px;
-  right: 12px;
-  bottom: 12px;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  z-index: 40;
   display: flex;
-  border-radius: 22px;
-  background: rgba(28, 27, 43, 0.96);
-  border: 1px solid rgba(124, 116, 240, 0.28);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(12px);
-  padding-bottom: 2px;
+  padding: 8px 6px;
+  border-radius: 999px 999px 28px 28px / 40px 40px 28px 28px;
+  background: rgba(22, 20, 40, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(18px) saturate(1.3);
 }
 
 .phone-shell:has(.phone-nav) .phone-scroll {
-  padding-bottom: 76px;
+  padding-bottom: 88px;
+}
+
+.nav-active-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 999px;
+  background: var(--lime);
+  color: var(--ink-on-bright);
+  box-shadow: 0 8px 20px rgba(223, 255, 131, 0.28);
 }
 
 @keyframes phone-in {
@@ -163,7 +208,7 @@ body {
 @keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -171,8 +216,32 @@ body {
   }
 }
 
+@keyframes blob-drift {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate(-12px, 18px) rotate(8deg);
+  }
+}
+
+@keyframes floaty {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-6deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(-4deg);
+  }
+}
+
 .animate-rise {
   animation: rise 0.45s ease-out both;
+}
+
+.animate-floaty {
+  animation: floaty 5.5s ease-in-out infinite;
 }
 
 @media (max-width: 899px) {
@@ -200,9 +269,48 @@ body {
 
 .live-stage {
   background:
-    radial-gradient(1000px 500px at 0% 0%, rgba(91, 80, 232, 0.28) 0%, transparent 55%),
-    radial-gradient(800px 420px at 100% 10%, rgba(255, 174, 152, 0.12) 0%, transparent 50%),
-    linear-gradient(165deg, #12111c 0%, #171625 45%, #1a1524 100%);
+    radial-gradient(ellipse 70% 45% at 0% 0%, rgba(91, 80, 232, 0.4), transparent 55%),
+    radial-gradient(ellipse 50% 40% at 100% 0%, rgba(223, 255, 131, 0.1), transparent 50%),
+    #100f18;
+}
+
+.glass-card {
+  background: linear-gradient(
+    155deg,
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0.03)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(16px) saturate(1.2);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+}
+
+.lime-blob {
+  background: var(--lime);
+  color: var(--ink-on-bright);
+  border-radius: 32px 40px 28px 44px / 36px 28px 42px 30px;
+}
+
+.purple-wave {
+  background: linear-gradient(145deg, #6a5aef, #4b43c9);
+  border-radius: 36px 28px 44px 30px / 30px 40px 28px 38px;
+  color: var(--cream);
+}
+
+.wavy-top {
+  border-radius: 42px 36px 28px 28px / 48px 44px 28px 28px;
+}
+
+.wavy-bottom {
+  border-radius: 28px 28px 46px 38px / 28px 28px 52px 44px;
+}
+
+.stripe-fill {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    #5b50e8 0 10px,
+    #7167f0 10px 20px
+  );
 }
 
 .xp-chip {
@@ -210,14 +318,13 @@ body {
   align-items: center;
   gap: 0.35rem;
   border-radius: 999px;
-  padding: 0.3rem 0.7rem;
+  padding: 0.35rem 0.75rem;
   font-size: 0.7rem;
   font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   background: var(--lime);
   color: var(--ink-on-bright);
-  border: 1px solid rgba(21, 20, 31, 0.2);
 }
 
 .on-lime {
@@ -230,6 +337,21 @@ body {
 }
 
 .chat-composer {
-  background: rgba(28, 27, 43, 0.98);
-  border-top: 1px solid var(--line);
+  background: rgba(16, 14, 28, 0.92);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+}
+
+.bento {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 0.75rem;
+}
+
+.mark-circle {
+  display: inline-block;
+  border: 2px solid var(--lime);
+  border-radius: 999px;
+  padding: 0 0.35em;
+  line-height: 1.15;
 }

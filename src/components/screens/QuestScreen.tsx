@@ -49,8 +49,8 @@ export function QuestScreen() {
           max={squad.questTarget}
           tone="sky"
         />
-        <div className="on-lime mt-4 rounded-2xl px-3.5 py-3">
-          <p className="text-sm font-semibold text-[var(--ink-on-bright)]">
+        <div className="lime-blob mt-4 px-3.5 py-3">
+          <p className="text-sm font-extrabold text-[var(--ink-on-bright)]">
             Quest bonus · +$1
           </p>
           <p className="muted mt-1 text-xs leading-relaxed">

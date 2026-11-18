@@ -45,7 +45,7 @@ function Shell() {
               <span className="relative">
                 <MessageCircle className="h-4 w-4" />
                 {chatCount > 0 && screen !== "chat" ? (
-                  <span className="absolute -right-1.5 -top-1 h-2 w-2 rounded-full bg-[var(--lime)]" />
+                  <span className="absolute -right-1.5 -top-1 h-2 w-2 rounded-full bg-[var(--ralli-deep)]" />
                 ) : null}
               </span>
             }
@@ -83,12 +83,14 @@ function NavBtn({
     <button
       type="button"
       onClick={onClick}
-      className={`flex flex-1 flex-col items-center gap-1 py-2 text-[11px] font-semibold transition ${
-        active ? "text-[var(--lime)]" : "text-[var(--ink-faint)]"
+      className={`flex flex-1 flex-col items-center gap-1 py-1 text-[10px] font-bold transition ${
+        active ? "text-[var(--ink-on-bright)]" : "text-[var(--ink-faint)]"
       }`}
     >
-      {icon}
-      {label}
+      <span className={active ? "nav-active-pill" : "inline-flex h-9 w-9 items-center justify-center"}>
+        {icon}
+      </span>
+      <span className={active ? "text-[var(--lime)]" : undefined}>{label}</span>
     </button>
   );
 }
@@ -98,19 +100,16 @@ export function BunchApp() {
     <BunchProvider>
       <main className="app-stage">
         <div className="stage-copy">
-          <p className="font-display text-3xl text-[var(--lime)] md:text-4xl">
-            bunch
-          </p>
-          <p className="mt-2 max-w-sm text-sm leading-relaxed text-[var(--ink-muted)]">
-            Follow the purple &quot;Do this next&quot; card on Home — it always
-            points to the clearest social action.
+          <p className="font-display text-4xl text-[var(--lime)]">bunch</p>
+          <p className="mt-3 max-w-sm text-sm leading-relaxed text-[var(--ink-muted)]">
+            Social nutrition with glass cards, live chat, and a next-step coach
+            that always points the way.
           </p>
           <ol className="mt-5 hidden space-y-2 text-sm text-[var(--ink-muted)] md:block">
-            <li>1. Join with your name</li>
-            <li>2. Fill the squad if seats are open</li>
-            <li>3. Log lunch / help the quest</li>
-            <li>4. Keep the energy in Chat</li>
-            <li>5. Watch the class board at /live</li>
+            <li>1. Get started with your name</li>
+            <li>2. Follow the lime &quot;Do this next&quot; card</li>
+            <li>3. Chat + quest with your squad</li>
+            <li>4. Watch the room on /live</li>
           </ol>
         </div>
         <Shell />

@@ -7,22 +7,29 @@ export function Button({
   className,
   variant = "primary",
   size = "md",
+  organic = false,
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: "primary" | "secondary" | "ghost" | "soft";
+  variant?: "primary" | "secondary" | "ghost" | "soft" | "lime";
   size?: "sm" | "md" | "lg";
+  organic?: boolean;
 }) {
   return (
     <button
       className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-2xl font-semibold transition active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none",
-        size === "sm" && "px-3 py-2 text-sm",
+        "inline-flex items-center justify-center gap-2 font-bold transition active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none",
+        organic
+          ? "rounded-[28px_34px_24px_36px/30px_26px_34px_28px]"
+          : "rounded-[22px]",
+        size === "sm" && "px-3.5 py-2 text-sm",
         size === "md" && "px-4 py-3 text-[15px]",
         size === "lg" && "px-5 py-3.5 text-base",
         variant === "primary" &&
-          "bg-[var(--ralli-deep)] text-[var(--cream)] shadow-[0_12px_28px_rgba(91,80,232,0.35)] hover:brightness-110",
+          "bg-[var(--ralli-deep)] text-[var(--cream)] shadow-[0_14px_32px_rgba(91,80,232,0.4)] hover:brightness-110",
+        variant === "lime" &&
+          "bg-[var(--lime)] text-[var(--ink-on-bright)] shadow-[0_14px_32px_rgba(223,255,131,0.28)] hover:brightness-105",
         variant === "secondary" &&
-          "bg-[var(--surface)] text-[var(--ink)] border border-[var(--line)] shadow-sm",
+          "bg-[var(--glass)] text-[var(--ink)] border border-white/15 backdrop-blur-md",
         variant === "soft" && "bg-[var(--leaf-soft)] text-[var(--leaf-deep)]",
         variant === "ghost" && "bg-transparent text-[var(--ink-muted)]",
         className,
@@ -37,27 +44,32 @@ export function ProgressBar({
   max,
   className,
   tone = "leaf",
+  striped = false,
 }: {
   value: number;
   max: number;
   className?: string;
   tone?: "leaf" | "amber" | "sky";
+  striped?: boolean;
 }) {
   const pct = Math.min(100, Math.round((value / max) * 100));
   return (
     <div
       className={cn(
-        "h-3.5 w-full overflow-hidden rounded-full bg-[var(--leaf-soft)] border border-[var(--line)]",
+        "h-3.5 w-full overflow-hidden rounded-full bg-white/10",
         className,
       )}
     >
       <div
         className={cn(
           "h-full rounded-full transition-all duration-700 ease-out",
-          tone === "leaf" &&
-            "bg-gradient-to-r from-[var(--leaf-deep)] to-[var(--ralli)]",
-          tone === "amber" && "bg-[var(--lime)]",
-          tone === "sky" &&
+          striped && "stripe-fill",
+          !striped &&
+            tone === "leaf" &&
+            "bg-gradient-to-r from-[#7167f0] to-[var(--teal)]",
+          !striped && tone === "amber" && "bg-[var(--lime)]",
+          !striped &&
+            tone === "sky" &&
             "bg-gradient-to-r from-[var(--peach)] to-[var(--ralli)]",
         )}
         style={{ width: `${pct}%` }}
@@ -84,7 +96,8 @@ export function Avatar({
         size === "sm" && "h-8 w-8 text-[11px]",
         size === "md" && "h-10 w-10 text-xs",
         size === "lg" && "h-12 w-12 text-sm",
-        ring && "ring-2 ring-[var(--ralli)] ring-offset-2 ring-offset-[var(--surface)]",
+        ring &&
+          "ring-2 ring-white/80 ring-offset-2 ring-offset-[var(--mist-deep)]",
       )}
       style={{ backgroundColor: color }}
     >
@@ -93,22 +106,44 @@ export function Avatar({
   );
 }
 
+export function AvatarStack({
+  members,
+}: {
+  members: Array<{ id: string; short: string; color: string }>;
+}) {
+  return (
+    <div className="flex -space-x-2">
+      {members.slice(0, 4).map((m) => (
+        <Avatar key={m.id} short={m.short} color={m.color} size="sm" ring />
+      ))}
+      {members.length > 4 ? (
+        <div className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[var(--leaf-soft)] text-[10px] font-bold text-[var(--ink)] ring-2 ring-white/80 ring-offset-2 ring-offset-[var(--mist-deep)]">
+          +{members.length - 4}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 export function SectionCard({
   children,
   className,
   onClick,
+  glass = true,
 }: {
   children: ReactNode;
   className?: string;
   onClick?: () => void;
+  glass?: boolean;
 }) {
   const Comp = onClick ? "button" : "div";
   return (
     <Comp
       onClick={onClick}
       className={cn(
-        "w-full rounded-[22px] bg-[var(--card)] border border-[var(--card-border)] shadow-[0_8px_30px_rgba(0,0,0,0.25)] text-left",
-        onClick && "transition hover:border-[var(--ralli)]/50",
+        "w-full text-left rounded-[28px]",
+        glass ? "glass-card" : "bg-[var(--card-solid)] border border-white/10",
+        onClick && "transition hover:-translate-y-0.5 hover:border-white/25",
         className,
       )}
     >
@@ -148,17 +183,17 @@ export function ScreenHeader({
   right?: ReactNode;
 }) {
   return (
-    <div className="flex items-start justify-between gap-3 mb-4">
+    <div className="mb-4 flex items-start justify-between gap-3">
       <div className="min-w-0">
         {onBack ? (
           <button
             onClick={onBack}
-            className="mb-2 text-sm font-medium text-[var(--leaf-deep)]"
+            className="mb-2 text-sm font-semibold text-[var(--teal)]"
           >
             ← Back
           </button>
         ) : null}
-        <h1 className="font-display text-[1.65rem] leading-tight tracking-tight text-[var(--ink)]">
+        <h1 className="font-display text-[1.7rem] leading-tight text-[var(--ink)]">
           {title}
         </h1>
         {subtitle ? (
