@@ -838,6 +838,8 @@ export function advanceWeek(sessionCode: string, memberId: string) {
 export function getLiveBoard(sessionCode: string): {
   sessionCode: string;
   humanCount: number;
+  realHumanCount: number;
+  demoSeatCount: number;
   squadCount: number;
   demoStarted: boolean;
   seatsFilled: number;
