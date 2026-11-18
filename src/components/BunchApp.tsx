@@ -27,7 +27,7 @@ function Shell() {
   }> = [
     {
       id: "home",
-      label: "Table",
+      label: "Bunch",
       active: screen === "home" || screen === "chat" || screen === "recap",
       onClick: () => goTo("home"),
       icon: <Home className="h-5 w-5" />,
@@ -103,14 +103,14 @@ export function BunchApp() {
         <div className="stage-copy">
           <p className="font-display text-4xl text-[var(--lime)]">bunch</p>
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-[var(--ink-muted)]">
-            A co-op food game: log real plates, share recipes, chat at the table,
-            and climb ranks with your squad.
+            A co-op food game: log real plates, share recipes, chat with your
+            bunch, and climb ranks together.
           </p>
           <ol className="mt-5 hidden space-y-2 text-sm text-[var(--ink-muted)] md:block">
-            <li>1. Everyone joins into the waiting room</li>
+            <li>1. Everyone joins a bunch in the waiting room</li>
             <li>2. Host starts the demo from /live</li>
             <li>3. Log meals, share, climb to Gold</li>
-            <li>4. Watch tables on the projector</li>
+            <li>4. Watch bunches on the projector</li>
           </ol>
         </div>
         <Shell />

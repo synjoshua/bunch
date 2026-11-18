@@ -87,8 +87,8 @@ export default function LivePage() {
             </p>
             <p className="mt-2 max-w-xl text-sm text-[var(--ink-muted)] md:text-base">
               {waiting
-                ? "Waiting room — let everyone join tables, then start the demo."
-                : "Demo is live. Watch squads log meals and climb ranks."}{" "}
+                ? "Waiting room — let everyone join a bunch, then start the demo."
+                : "Demo is live. Watch bunches log meals and climb ranks."}{" "}
               Code{" "}
               <span className="font-semibold text-[var(--ink)]">
                 {board?.sessionCode ?? code}
@@ -128,10 +128,10 @@ export default function LivePage() {
                 </p>
                 <p className="mt-1 font-display text-2xl text-[var(--ink-on-bright)] md:text-3xl">
                   {board?.humanCount ?? 0} people seated ·{" "}
-                  {board?.squadCount ?? 0} tables
+                  {board?.squadCount ?? 0} bunches
                 </p>
                 <p className="mt-1 text-sm text-[var(--ink-on-bright)]/80">
-                  Start when groups look ready (e.g. 12 people → 3 tables of 4).
+                  Start when groups look ready (e.g. 12 people → 3 bunches of 4).
                 </p>
               </div>
               <button
@@ -152,9 +152,9 @@ export default function LivePage() {
 
         <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4">
           <Stat label="People in room" value={String(board?.humanCount ?? 0)} />
-          <Stat label="Tables" value={String(board?.squadCount ?? 0)} />
+          <Stat label="Bunches" value={String(board?.squadCount ?? 0)} />
           <Stat
-            label={waiting ? "Seats per table" : "Top quest"}
+            label={waiting ? "Seats per bunch" : "Top quest"}
             value={
               waiting
                 ? String(SQUAD_SIZE)

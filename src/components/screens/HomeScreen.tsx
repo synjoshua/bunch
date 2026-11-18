@@ -89,14 +89,14 @@ export function HomeScreen() {
         ))}
       </div>
       <p className="mt-1.5 text-[11px] text-[var(--ink-faint)]">
-        Squad pantry · code {sessionCode}
+        Bunch pantry · code {sessionCode}
       </p>
 
       <SectionCard className="mt-4 p-4" glass={false}>
         <div className="flex items-end justify-between gap-3">
           <div>
             <p className="text-xs font-bold uppercase tracking-wide text-[var(--ink-faint)]">
-              Table progress
+              Bunch progress
             </p>
             <p className="mt-1 font-display text-3xl text-[var(--ink)]">
               {squad.weeklyGoalDays}
@@ -140,7 +140,7 @@ export function HomeScreen() {
                   Shared meals
                 </p>
                 <p className="mt-0.5 text-[11px] font-semibold leading-snug text-white/90">
-                  Get inspired by plates your squad logged
+                  Get inspired by plates your bunch logged
                 </p>
               </div>
             </div>
@@ -155,7 +155,7 @@ export function HomeScreen() {
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <MessageCircle className="h-4 w-4 text-[var(--lime)]" />
-            <p className="font-display text-lg text-[var(--ink)]">Table chat</p>
+            <p className="font-display text-lg text-[var(--ink)]">Bunch chat</p>
           </div>
           <button
             type="button"
@@ -217,7 +217,7 @@ export function HomeScreen() {
                 void sendChat(text);
               }
             }}
-            placeholder="Message the table…"
+            placeholder="Message the bunch…"
             maxLength={280}
             className="min-w-0 flex-1 rounded-2xl border border-[var(--line)] bg-[var(--surface)] px-3 py-2.5 text-sm text-[var(--ink)] outline-none placeholder:text-[var(--ink-faint)] focus:border-[var(--ralli)]"
           />
@@ -239,7 +239,7 @@ export function HomeScreen() {
 
       <SectionCard className="mt-3 p-4" glass={false}>
         <div className="flex items-center justify-between">
-          <p className="text-sm font-bold text-[var(--ink)]">At the table</p>
+          <p className="text-sm font-bold text-[var(--ink)]">In your bunch</p>
           <p className="text-xs text-[var(--ink-faint)]">
             {checkedIn}/{people.length} ate / checked in
             {sessionStats ? ` · ${sessionStats.humanCount} in class` : ""}

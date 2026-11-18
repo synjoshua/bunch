@@ -140,7 +140,7 @@ export const RANKS: RankInfo[] = [
   { id: "platinum", label: "Platinum", reward: 15, pointsNeeded: 28 },
 ];
 
-/** Gift card unlocked at Gold when the squad shares + hits goals together */
+/** Gift card unlocked at Gold when the bunch shares + hits goals together */
 export const GOLD_GIFT_AMOUNT = 10;
 
 export const QUEST_TARGET = 12;
@@ -159,7 +159,7 @@ export const SQUAD_NAMES = [
   "Goal Bunch",
   "Plate Patrol",
   "Fuel Friends",
-  "Snack Squad",
+  "Snack Bunch",
   "Bowl Bunch",
   "Quest Quartet",
   "Rank Raisers",

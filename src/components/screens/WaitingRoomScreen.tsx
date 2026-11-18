@@ -11,7 +11,7 @@ export function WaitingRoomScreen() {
   if (!you || !squad) {
     return (
       <div className="px-5 py-10 text-sm text-[var(--ink-muted)]">
-        Finding your table…
+        Finding your bunch…
       </div>
     );
   }
@@ -19,7 +19,7 @@ export function WaitingRoomScreen() {
   const people = squad.members.filter((m) => !m.isBot);
   const openSeats = Math.max(0, SQUAD_SIZE - people.length);
   const roomPeople = sessionStats?.humanCount ?? people.length;
-  const roomSquads = sessionStats?.squadCount ?? 1;
+  const roomBunches = sessionStats?.squadCount ?? 1;
 
   return (
     <div className="flex min-h-full flex-col px-5 pb-10 pt-8 animate-rise">
@@ -27,17 +27,17 @@ export function WaitingRoomScreen() {
         Waiting room
       </p>
       <h1 className="mt-2 font-display text-3xl leading-none text-[var(--ink)]">
-        You&apos;re at {squad.name}
+        You&apos;re in {squad.name}
       </h1>
       <p className="mt-2 text-sm leading-relaxed text-[var(--ink-muted)]">
         Hang tight while classmates join. The host will start the demo from the
-        live screen when tables look full.
+        live screen when bunches look full.
       </p>
 
       <div className="mt-5 rounded-[28px] border border-white/10 bg-[var(--card-solid)] p-4">
         <div className="flex items-center justify-between gap-2">
           <p className="text-xs font-bold uppercase tracking-wide text-[var(--ink-faint)]">
-            Your table
+            Your bunch
           </p>
           <p className="text-xs font-bold text-[var(--lime)]">
             {people.length}/{SQUAD_SIZE} seated
@@ -69,11 +69,11 @@ export function WaitingRoomScreen() {
           <p className="mt-4 text-xs leading-relaxed text-[var(--ink-muted)]">
             {openSeats} open seat{openSeats === 1 ? "" : "s"} — friends joining
             code <span className="font-semibold text-[var(--ink)]">{sessionCode}</span>{" "}
-            fill this table first.
+            fill this bunch first.
           </p>
         ) : (
           <p className="mt-4 text-xs font-semibold text-[var(--lime)]">
-            Table full — waiting for host to start.
+            Bunch full — waiting for host to start.
           </p>
         )}
       </div>
@@ -84,8 +84,8 @@ export function WaitingRoomScreen() {
         </span>
         <div>
           <p className="text-sm font-bold text-[var(--ink)]">
-            {roomPeople} in the room · {roomSquads} table
-            {roomSquads === 1 ? "" : "s"}
+            {roomPeople} in the room · {roomBunches} bunch
+            {roomBunches === 1 ? "" : "es"}
           </p>
           <p className="text-[11px] text-[var(--ink-muted)]">
             Updates live every couple seconds

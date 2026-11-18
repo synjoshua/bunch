@@ -17,7 +17,7 @@ const body = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: "bunch — social nutrition prototype",
   description:
-    "Class prototype for bunch: join a session, get matched into a squad, log meals, complete quests, and climb ranks together.",
+    "Class prototype for bunch: join a session, get matched into a bunch, log meals, share plates, and climb ranks together.",
 };
 
 export default function RootLayout({

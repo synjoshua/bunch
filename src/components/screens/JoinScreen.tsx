@@ -15,7 +15,7 @@ export function JoinScreen() {
     <div className="flex min-h-full flex-col px-5 pb-8 pt-8 animate-rise">
       <p className="font-display text-2xl text-[var(--lime)]">bunch</p>
       <p className="mt-1 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--peach)]">
-        Food quests with friends
+        Eat better as a bunch
       </p>
 
       {/* Food photo collage — game packaging vibe */}
@@ -47,11 +47,11 @@ export function JoinScreen() {
 
       <h1 className="mt-6 font-display text-[1.85rem] leading-[1.08] text-[var(--ink)]">
         Eat better as a{" "}
-        <span className="text-[var(--lime)]">squad</span>
+        <span className="text-[var(--lime)]">bunch</span>
       </h1>
       <p className="mt-2 text-sm leading-relaxed text-[var(--ink-muted)]">
-        Snap lunch, fuel your protein goal, drop meal ideas in the quest, and
-        talk it out in chat — like a co-op game for real food.
+        Snap lunch, fuel your protein goal, share plates with your bunch, and
+        talk it out in chat — a co-op game for real food.
       </p>
 
       <div className="mt-5 space-y-3">
@@ -69,7 +69,7 @@ export function JoinScreen() {
         </label>
         <label className="block">
           <span className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-[var(--ink-faint)]">
-            Table code
+            Bunch code
           </span>
           <input
             value={code}
@@ -96,7 +96,7 @@ export function JoinScreen() {
         <ArrowRight className="h-4 w-4" />
       </Button>
       <p className="mt-3 text-center text-xs text-[var(--ink-faint)]">
-        You&apos;ll sit at a table of 4 · host starts the demo from /live
+        You&apos;ll join a bunch of 4 · host starts the demo from /live
       </p>
     </div>
   );

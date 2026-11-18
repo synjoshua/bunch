@@ -53,7 +53,7 @@ export function ChatScreen() {
               {squad.name}
             </p>
             <p className="mt-1 truncate text-[11px] text-[var(--ink-muted)]">
-              Table chat · {people.length} classmates
+              Bunch chat · {people.length} classmates
             </p>
           </div>
           <div className="flex -space-x-2">
@@ -79,7 +79,7 @@ export function ChatScreen() {
             striped
           />
           <p className="mt-1.5 text-[11px] text-[var(--ink-muted)]">
-            {checkedIn}/{people.length} checked in today · Recipe Relay{" "}
+            {checkedIn}/{people.length} checked in today · Shared meals{" "}
             {squad.mealIdeas.length}/{squad.questTarget}
           </p>
         </div>
@@ -214,7 +214,7 @@ export function ChatScreen() {
                 void onSend();
               }
             }}
-            placeholder="Message your squad…"
+            placeholder="Message your bunch…"
             maxLength={280}
             className="min-w-0 flex-1 rounded-2xl border border-[var(--line)] bg-[var(--surface)] px-3.5 py-3 text-[15px] text-[var(--ink)] outline-none placeholder:text-[var(--ink-faint)] focus:border-[var(--ralli)]"
           />

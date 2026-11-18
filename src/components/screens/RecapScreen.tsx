@@ -19,8 +19,8 @@ export function RecapScreen() {
   return (
     <div className="px-5 pb-8 pt-6 animate-rise">
       <ScreenHeader
-        title="Week at the table"
-        subtitle={`Week ${squad.weekNumber} · plates logged, quests cooked`}
+        title="Week with your bunch"
+        subtitle={`Week ${squad.weekNumber} · plates logged, meals shared`}
         onBack={() => goTo("home")}
       />
 
@@ -60,7 +60,7 @@ export function RecapScreen() {
           </p>
           <p className="mt-1 text-[11px] text-[var(--ink-muted)]">
             {questDone
-              ? "Recipe Relay complete"
+              ? "Shared meals complete"
               : you.sharedQuestToday
                 ? "Your idea counted today"
                 : "Still room to contribute"}
@@ -76,13 +76,13 @@ export function RecapScreen() {
           <li className="flex gap-2">
             <span className="text-[var(--leaf)]">1.</span>
             {you.goalDayComplete
-              ? "You finished a personal goal-day and moved the squad total."
-              : "Log enough protein to finish your goal-day for the squad."}
+              ? "You finished a personal goal-day and moved the bunch total."
+              : "Log enough protein to finish your goal-day for the bunch."}
           </li>
           <li className="flex gap-2">
             <span className="text-[var(--leaf)]">2.</span>
             {you.sharedQuestToday
-              ? "Your shared meal advanced Recipe Relay for everyone."
+              ? "Your shared meal helped the whole bunch."
               : "Share one meal idea so posting helps even without comments."}
           </li>
           <li className="flex gap-2">

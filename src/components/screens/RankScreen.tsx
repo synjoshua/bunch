@@ -105,7 +105,7 @@ export function RankScreen() {
           }}
         >
           <p className="text-center text-[11px] font-extrabold uppercase tracking-[0.16em] text-[var(--ink-faint)]">
-            Your squad rank
+            Your bunch rank
           </p>
           <div className="mt-3 flex flex-col items-center">
             <RankMedal rankId={rank.id} size="lg" active />
@@ -145,7 +145,7 @@ export function RankScreen() {
         <p className="text-sm font-bold text-[var(--ink)]">Path to Gold gift card</p>
         <p className="mt-1 text-xs leading-relaxed text-[var(--ink-muted)]">
           When multiple teammates share plates and hit 100% of their protein
-          goal, your squad earns XP. Reach Gold to redeem.
+          goal, your bunch earns XP. Reach Gold to redeem.
         </p>
 
         <div className="mt-4 space-y-2.5">
@@ -223,7 +223,7 @@ export function RankScreen() {
         <SectionCard className="mt-3 p-4" glass={false}>
           <p className="text-sm font-bold text-[var(--ink)]">Gift card locked</p>
           <p className="mt-1 text-xs text-[var(--ink-muted)]">
-            Log meals, share with the table, and hit 100% goals as a group to
+            Log meals, share with your bunch, and hit 100% goals together to
             climb to Gold.
           </p>
           <div className="mt-3 flex gap-2">

@@ -72,7 +72,7 @@ export function ProfileScreen() {
       <div className="mt-3 grid grid-cols-2 gap-3">
         <SectionCard className="p-4" glass={false}>
           <Trophy className="h-4 w-4 text-[var(--lime)]" />
-          <p className="mt-2 text-xs text-[var(--ink-faint)]">Squad medal</p>
+          <p className="mt-2 text-xs text-[var(--ink-faint)]">Bunch medal</p>
           <p className="font-display text-xl text-[var(--ink)]">{rank.label}</p>
           <p className="text-[11px] text-[var(--ink-muted)]">
             {squad.rankPoints} XP
@@ -92,7 +92,7 @@ export function ProfileScreen() {
       </div>
 
       <SectionCard className="mt-3 p-4" glass={false}>
-        <p className="text-sm font-bold text-[var(--ink)]">Your table</p>
+        <p className="text-sm font-bold text-[var(--ink)]">Your bunch</p>
         <p className="mt-1 text-xs text-[var(--ink-muted)]">
           {people.length} classmates
           {sessionStats ? ` · ${sessionStats.humanCount} in the room` : ""}
@@ -130,7 +130,7 @@ export function ProfileScreen() {
         className="mt-6 flex w-full items-center justify-center gap-2 text-sm font-semibold text-[var(--ink-muted)]"
       >
         <LogOut className="h-4 w-4" />
-        Leave table / switch name
+        Leave bunch / switch name
       </button>
     </div>
   );

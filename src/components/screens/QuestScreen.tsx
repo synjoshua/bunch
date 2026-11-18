@@ -21,7 +21,7 @@ export function QuestScreen() {
     <div className="px-5 pb-8 pt-6 animate-rise">
       <ScreenHeader
         title="Shared meals"
-        subtitle="Browse plates your squad logged and steal ideas for your next one"
+        subtitle="Browse plates your bunch logged and steal ideas for your next one"
         onBack={() => goTo("home")}
       />
 
@@ -36,7 +36,7 @@ export function QuestScreen() {
         <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between gap-3">
           <div>
             <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-[var(--lime)]">
-              Squad cookbook
+              Bunch cookbook
             </p>
             <p className="font-display text-2xl text-white drop-shadow">
               {squad.mealIdeas.length}/{squad.questTarget} shared
@@ -113,7 +113,7 @@ export function QuestScreen() {
       </SectionCard>
 
       <div className="mt-5 flex items-center justify-between">
-        <h2 className="font-display text-lg text-[var(--ink)]">Squad cookbook</h2>
+        <h2 className="font-display text-lg text-[var(--ink)]">Bunch cookbook</h2>
         <p className="text-xs text-[var(--ink-faint)]">Live updates</p>
       </div>
 
@@ -190,7 +190,7 @@ export function QuestScreen() {
             disabled={loading}
             onClick={() => void shareExistingIdea()}
           >
-            Drop a recipe for the squad
+            Drop a recipe for the bunch
           </Button>
         )}
         <Button

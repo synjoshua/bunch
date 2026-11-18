@@ -1,8 +1,8 @@
 # bunch
 
-Class prototype for **bunch** — a co-op food game for friend squads.
+Class prototype for **bunch** — a co-op food game. Slogan: **eat better as a bunch**.
 
-People join the same table code, get matched into groups of about four, log real plates toward protein goals, drop recipes in a shared kitchen quest, and chat at the table. Consistency unlocks grocery gift-card loot.
+People join the same code, get matched into bunches of about four, log real plates toward protein goals, share meals, and chat together. Hit goals as a bunch to climb to Gold and redeem grocery gift-card loot.
 
 Built for a live classroom demo (~50 people at once).
 
@@ -39,10 +39,10 @@ Session state is stored on the server disk under `.data/`. One Railway service =
 
 1. Put `/live` on the projector with session code `BUNCH` (or your own code).
 2. Everyone opens the player app, enters a name, and uses the same code.
-3. bunch places people into squads of ~4 as they join.
-4. Each person logs a meal (optionally share to Recipe Relay).
-5. Squad home and the live board update together every couple of seconds.
-6. Squads fill with **real classmates** who join the same code (groups of ~4). Open seats wait for people — no fake teammates.
+3. Everyone lands in the waiting room while bunches of ~4 fill.
+4. Host taps **Start demo** on `/live`.
+5. Each person logs a meal (and can share with their bunch).
+6. Bunch home and the live board update together every couple of seconds.
 
 ## AI meal macros
 

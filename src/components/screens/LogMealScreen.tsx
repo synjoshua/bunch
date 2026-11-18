@@ -257,12 +257,12 @@ export function LogMealScreen() {
             </span>
             <span>
               <span className="block text-sm font-semibold text-[var(--ink)]">
-                Share photo + macros to squad
+                Share photo + macros with your bunch
               </span>
               <span className="mt-0.5 block text-xs text-[var(--ink-muted)]">
                 {shareLocked
                   ? "You already contributed today — one quest post per day."
-                  : "Posts the plate in chat and Recipe Relay."}
+                  : "Posts the plate in chat and shared meals."}
               </span>
             </span>
           </button>
@@ -308,7 +308,7 @@ export function LogMealScreen() {
             : "Add protein to my goal"}
       </Button>
       <p className="mt-3 text-center text-xs text-[var(--ink-faint)]">
-        Protein from the estimate counts toward your squad goal-day.
+        Protein from the estimate counts toward your bunch goal-day.
       </p>
     </div>
   );

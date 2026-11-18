@@ -99,7 +99,7 @@ function nextSquadName(session: Session) {
   const used = new Set(Object.values(session.squads).map((s) => s.name));
   const available = SQUAD_NAMES.find((n) => !used.has(n));
   if (available) return available;
-  return `Squad ${Object.keys(session.squads).length + 1}`;
+  return `Bunch ${Object.keys(session.squads).length + 1}`;
 }
 
 function weeklyTargetFor(squad: Squad, session: Session) {
@@ -184,7 +184,7 @@ function applyTeamProgressBoost(
       authorName: "bunch",
       authorShort: "B",
       authorColor: "#5B50E8",
-      text: `${goalsHit} teammates hit 100% goals and shared plates — +4 XP toward Gold gift card!`,
+      text: `${goalsHit} in your bunch hit 100% goals and shared plates — +4 XP toward Gold gift card!`,
       kind: "system",
     });
   }
@@ -229,7 +229,7 @@ function createSquad(session: Session): Squad {
         authorName: "bunch",
         authorShort: "B",
         authorColor: "#5B50E8",
-        text: "Squad chat is live — hype check-ins, meal tips, and quest wins here.",
+        text: "Bunch chat is live — hype check-ins, meal tips, and shared plates here.",
         kind: "system",
         createdAt: Date.now(),
       },
@@ -382,7 +382,7 @@ export function getMemberState(sessionCode: string, memberId: string) {
     sessionStats: {
       humanCount,
       squadCount,
-      capacityHint: `Squads of ${SQUAD_SIZE} · up to ~${SQUAD_MAX}`,
+      capacityHint: `Bunches of ${SQUAD_SIZE} · up to ~${SQUAD_MAX}`,
       demoStarted: isDemoStarted(session),
     },
   };
@@ -403,7 +403,7 @@ export function logMeal(input: {
   const member = session.members[input.memberId];
   if (!member || !member.squadId) throw new Error("Member not found.");
   const squad = session.squads[member.squadId];
-  if (!squad) throw new Error("Squad not found.");
+  if (!squad) throw new Error("Bunch not found.");
   if (!isDemoStarted(session)) {
     throw new Error("Demo hasn’t started yet — hang tight in the waiting room.");
   }
@@ -481,7 +481,7 @@ export function logMeal(input: {
       authorName: "bunch",
       authorShort: "B",
       authorColor: "#5B50E8",
-      text: `${member.name} shared a meal with the squad (${squad.mealIdeas.length}/${QUEST_TARGET}).`,
+      text: `${member.name} shared a meal with the bunch (${squad.mealIdeas.length}/${QUEST_TARGET}).`,
       kind: "system",
     });
     if (squad.mealIdeas.length >= QUEST_TARGET) {
@@ -503,7 +503,7 @@ export function shareIdea(sessionCode: string, memberId: string) {
   const member = session.members[memberId];
   if (!member || !member.squadId) throw new Error("Member not found.");
   const squad = session.squads[member.squadId];
-  if (!squad) throw new Error("Squad not found.");
+  if (!squad) throw new Error("Bunch not found.");
   if (member.sharedQuestToday) {
     return getMemberState(session.code, memberId);
   }
@@ -526,7 +526,7 @@ export function shareIdea(sessionCode: string, memberId: string) {
     authorName: member.name,
     authorShort: member.short,
     authorColor: member.color,
-    text: `Shared ${sample.name} with the squad (${squad.mealIdeas.length}/${QUEST_TARGET}). Tip: ${sample.tip}`,
+    text: `Shared ${sample.name} with the bunch (${squad.mealIdeas.length}/${QUEST_TARGET}). Tip: ${sample.tip}`,
     kind: "meal",
   });
   applyTeamProgressBoost(squad, session, { justShared: true });
@@ -539,7 +539,7 @@ export function redeemGiftCard(sessionCode: string, memberId: string) {
   const member = session.members[memberId];
   if (!member || !member.squadId) throw new Error("Member not found.");
   const squad = session.squads[member.squadId];
-  if (!squad) throw new Error("Squad not found.");
+  if (!squad) throw new Error("Bunch not found.");
 
   const rank = rankForPoints(squad.rankPoints);
   if (rank.id !== "gold" && rank.id !== "platinum") {
@@ -573,7 +573,7 @@ export function fillDemoTeammates(sessionCode: string, memberId: string) {
   const member = session.members[memberId];
   if (!member || !member.squadId) throw new Error("Member not found.");
   const squad = session.squads[member.squadId];
-  if (!squad) throw new Error("Squad not found.");
+  if (!squad) throw new Error("Bunch not found.");
 
   const botNames = ["Maya", "Leo", "Sam", "Jordan", "Avery"];
   let i = 0;
@@ -638,7 +638,7 @@ export function fillDemoTeammates(sessionCode: string, memberId: string) {
     squad.mealIdeas.push({
       id: randomUUID(),
       authorId: member.id,
-      authorName: "Squad",
+      authorName: "Bunch",
       title: sample.name,
       protein: sample.protein,
       tip: sample.tip,
@@ -657,7 +657,7 @@ export function fillDemoTeammates(sessionCode: string, memberId: string) {
       authorName: bots[0].name,
       authorShort: bots[0].short,
       authorColor: bots[0].color,
-      text: "Who's meal-prepping tonight? Drop ideas in the quest.",
+      text: "Who's meal-prepping tonight? Share a plate with the bunch.",
       kind: "chat",
     });
   }
@@ -677,7 +677,7 @@ export function fillDemoTeammates(sessionCode: string, memberId: string) {
       authorName: bots[2].name,
       authorShort: bots[2].short,
       authorColor: bots[2].color,
-      text: "We're close on Recipe Relay. One more idea each?",
+      text: "We're close on shared meals. One more plate each?",
       kind: "chat",
     });
   }
@@ -695,7 +695,7 @@ export function postChat(input: {
   const member = session.members[input.memberId];
   if (!member || !member.squadId) throw new Error("Member not found.");
   const squad = session.squads[member.squadId];
-  if (!squad) throw new Error("Squad not found.");
+  if (!squad) throw new Error("Bunch not found.");
 
   const text = input.text.trim().slice(0, 280);
   if (text.length < 1) throw new Error("Message can’t be empty.");
@@ -718,7 +718,7 @@ export function advanceWeek(sessionCode: string, memberId: string) {
   const member = session.members[memberId];
   if (!member || !member.squadId) throw new Error("Member not found.");
   const squad = session.squads[member.squadId];
-  if (!squad) throw new Error("Squad not found.");
+  if (!squad) throw new Error("Bunch not found.");
 
   const target = weeklyTargetFor(squad, session) || SQUAD_SIZE * GOAL_DAYS_PER_PERSON;
   const done = weeklyDoneFor(squad, session);
@@ -818,7 +818,7 @@ export function startDemo(sessionCode: string) {
       authorName: "bunch",
       authorShort: "B",
       authorColor: "#5B50E8",
-      text: "Demo started — log a meal, share with your table, climb to Gold!",
+      text: "Demo started — log a meal, share with your bunch, climb to Gold!",
       kind: "system",
     });
   }
