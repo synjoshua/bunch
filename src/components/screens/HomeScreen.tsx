@@ -306,8 +306,8 @@ export function HomeScreen() {
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--lime)] text-[var(--ink-on-bright)]">
             <Gift className="h-4 w-4" />
           </div>
-          <p className="mt-3 text-xs text-[var(--ink-faint)]">Grocery loot</p>
-          <p className="font-display text-xl text-[var(--ink)]">{rank.label}</p>
+          <p className="mt-3 text-xs text-[var(--ink-faint)]">Loot rank</p>
+          <p className="font-display text-xl text-[var(--ink)]">{rank.label} medal</p>
           <p className="text-[11px] text-[var(--ink-muted)]">
             ${rank.reward} gift card path
           </p>

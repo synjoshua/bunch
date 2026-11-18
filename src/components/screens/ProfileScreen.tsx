@@ -72,10 +72,10 @@ export function ProfileScreen() {
       <div className="mt-3 grid grid-cols-2 gap-3">
         <SectionCard className="p-4" glass={false}>
           <Trophy className="h-4 w-4 text-[var(--lime)]" />
-          <p className="mt-2 text-xs text-[var(--ink-faint)]">Squad rank</p>
+          <p className="mt-2 text-xs text-[var(--ink-faint)]">Squad medal</p>
           <p className="font-display text-xl text-[var(--ink)]">{rank.label}</p>
           <p className="text-[11px] text-[var(--ink-muted)]">
-            {squad.rankPoints} XP · ${rank.reward} path
+            {squad.rankPoints} XP · ${rank.reward} gift card
           </p>
         </SectionCard>
         <SectionCard className="p-4" glass={false}>
