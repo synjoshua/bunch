@@ -18,6 +18,7 @@ import {
 
 export type Screen =
   | "join"
+  | "waiting"
   | "home"
   | "log"
   | "quest"
@@ -30,6 +31,7 @@ type SessionStats = {
   humanCount: number;
   squadCount: number;
   capacityHint: string;
+  demoStarted: boolean;
 };
 
 type BunchState = {
@@ -128,7 +130,7 @@ export function BunchProvider({ children }: { children: ReactNode }) {
         .then(parseJson)
         .then((data) => {
           applyState(data);
-          setScreen("home");
+          setScreen(data.sessionStats?.demoStarted ? "home" : "waiting");
         })
         .catch(() => {
           localStorage.removeItem(STORAGE_KEY);
@@ -147,6 +149,17 @@ export function BunchProvider({ children }: { children: ReactNode }) {
     }, 2000);
     return () => window.clearInterval(id);
   }, [memberId, refresh, screen]);
+
+  useEffect(() => {
+    if (!memberId || !sessionStats) return;
+    if (!sessionStats.demoStarted && screen !== "join" && screen !== "waiting") {
+      setScreen("waiting");
+      return;
+    }
+    if (sessionStats.demoStarted && screen === "waiting") {
+      setScreen("home");
+    }
+  }, [memberId, screen, sessionStats]);
 
   const goTo = useCallback((next: Screen) => setScreen(next), []);
 
@@ -175,7 +188,7 @@ export function BunchProvider({ children }: { children: ReactNode }) {
         );
         const state = await parseJson(stateRes);
         applyState(state);
-        setScreen("home");
+        setScreen(state.sessionStats?.demoStarted ? "home" : "waiting");
       } catch (err) {
         setError(err instanceof Error ? err.message : "Join failed");
       } finally {

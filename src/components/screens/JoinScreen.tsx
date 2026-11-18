@@ -92,11 +92,11 @@ export function JoinScreen() {
         disabled={loading || name.trim().length < 2}
         onClick={() => void joinSquad(name, code)}
       >
-        {loading ? "Finding your table…" : "Sit down at the table"}
+        {loading ? "Finding your table…" : "Join waiting room"}
         <ArrowRight className="h-4 w-4" />
       </Button>
       <p className="mt-3 text-center text-xs text-[var(--ink-faint)]">
-        Same name brings you back · no passwords
+        You&apos;ll sit at a table of 4 · host starts the demo from /live
       </p>
     </div>
   );

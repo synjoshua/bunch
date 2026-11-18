@@ -8,13 +8,15 @@ import { ProfileScreen } from "@/components/screens/ProfileScreen";
 import { QuestScreen } from "@/components/screens/QuestScreen";
 import { RankScreen } from "@/components/screens/RankScreen";
 import { RecapScreen } from "@/components/screens/RecapScreen";
+import { WaitingRoomScreen } from "@/components/screens/WaitingRoomScreen";
 import { BunchProvider, useBunch } from "@/lib/bunch-context";
 import { Camera, ChefHat, Gift, Home, UserRound } from "lucide-react";
 import type { ReactNode } from "react";
 
 function Shell() {
   const { screen, goTo, memberId } = useBunch();
-  const showNav = Boolean(memberId) && screen !== "join";
+  const showNav =
+    Boolean(memberId) && screen !== "join" && screen !== "waiting";
 
   const items: Array<{
     id: string;
@@ -64,6 +66,7 @@ function Shell() {
     <div className="phone-shell">
       <div className="phone-scroll">
         {screen === "join" && <JoinScreen />}
+        {screen === "waiting" && <WaitingRoomScreen />}
         {screen === "home" && <HomeScreen />}
         {screen === "log" && <LogMealScreen />}
         {screen === "quest" && <QuestScreen />}
@@ -104,10 +107,10 @@ export function BunchApp() {
             and climb ranks with your squad.
           </p>
           <ol className="mt-5 hidden space-y-2 text-sm text-[var(--ink-muted)] md:block">
-            <li>1. Sit down with your name</li>
-            <li>2. Tap Log meal</li>
-            <li>3. Chat lives on Table home</li>
-            <li>4. Watch the room on /live</li>
+            <li>1. Everyone joins into the waiting room</li>
+            <li>2. Host starts the demo from /live</li>
+            <li>3. Log meals, share, climb to Gold</li>
+            <li>4. Watch tables on the projector</li>
           </ol>
         </div>
         <Shell />

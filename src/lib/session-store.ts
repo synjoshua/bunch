@@ -74,10 +74,19 @@ function ensureSession(code: string): Session {
       createdAt: Date.now(),
       members: {},
       squads: {},
+      demoStarted: false,
     };
     saveStore(store);
   }
-  return store.sessions[key];
+  const session = store.sessions[key];
+  if (typeof session.demoStarted !== "boolean") {
+    session.demoStarted = false;
+  }
+  return session;
+}
+
+function isDemoStarted(session: Session) {
+  return Boolean(session.demoStarted);
 }
 
 function touch(session: Session) {
@@ -374,6 +383,7 @@ export function getMemberState(sessionCode: string, memberId: string) {
       humanCount,
       squadCount,
       capacityHint: `Squads of ${SQUAD_SIZE} · up to ~${SQUAD_MAX}`,
+      demoStarted: isDemoStarted(session),
     },
   };
 }
@@ -394,6 +404,9 @@ export function logMeal(input: {
   if (!member || !member.squadId) throw new Error("Member not found.");
   const squad = session.squads[member.squadId];
   if (!squad) throw new Error("Squad not found.");
+  if (!isDemoStarted(session)) {
+    throw new Error("Demo hasn’t started yet — hang tight in the waiting room.");
+  }
 
   const protein = Math.max(1, Math.min(80, Math.round(input.protein)));
   member.personalProtein = Math.min(
@@ -746,6 +759,9 @@ export function getLiveBoard(sessionCode: string): {
   sessionCode: string;
   humanCount: number;
   squadCount: number;
+  demoStarted: boolean;
+  seatsFilled: number;
+  seatsTarget: number;
   squads: LiveSquadCard[];
 } {
   const session = ensureSession(sessionCode);
@@ -763,10 +779,8 @@ export function getLiveBoard(sessionCode: string): {
       return {
         id: squad.id,
         name: squad.name,
-        memberCount: members.length,
-        memberNames: humans.map((m) => m.name).concat(
-          members.filter((m) => m.isBot).map((m) => `${m.name} (demo)`),
-        ),
+        memberCount: humans.length,
+        memberNames: humans.map((m) => m.name),
         weeklyGoalDays: tableProgressFor(squad, session),
         weeklyGoalTarget: target || SQUAD_SIZE * GOAL_DAYS_PER_PERSON,
         questCount: squad.mealIdeas.length,
@@ -775,14 +789,41 @@ export function getLiveBoard(sessionCode: string): {
         reward: rank.reward,
       } satisfies LiveSquadCard;
     })
-    .sort((a, b) => b.weeklyGoalDays - a.weeklyGoalDays);
+    .sort((a, b) =>
+      isDemoStarted(session)
+        ? b.weeklyGoalDays - a.weeklyGoalDays
+        : b.memberCount - a.memberCount,
+    );
+
+  const humanCount = Object.values(session.members).filter((m) => !m.isBot).length;
+  const seatsTarget = Math.max(squads.length * SQUAD_SIZE, SQUAD_SIZE);
 
   return {
     sessionCode: session.code,
-    humanCount: Object.values(session.members).filter((m) => !m.isBot).length,
+    humanCount,
     squadCount: squads.length,
+    demoStarted: isDemoStarted(session),
+    seatsFilled: humanCount,
+    seatsTarget,
     squads,
   };
+}
+
+export function startDemo(sessionCode: string) {
+  const session = ensureSession(sessionCode);
+  session.demoStarted = true;
+  for (const squad of Object.values(session.squads)) {
+    pushMessage(squad, {
+      authorId: "system",
+      authorName: "bunch",
+      authorShort: "B",
+      authorColor: "#5B50E8",
+      text: "Demo started — log a meal, share with your table, climb to Gold!",
+      kind: "system",
+    });
+  }
+  touch(session);
+  return getLiveBoard(session.code);
 }
 
 export function resetSession(sessionCode: string) {
@@ -793,6 +834,7 @@ export function resetSession(sessionCode: string) {
     createdAt: Date.now(),
     members: {},
     squads: {},
+    demoStarted: false,
   };
   saveStore(store);
   return { ok: true, sessionCode: key };

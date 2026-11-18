@@ -80,6 +80,8 @@ export type Session = {
   createdAt: number;
   members: Record<string, Member>;
   squads: Record<string, Squad>;
+  /** False until host hits Start on /live */
+  demoStarted?: boolean;
 };
 
 export type SquadView = {
