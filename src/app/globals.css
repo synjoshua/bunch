@@ -185,7 +185,6 @@ body {
 .gooey-nav {
   --slot: 68px;
   --blob: 56px;
-  --active: 44px;
   position: relative;
   display: inline-grid;
   filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.45));
@@ -233,48 +232,20 @@ body {
   padding: 0;
   border: 0;
   background: transparent;
-  color: rgba(255, 255, 255, 0.92);
+  color: rgba(255, 255, 255, 0.78);
   cursor: pointer;
-  transition: color 0.2s ease;
+  transition: color 0.15s ease;
 }
 
 .gooey-nav-btn.is-active {
-  color: var(--ink-on-bright);
-}
-
-/* Lime sits inside the button — inset/margin center, no transform offset bugs */
-.gooey-nav-btn.is-active::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  inset: 0;
-  width: var(--active);
-  height: var(--active);
-  margin: auto;
-  border-radius: 50%;
-  background: var(--lime);
-  box-shadow: 0 8px 22px rgba(223, 255, 131, 0.35);
-  animation: nav-lime-in 0.32s cubic-bezier(0.34, 1.35, 0.64, 1);
-}
-
-@keyframes nav-lime-in {
-  from {
-    transform: scale(0.72);
-    opacity: 0.55;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
+  color: var(--lime);
 }
 
 .gooey-nav-btn svg {
-  width: 1.2rem;
-  height: 1.2rem;
-  stroke-width: 2.25;
+  width: 1.25rem;
+  height: 1.25rem;
+  stroke-width: 2.35;
   display: block;
-  position: relative;
-  z-index: 1;
 }
 
 .gooey-nav-dot {
