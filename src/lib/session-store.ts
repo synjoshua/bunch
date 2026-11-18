@@ -450,7 +450,6 @@ export function fillDemoTeammates(sessionCode: string, memberId: string) {
       authorColor: "#5B50E8",
       text: `${bot.name} hopped into the chat.`,
       kind: "system",
-      createdAt: Date.now() - (20 - i) * 60000,
     });
 
     const sample = SAMPLE_MEALS[i % SAMPLE_MEALS.length];
@@ -488,7 +487,7 @@ export function fillDemoTeammates(sessionCode: string, memberId: string) {
 
   const bots = squad.memberIds
     .map((id) => session.members[id])
-    .filter((m) => m && m.isBot);
+    .filter((m): m is Member => Boolean(m && m.isBot));
   if (bots[0]) {
     pushMessage(squad, {
       authorId: bots[0].id,
@@ -497,7 +496,6 @@ export function fillDemoTeammates(sessionCode: string, memberId: string) {
       authorColor: bots[0].color,
       text: "Who's meal-prepping tonight? Drop ideas in the quest.",
       kind: "chat",
-      createdAt: Date.now() - 8 * 60000,
     });
   }
   if (bots[1]) {
@@ -508,7 +506,6 @@ export function fillDemoTeammates(sessionCode: string, memberId: string) {
       authorColor: bots[1].color,
       text: "I hit my protein with leftover chili — easy win.",
       kind: "chat",
-      createdAt: Date.now() - 5 * 60000,
     });
   }
   if (bots[2]) {
@@ -519,7 +516,6 @@ export function fillDemoTeammates(sessionCode: string, memberId: string) {
       authorColor: bots[2].color,
       text: "We're close on Recipe Relay. One more idea each?",
       kind: "chat",
-      createdAt: Date.now() - 2 * 60000,
     });
   }
 
