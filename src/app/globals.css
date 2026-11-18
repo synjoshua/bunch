@@ -3,25 +3,34 @@
 @tailwind utilities;
 
 :root {
-  /* Gamified light HUD — teal XP, gold ranks, quest blue */
-  --mist: #e8f2ff;
-  --mist-deep: #d5e6fb;
-  --surface: #f7fbff;
-  --ink: #13233f;
-  --ink-muted: #51607a;
-  --ink-faint: #8492a8;
-  --line: #d4e0f2;
-  --leaf: #00b89a;
-  --leaf-deep: #008f78;
-  --leaf-soft: #d2f7ef;
-  --amber: #ffb020;
-  --amber-deep: #c77d00;
-  --amber-soft: #fff1cc;
-  --sky: #3b82f6;
-  --sky-soft: #dbeafe;
-  --coral: #ff5a3d;
-  --coral-soft: #ffe2db;
-  --background: var(--mist);
+  /* bunch palette */
+  --ralli: #5b50e8;
+  --lime: #dfff83;
+  --cream: #f7f6f2;
+  --ink: #25243a;
+  --lavender: #e9e6ff;
+  --peach: #ffae98;
+
+  --mist: var(--cream);
+  --mist-deep: #ebe8e1;
+  --surface: #fffcf8;
+  --ink-muted: #5c5a72;
+  --ink-faint: #8e8ba8;
+  --line: #ddd8f0;
+
+  /* mapped aliases used across components */
+  --leaf: var(--ralli);
+  --leaf-deep: #4338ca;
+  --leaf-soft: var(--lavender);
+  --amber: var(--lime);
+  --amber-deep: #5f6b1f;
+  --amber-soft: #f3ffc8;
+  --sky: #6d63f0;
+  --sky-soft: var(--lavender);
+  --coral: var(--peach);
+  --coral-soft: #ffe4db;
+
+  --background: var(--cream);
   --foreground: var(--ink);
 }
 
@@ -33,10 +42,10 @@ body {
 body {
   color: var(--foreground);
   background:
-    radial-gradient(1100px 560px at 8% -8%, #fff7e8 0%, transparent 52%),
-    radial-gradient(900px 500px at 100% 0%, #d9fff5 0%, transparent 48%),
-    radial-gradient(700px 420px at 70% 100%, #dce9ff 0%, transparent 45%),
-    linear-gradient(165deg, #eef5ff 0%, #e7f8f3 48%, #e8eefc 100%);
+    radial-gradient(1000px 520px at 0% -5%, #e9e6ff 0%, transparent 55%),
+    radial-gradient(900px 480px at 100% 0%, #ffe8e0 0%, transparent 50%),
+    radial-gradient(700px 420px at 50% 100%, #f3ffc8 0%, transparent 45%),
+    linear-gradient(165deg, #f7f6f2 0%, #f3f0ff 48%, #fff4ef 100%);
   font-family: var(--font-body), system-ui, sans-serif;
 }
 
@@ -83,11 +92,11 @@ body {
   border-radius: 36px;
   overflow: hidden;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(247, 251, 255, 0.94)),
+    linear-gradient(180deg, rgba(255, 252, 248, 0.96), rgba(247, 246, 242, 0.98)),
     radial-gradient(800px 400px at 50% -10%, #ffffff 0%, transparent 60%);
   box-shadow:
-    0 30px 80px rgba(19, 35, 63, 0.18),
-    0 0 0 1px rgba(255, 255, 255, 0.75),
+    0 30px 80px rgba(37, 36, 58, 0.18),
+    0 0 0 1px rgba(255, 255, 255, 0.8),
     inset 0 1px 0 rgba(255, 255, 255, 0.95);
   animation: phone-in 0.7s ease-out both;
 }
@@ -101,8 +110,8 @@ body {
   height: 28px;
   transform: translateX(-50%);
   border-radius: 999px;
-  background: #13233f;
-  opacity: 0.92;
+  background: #25243a;
+  opacity: 0.95;
 }
 
 .phone-scroll {
@@ -123,9 +132,9 @@ body {
   bottom: 12px;
   display: flex;
   border-radius: 22px;
-  background: rgba(255, 255, 255, 0.94);
-  border: 1px solid rgba(212, 224, 242, 0.95);
-  box-shadow: 0 10px 30px rgba(19, 35, 63, 0.12);
+  background: rgba(255, 252, 248, 0.96);
+  border: 1px solid rgba(221, 216, 240, 0.95);
+  box-shadow: 0 10px 30px rgba(37, 36, 58, 0.12);
   backdrop-filter: blur(10px);
   padding-bottom: 2px;
 }
@@ -156,22 +165,8 @@ body {
   }
 }
 
-@keyframes pulse-glow {
-  0%,
-  100% {
-    box-shadow: 0 10px 24px rgba(0, 184, 154, 0.28);
-  }
-  50% {
-    box-shadow: 0 12px 30px rgba(255, 90, 61, 0.28);
-  }
-}
-
 .animate-rise {
   animation: rise 0.45s ease-out both;
-}
-
-.btn-glow {
-  animation: pulse-glow 2.8s ease-in-out infinite;
 }
 
 @media (max-width: 899px) {
@@ -199,9 +194,9 @@ body {
 
 .live-stage {
   background:
-    radial-gradient(1000px 500px at 0% 0%, #fff4df 0%, transparent 55%),
-    radial-gradient(800px 420px at 100% 10%, #d6fff4 0%, transparent 50%),
-    linear-gradient(165deg, #eef5ff 0%, #e7f8f3 45%, #e8eefc 100%);
+    radial-gradient(1000px 500px at 0% 0%, #e9e6ff 0%, transparent 55%),
+    radial-gradient(800px 420px at 100% 10%, #ffe4db 0%, transparent 50%),
+    linear-gradient(165deg, #f7f6f2 0%, #f1eeff 45%, #fff3ee 100%);
 }
 
 .xp-chip {
@@ -214,7 +209,7 @@ body {
   font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  background: linear-gradient(135deg, #fff1cc, #ffe2db);
-  color: #9a4b18;
-  border: 1px solid rgba(255, 176, 32, 0.35);
+  background: var(--lime);
+  color: var(--ink);
+  border: 1px solid rgba(37, 36, 58, 0.12);
 }

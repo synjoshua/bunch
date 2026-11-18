@@ -102,14 +102,14 @@ export function LogMealScreen() {
             disabled={shareLocked}
             className={`flex w-full items-start gap-3 rounded-2xl border px-3.5 py-3 text-left transition ${
               share && !shareLocked
-                ? "border-[var(--sky)] bg-[var(--sky-soft)]"
+                ? "border-[var(--ralli)] bg-[var(--lavender)]"
                 : "border-[var(--line)] bg-[var(--surface)]"
             } ${shareLocked ? "opacity-60" : ""}`}
           >
             <span
               className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border ${
                 share || shareLocked
-                  ? "border-[var(--sky)] bg-[var(--sky)] text-white"
+                  ? "border-[var(--ralli)] bg-[var(--ralli)] text-white"
                   : "border-[var(--line)] bg-white"
               }`}
             >

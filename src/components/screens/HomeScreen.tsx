@@ -55,7 +55,7 @@ export function HomeScreen() {
 
       <div className="mt-3 flex flex-wrap items-center gap-2">
         <span className="xp-chip">{squad.rankPoints} XP</span>
-        <span className="rounded-full bg-[var(--sky-soft)] px-2.5 py-1 text-[11px] font-bold text-[var(--sky)]">
+        <span className="rounded-full bg-[var(--lavender)] px-2.5 py-1 text-[11px] font-bold text-[var(--ralli)]">
           Quest {squad.mealIdeas.length}/{squad.questTarget}
         </span>
         {sessionStats ? (
@@ -134,13 +134,13 @@ export function HomeScreen() {
 
       <SectionCard className="mt-3 p-4" onClick={() => goTo("quest")}>
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--sky-soft)] text-[var(--sky)]">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--lavender)] text-[var(--ralli)]">
             <Sparkles className="h-5 w-5" />
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex items-center justify-between gap-2">
               <p className="font-semibold text-[var(--ink)]">Recipe Relay</p>
-              <p className="text-sm font-bold text-[var(--sky)]">
+              <p className="text-sm font-bold text-[var(--ralli)]">
                 {squad.mealIdeas.length}/{squad.questTarget}
               </p>
             </div>
@@ -159,7 +159,7 @@ export function HomeScreen() {
 
       <div className="mt-3 grid grid-cols-2 gap-3">
         <SectionCard className="p-4" onClick={() => goTo("rank")}>
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--amber-soft)] text-[var(--amber-deep)]">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--lime)] text-[var(--ink)]">
             <Gift className="h-4 w-4" />
           </div>
           <p className="mt-3 text-xs text-[var(--ink-faint)]">Possible reward</p>

@@ -150,7 +150,7 @@ function EligibilityRow({ ok, label }: { ok: boolean; label: string }) {
       <span
         className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full ${
           ok
-            ? "bg-[var(--leaf)] text-white"
+            ? "bg-[var(--lime)] text-[var(--ink)]"
             : "bg-[var(--line)] text-[var(--ink-faint)]"
         }`}
       >

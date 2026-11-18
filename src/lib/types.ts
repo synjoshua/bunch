@@ -132,14 +132,14 @@ export const SQUAD_NAMES = [
 ];
 
 export const AVATAR_COLORS = [
-  "#00B89A",
-  "#FF5A3D",
-  "#3B82F6",
-  "#FFB020",
-  "#8B5CF6",
-  "#14B8A6",
-  "#F97316",
-  "#0EA5E9",
+  "#5B50E8",
+  "#FFAE98",
+  "#25243A",
+  "#7C74F0",
+  "#E8896F",
+  "#4338CA",
+  "#9B93F5",
+  "#DFFF83",
 ];
 
 export const SAMPLE_MEALS = [
