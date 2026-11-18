@@ -13,7 +13,7 @@ export function JoinScreen() {
   return (
     <div className="flex min-h-full flex-col px-5 pb-8 pt-10 animate-rise">
       <div className="flex-1">
-        <p className="font-display text-4xl tracking-tight text-[var(--leaf-deep)]">
+        <p className="font-display text-4xl tracking-tight text-[var(--lime)]">
           bunch
         </p>
         <p className="mt-2 max-w-[17rem] text-[15px] leading-relaxed text-[var(--ink-muted)]">
@@ -21,7 +21,7 @@ export function JoinScreen() {
           can play the week together.
         </p>
 
-        <div className="mt-8 rounded-[28px] bg-white/85 p-5 shadow-[0_16px_40px_rgba(28,52,40,0.08)] border border-white/80 space-y-4">
+        <div className="mt-8 rounded-[28px] bg-[var(--card)] p-5 shadow-[0_16px_40px_rgba(0,0,0,0.28)] border border-[var(--card-border)] space-y-4">
           <label className="block">
             <span className="text-xs font-semibold uppercase tracking-wide text-[var(--ink-faint)]">
               Your name

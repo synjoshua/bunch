@@ -13,6 +13,7 @@ import {
   SQUAD_SIZE,
   initials,
   rankForPoints,
+  type ChatMessage,
   type LiveSquadCard,
   type MealIdea,
   type Member,
@@ -113,12 +114,49 @@ function findOpenSquad(session: Session): Squad | null {
   return open[0] ?? null;
 }
 
+function ensureMessages(squad: Squad) {
+  if (!Array.isArray(squad.messages)) squad.messages = [];
+  return squad.messages;
+}
+
+function pushMessage(
+  squad: Squad,
+  message: Omit<ChatMessage, "id" | "createdAt"> & { createdAt?: number },
+) {
+  const messages = ensureMessages(squad);
+  messages.push({
+    id: randomUUID(),
+    createdAt: message.createdAt ?? Date.now(),
+    authorId: message.authorId,
+    authorName: message.authorName,
+    authorShort: message.authorShort,
+    authorColor: message.authorColor,
+    text: message.text,
+    kind: message.kind,
+  });
+  if (messages.length > 80) {
+    squad.messages = messages.slice(-80);
+  }
+}
+
 function createSquad(session: Session): Squad {
   const squad: Squad = {
     id: randomUUID(),
     name: nextSquadName(session),
     memberIds: [],
     mealIdeas: [],
+    messages: [
+      {
+        id: randomUUID(),
+        authorId: "system",
+        authorName: "bunch",
+        authorShort: "B",
+        authorColor: "#5B50E8",
+        text: "Squad chat is live — hype check-ins, meal tips, and quest wins here.",
+        kind: "system",
+        createdAt: Date.now(),
+      },
+    ],
     rankPoints: 12,
     seasonWeeksHit: 2,
     questsCompletedThisSeason: 2,
@@ -134,6 +172,14 @@ function assignToSquad(session: Session, member: Member) {
   if (!squad) squad = createSquad(session);
   squad.memberIds.push(member.id);
   member.squadId = squad.id;
+  pushMessage(squad, {
+    authorId: "system",
+    authorName: "bunch",
+    authorShort: "B",
+    authorColor: "#5B50E8",
+    text: `${member.name} joined ${squad.name}. Welcome to the bunch.`,
+    kind: "system",
+  });
   if (squad.memberIds.length >= SQUAD_SIZE) squad.open = false;
   // Keep open until SQUAD_SIZE; allow late joiners up to SQUAD_MAX via reopen if under max
   if (squad.memberIds.length < SQUAD_MAX && squad.memberIds.length >= SQUAD_SIZE) {
@@ -212,6 +258,7 @@ function toSquadView(session: Session, squad: Squad, youId: string): SquadView {
       members.length * GOAL_DAYS_PER_PERSON,
     ),
     mealIdeas: [...squad.mealIdeas].sort((a, b) => b.createdAt - a.createdAt),
+    messages: [...ensureMessages(squad)].sort((a, b) => a.createdAt - b.createdAt),
     questTarget: QUEST_TARGET,
     rankPoints: squad.rankPoints,
     seasonWeeksHit: squad.seasonWeeksHit,
@@ -276,6 +323,18 @@ export function logMeal(input: {
     );
   }
 
+  const mealTitle = input.mealName.trim() || SAMPLE_MEALS[0].name;
+  pushMessage(squad, {
+    authorId: member.id,
+    authorName: member.name,
+    authorShort: member.short,
+    authorColor: member.color,
+    text: member.goalDayComplete
+      ? `Logged ${mealTitle} (+${protein}g) and finished today's goal-day.`
+      : `Logged ${mealTitle} (+${protein}g protein).`,
+    kind: "meal",
+  });
+
   if (input.shareToQuest && !member.sharedQuestToday) {
     member.sharedQuestToday = true;
     const sample = SAMPLE_MEALS[0];
@@ -283,7 +342,7 @@ export function logMeal(input: {
       id: randomUUID(),
       authorId: member.id,
       authorName: member.name,
-      title: input.mealName.trim() || sample.name,
+      title: mealTitle,
       protein,
       tip: sample.tip,
       image: sample.image,
@@ -291,6 +350,14 @@ export function logMeal(input: {
       createdAt: Date.now(),
     };
     squad.mealIdeas.push(idea);
+    pushMessage(squad, {
+      authorId: "system",
+      authorName: "bunch",
+      authorShort: "B",
+      authorColor: "#5B50E8",
+      text: `${member.name} shared a meal idea to Recipe Relay (${squad.mealIdeas.length}/${QUEST_TARGET}).`,
+      kind: "system",
+    });
     if (squad.mealIdeas.length >= QUEST_TARGET) {
       squad.questsCompletedThisSeason = Math.min(
         4,
@@ -325,6 +392,14 @@ export function shareIdea(sessionCode: string, memberId: string) {
     image: sample.image,
     dayLabel: "Today",
     createdAt: Date.now(),
+  });
+  pushMessage(squad, {
+    authorId: member.id,
+    authorName: member.name,
+    authorShort: member.short,
+    authorColor: member.color,
+    text: `Shared ${sample.name} to the Recipe Relay (${squad.mealIdeas.length}/${QUEST_TARGET}). Tip: ${sample.tip}`,
+    kind: "meal",
   });
   touch(session);
   return getMemberState(session.code, memberId);
@@ -368,6 +443,15 @@ export function fillDemoTeammates(sessionCode: string, memberId: string) {
     };
     session.members[bot.id] = bot;
     squad.memberIds.push(bot.id);
+    pushMessage(squad, {
+      authorId: "system",
+      authorName: "bunch",
+      authorShort: "B",
+      authorColor: "#5B50E8",
+      text: `${bot.name} hopped into the chat.`,
+      kind: "system",
+      createdAt: Date.now() - (20 - i) * 60000,
+    });
 
     const sample = SAMPLE_MEALS[i % SAMPLE_MEALS.length];
     if (squad.mealIdeas.length < 8) {
@@ -402,8 +486,72 @@ export function fillDemoTeammates(sessionCode: string, memberId: string) {
     });
   }
 
+  const bots = squad.memberIds
+    .map((id) => session.members[id])
+    .filter((m) => m && m.isBot);
+  if (bots[0]) {
+    pushMessage(squad, {
+      authorId: bots[0].id,
+      authorName: bots[0].name,
+      authorShort: bots[0].short,
+      authorColor: bots[0].color,
+      text: "Who's meal-prepping tonight? Drop ideas in the quest.",
+      kind: "chat",
+      createdAt: Date.now() - 8 * 60000,
+    });
+  }
+  if (bots[1]) {
+    pushMessage(squad, {
+      authorId: bots[1].id,
+      authorName: bots[1].name,
+      authorShort: bots[1].short,
+      authorColor: bots[1].color,
+      text: "I hit my protein with leftover chili — easy win.",
+      kind: "chat",
+      createdAt: Date.now() - 5 * 60000,
+    });
+  }
+  if (bots[2]) {
+    pushMessage(squad, {
+      authorId: bots[2].id,
+      authorName: bots[2].name,
+      authorShort: bots[2].short,
+      authorColor: bots[2].color,
+      text: "We're close on Recipe Relay. One more idea each?",
+      kind: "chat",
+      createdAt: Date.now() - 2 * 60000,
+    });
+  }
+
   touch(session);
   return getMemberState(session.code, memberId);
+}
+
+export function postChat(input: {
+  sessionCode: string;
+  memberId: string;
+  text: string;
+}) {
+  const session = ensureSession(input.sessionCode);
+  const member = session.members[input.memberId];
+  if (!member || !member.squadId) throw new Error("Member not found.");
+  const squad = session.squads[member.squadId];
+  if (!squad) throw new Error("Squad not found.");
+
+  const text = input.text.trim().slice(0, 280);
+  if (text.length < 1) throw new Error("Message can’t be empty.");
+
+  pushMessage(squad, {
+    authorId: member.id,
+    authorName: member.name,
+    authorShort: member.short,
+    authorColor: member.color,
+    text,
+    kind: "chat",
+  });
+  member.lastSeenAt = Date.now();
+  touch(session);
+  return getMemberState(session.code, member.id);
 }
 
 export function advanceWeek(sessionCode: string, memberId: string) {

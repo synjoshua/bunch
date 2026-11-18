@@ -3,35 +3,39 @@
 @tailwind utilities;
 
 :root {
-  /* bunch palette */
-  --ralli: #5b50e8;
+  /* bunch palette — dark mode */
+  --ralli: #7c74f0;
+  --ralli-deep: #5b50e8;
   --lime: #dfff83;
   --cream: #f7f6f2;
-  --ink: #25243a;
-  --lavender: #e9e6ff;
+  --ink: #f7f6f2;
+  --lavender: #3a3658;
   --peach: #ffae98;
 
-  --mist: var(--cream);
-  --mist-deep: #ebe8e1;
-  --surface: #fffcf8;
-  --ink-muted: #5c5a72;
-  --ink-faint: #8e8ba8;
-  --line: #ddd8f0;
+  --mist: #15141f;
+  --mist-deep: #0f0e18;
+  --surface: #1c1b2b;
+  --ink-muted: #b7b4cc;
+  --ink-faint: #817e9a;
+  --line: #2f2d45;
 
-  /* mapped aliases used across components */
   --leaf: var(--ralli);
-  --leaf-deep: #4338ca;
-  --leaf-soft: var(--lavender);
+  --leaf-deep: #a59ef7;
+  --leaf-soft: #2a2744;
   --amber: var(--lime);
-  --amber-deep: #5f6b1f;
-  --amber-soft: #f3ffc8;
-  --sky: #6d63f0;
-  --sky-soft: var(--lavender);
+  --amber-deep: #dfff83;
+  --amber-soft: #2f3420;
+  --sky: #9b93f5;
+  --sky-soft: #2a2744;
   --coral: var(--peach);
-  --coral-soft: #ffe4db;
+  --coral-soft: #3a2a28;
 
-  --background: var(--cream);
+  --background: var(--mist);
   --foreground: var(--ink);
+  --card: #222134;
+  --card-border: rgba(124, 116, 240, 0.22);
+  --bubble-me: #5b50e8;
+  --bubble-them: #2a2744;
 }
 
 html,
@@ -42,10 +46,10 @@ body {
 body {
   color: var(--foreground);
   background:
-    radial-gradient(1000px 520px at 0% -5%, #e9e6ff 0%, transparent 55%),
-    radial-gradient(900px 480px at 100% 0%, #ffe8e0 0%, transparent 50%),
-    radial-gradient(700px 420px at 50% 100%, #f3ffc8 0%, transparent 45%),
-    linear-gradient(165deg, #f7f6f2 0%, #f3f0ff 48%, #fff4ef 100%);
+    radial-gradient(900px 500px at 10% -10%, rgba(91, 80, 232, 0.28) 0%, transparent 55%),
+    radial-gradient(800px 460px at 100% 0%, rgba(255, 174, 152, 0.14) 0%, transparent 50%),
+    radial-gradient(700px 420px at 60% 110%, rgba(223, 255, 131, 0.08) 0%, transparent 45%),
+    linear-gradient(165deg, #12111c 0%, #171625 45%, #1a1524 100%);
   font-family: var(--font-body), system-ui, sans-serif;
 }
 
@@ -92,12 +96,12 @@ body {
   border-radius: 36px;
   overflow: hidden;
   background:
-    linear-gradient(180deg, rgba(255, 252, 248, 0.96), rgba(247, 246, 242, 0.98)),
-    radial-gradient(800px 400px at 50% -10%, #ffffff 0%, transparent 60%);
+    linear-gradient(180deg, rgba(34, 33, 52, 0.98), rgba(22, 21, 37, 0.99)),
+    radial-gradient(700px 360px at 50% -10%, rgba(91, 80, 232, 0.25) 0%, transparent 60%);
   box-shadow:
-    0 30px 80px rgba(37, 36, 58, 0.18),
-    0 0 0 1px rgba(255, 255, 255, 0.8),
-    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    0 30px 80px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(124, 116, 240, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
   animation: phone-in 0.7s ease-out both;
 }
 
@@ -110,7 +114,7 @@ body {
   height: 28px;
   transform: translateX(-50%);
   border-radius: 999px;
-  background: #25243a;
+  background: #0b0a12;
   opacity: 0.95;
 }
 
@@ -132,10 +136,10 @@ body {
   bottom: 12px;
   display: flex;
   border-radius: 22px;
-  background: rgba(255, 252, 248, 0.96);
-  border: 1px solid rgba(221, 216, 240, 0.95);
-  box-shadow: 0 10px 30px rgba(37, 36, 58, 0.12);
-  backdrop-filter: blur(10px);
+  background: rgba(28, 27, 43, 0.96);
+  border: 1px solid rgba(124, 116, 240, 0.28);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(12px);
   padding-bottom: 2px;
 }
 
@@ -194,9 +198,9 @@ body {
 
 .live-stage {
   background:
-    radial-gradient(1000px 500px at 0% 0%, #e9e6ff 0%, transparent 55%),
-    radial-gradient(800px 420px at 100% 10%, #ffe4db 0%, transparent 50%),
-    linear-gradient(165deg, #f7f6f2 0%, #f1eeff 45%, #fff3ee 100%);
+    radial-gradient(1000px 500px at 0% 0%, rgba(91, 80, 232, 0.28) 0%, transparent 55%),
+    radial-gradient(800px 420px at 100% 10%, rgba(255, 174, 152, 0.12) 0%, transparent 50%),
+    linear-gradient(165deg, #12111c 0%, #171625 45%, #1a1524 100%);
 }
 
 .xp-chip {
@@ -210,6 +214,11 @@ body {
   letter-spacing: 0.04em;
   text-transform: uppercase;
   background: var(--lime);
-  color: var(--ink);
-  border: 1px solid rgba(37, 36, 58, 0.12);
+  color: #15141f;
+  border: 1px solid rgba(223, 255, 131, 0.35);
+}
+
+.chat-composer {
+  background: rgba(28, 27, 43, 0.98);
+  border-top: 1px solid var(--line);
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { ChatScreen } from "@/components/screens/ChatScreen";
 import { HomeScreen } from "@/components/screens/HomeScreen";
 import { JoinScreen } from "@/components/screens/JoinScreen";
 import { LogMealScreen } from "@/components/screens/LogMealScreen";
@@ -7,12 +8,13 @@ import { QuestScreen } from "@/components/screens/QuestScreen";
 import { RankScreen } from "@/components/screens/RankScreen";
 import { RecapScreen } from "@/components/screens/RecapScreen";
 import { BunchProvider, useBunch } from "@/lib/bunch-context";
-import { Gift, Home, Sparkles } from "lucide-react";
+import { Gift, Home, MessageCircle, Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
 
 function Shell() {
-  const { screen, goTo, memberId } = useBunch();
+  const { screen, goTo, memberId, squad } = useBunch();
   const showNav = Boolean(memberId) && screen !== "join" && screen !== "log";
+  const chatCount = squad?.messages.filter((m) => m.kind === "chat").length ?? 0;
 
   return (
     <div className="phone-shell">
@@ -24,6 +26,7 @@ function Shell() {
         {screen === "quest" && <QuestScreen />}
         {screen === "rank" && <RankScreen />}
         {screen === "recap" && <RecapScreen />}
+        {screen === "chat" && <ChatScreen />}
       </div>
 
       {showNav ? (
@@ -33,6 +36,19 @@ function Shell() {
             label="Home"
             onClick={() => goTo("home")}
             icon={<Home className="h-4 w-4" />}
+          />
+          <NavBtn
+            active={screen === "chat"}
+            label="Chat"
+            onClick={() => goTo("chat")}
+            icon={
+              <span className="relative">
+                <MessageCircle className="h-4 w-4" />
+                {chatCount > 0 && screen !== "chat" ? (
+                  <span className="absolute -right-1.5 -top-1 h-2 w-2 rounded-full bg-[var(--lime)]" />
+                ) : null}
+              </span>
+            }
           />
           <NavBtn
             active={screen === "quest"}
@@ -68,7 +84,7 @@ function NavBtn({
       type="button"
       onClick={onClick}
       className={`flex flex-1 flex-col items-center gap-1 py-2 text-[11px] font-semibold transition ${
-        active ? "text-[var(--leaf-deep)]" : "text-[var(--ink-faint)]"
+        active ? "text-[var(--lime)]" : "text-[var(--ink-faint)]"
       }`}
     >
       {icon}
@@ -82,17 +98,17 @@ export function BunchApp() {
     <BunchProvider>
       <main className="app-stage">
         <div className="stage-copy">
-          <p className="font-display text-3xl text-[var(--leaf-deep)] md:text-4xl">
+          <p className="font-display text-3xl text-[var(--lime)] md:text-4xl">
             bunch
           </p>
           <p className="mt-2 max-w-sm text-sm leading-relaxed text-[var(--ink-muted)]">
-            Class demo for ~50 people. Everyone joins the same session code,
-            gets auto-matched into a squad, and progress syncs live.
+            Dark-mode class demo for ~50 people. Join a session, land in a
+            squad, chat live, and chase the weekly quest together.
           </p>
           <ol className="mt-5 hidden space-y-2 text-sm text-[var(--ink-muted)] md:block">
             <li>1. Enter your name + session code</li>
             <li>2. Get placed in a squad of ~4</li>
-            <li>3. Log lunch and share to the quest</li>
+            <li>3. Log lunch and talk it out in chat</li>
             <li>4. Watch teammates update in realtime</li>
             <li>5. Projector board at /live</li>
           </ol>

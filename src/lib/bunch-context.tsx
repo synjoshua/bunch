@@ -22,7 +22,8 @@ export type Screen =
   | "log"
   | "quest"
   | "rank"
-  | "recap";
+  | "recap"
+  | "chat";
 
 type SessionStats = {
   humanCount: number;
@@ -48,6 +49,7 @@ type BunchState = {
   }) => Promise<void>;
   shareExistingIdea: () => Promise<void>;
   fillDemoTeammates: () => Promise<void>;
+  sendChat: (text: string) => Promise<void>;
   startNextWeek: () => Promise<void>;
   leaveSession: () => void;
   refresh: () => Promise<void>;
@@ -247,6 +249,27 @@ export function BunchProvider({ children }: { children: ReactNode }) {
     }
   }, [applyState, memberId, sessionCode]);
 
+  const sendChat = useCallback(
+    async (text: string) => {
+      if (!memberId) return;
+      setLoading(true);
+      try {
+        const res = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sessionCode, memberId, text }),
+        });
+        const data = await parseJson(res);
+        applyState(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Could not send");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [applyState, memberId, sessionCode],
+  );
+
   const startNextWeek = useCallback(async () => {
     if (!memberId) return;
     setLoading(true);
@@ -291,6 +314,7 @@ export function BunchProvider({ children }: { children: ReactNode }) {
       saveMeal,
       shareExistingIdea,
       fillDemoTeammates,
+      sendChat,
       startNextWeek,
       leaveSession,
       refresh,
@@ -309,6 +333,7 @@ export function BunchProvider({ children }: { children: ReactNode }) {
       saveMeal,
       shareExistingIdea,
       fillDemoTeammates,
+      sendChat,
       startNextWeek,
       leaveSession,
       refresh,

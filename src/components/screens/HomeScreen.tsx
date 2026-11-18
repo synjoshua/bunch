@@ -3,7 +3,7 @@
 import { Avatar, Button, Pill, ProgressBar, SectionCard } from "@/components/ui";
 import { useBunch } from "@/lib/bunch-context";
 import { nextRank, rankForPoints } from "@/lib/types";
-import { Gift, Sparkles, Utensils, Users } from "lucide-react";
+import { Gift, MessageCircle, Sparkles, Utensils, Users } from "lucide-react";
 
 export function HomeScreen() {
   const {
@@ -35,7 +35,7 @@ export function HomeScreen() {
     <div className="px-5 pb-8 pt-6 animate-rise">
       <div className="flex items-center justify-between">
         <div>
-          <p className="font-display text-[1.75rem] leading-none text-[var(--leaf-deep)]">
+          <p className="font-display text-[1.75rem] leading-none text-[var(--lime)]">
             bunch
           </p>
           <p className="mt-1 text-xs font-medium text-[var(--ink-faint)]">
@@ -132,6 +132,27 @@ export function HomeScreen() {
         ) : null}
       </SectionCard>
 
+      <SectionCard className="mt-3 p-4" onClick={() => goTo("chat")}>
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--leaf-soft)] text-[var(--lime)]">
+            <MessageCircle className="h-5 w-5" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center justify-between gap-2">
+              <p className="font-semibold text-[var(--ink)]">Squad chat</p>
+              <p className="text-xs font-bold text-[var(--lime)]">
+                {squad.messages.length} msgs
+              </p>
+            </div>
+            <p className="truncate text-xs text-[var(--ink-muted)]">
+              {squad.messages.length
+                ? squad.messages[squad.messages.length - 1]?.text
+                : "Say hi and keep the streak social"}
+            </p>
+          </div>
+        </div>
+      </SectionCard>
+
       <SectionCard className="mt-3 p-4" onClick={() => goTo("quest")}>
         <div className="flex items-center gap-3">
           <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--lavender)] text-[var(--ralli)]">
@@ -191,8 +212,8 @@ export function HomeScreen() {
       </div>
 
       {you.goalDayComplete && you.sharedQuestToday ? (
-        <SectionCard className="mt-3 p-4 bg-[var(--leaf-soft)]/70 border-[var(--leaf)]/20">
-          <p className="text-sm font-semibold text-[var(--leaf-deep)]">
+        <SectionCard className="mt-3 p-4 bg-[var(--leaf-soft)] border-[var(--ralli)]/30">
+          <p className="text-sm font-semibold text-[var(--lime)]">
             Nice — that helped {squad.name}.
           </p>
           <p className="mt-1 text-xs text-[var(--ink-muted)]">

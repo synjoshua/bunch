@@ -19,6 +19,17 @@ export type MealIdea = {
   createdAt: number;
 };
 
+export type ChatMessage = {
+  id: string;
+  authorId: string;
+  authorName: string;
+  authorShort: string;
+  authorColor: string;
+  text: string;
+  kind: "chat" | "system" | "meal";
+  createdAt: number;
+};
+
 export type Member = {
   id: string;
   name: string;
@@ -43,6 +54,7 @@ export type Squad = {
   name: string;
   memberIds: string[];
   mealIdeas: MealIdea[];
+  messages: ChatMessage[];
   rankPoints: number;
   seasonWeeksHit: number;
   questsCompletedThisSeason: number;
@@ -77,6 +89,7 @@ export type SquadView = {
   weeklyGoalDays: number;
   weeklyGoalTarget: number;
   mealIdeas: MealIdea[];
+  messages: ChatMessage[];
   questTarget: number;
   rankPoints: number;
   seasonWeeksHit: number;

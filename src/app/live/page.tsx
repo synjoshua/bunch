@@ -58,7 +58,7 @@ export default function LivePage() {
       <div className="mx-auto max-w-6xl">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="font-display text-4xl text-[var(--leaf-deep)] md:text-5xl">
+            <p className="font-display text-4xl text-[var(--lime)] md:text-5xl">
               bunch live
             </p>
             <p className="mt-2 max-w-xl text-sm text-[var(--ink-muted)] md:text-base">
@@ -73,12 +73,12 @@ export default function LivePage() {
             <input
               value={code}
               onChange={(e) => setCode(e.target.value.toUpperCase())}
-              className="rounded-2xl border border-[var(--line)] bg-white/80 px-3 py-2 text-sm font-semibold tracking-[0.14em]"
+              className="rounded-2xl border border-[var(--line)] bg-[var(--card)] px-3 py-2 text-sm font-semibold tracking-[0.14em] text-[var(--ink)]"
               aria-label="Session code"
             />
             <Link
               href="/"
-              className="rounded-2xl bg-white/80 px-4 py-2 text-sm font-semibold text-[var(--ink)] border border-[var(--line)]"
+              className="rounded-2xl bg-[var(--card)] px-4 py-2 text-sm font-semibold text-[var(--ink)] border border-[var(--card-border)]"
             >
               Open player app
             </Link>
@@ -116,7 +116,7 @@ export default function LivePage() {
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {(board?.squads ?? []).length === 0 ? (
-            <div className="rounded-[28px] border border-white/70 bg-white/80 p-6 text-[var(--ink-muted)] shadow-sm sm:col-span-2 xl:col-span-3">
+            <div className="rounded-[28px] border border-[var(--card-border)] bg-[var(--card)] p-6 text-[var(--ink-muted)] shadow-sm sm:col-span-2 xl:col-span-3">
               Waiting for the first people to join. Ask the room to open the
               player app, enter a name, and use code{" "}
               <strong className="text-[var(--ink)]">{code || "BUNCH"}</strong>.
@@ -140,7 +140,7 @@ function Stat({
   subtle?: boolean;
 }) {
   return (
-    <div className="rounded-[24px] border border-white/70 bg-white/80 px-4 py-4 shadow-sm">
+    <div className="rounded-[24px] border border-[var(--card-border)] bg-[var(--card)] px-4 py-4 shadow-sm">
       <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--ink-faint)]">
         {label}
       </p>
@@ -160,7 +160,7 @@ function SquadCard({ squad }: { squad: LiveSquadCard }) {
     (squad.weeklyGoalDays / Math.max(1, squad.weeklyGoalTarget)) * 100,
   );
   return (
-    <article className="rounded-[28px] border border-white/70 bg-white/85 p-5 shadow-[0_12px_40px_rgba(28,52,40,0.08)]">
+    <article className="rounded-[28px] border border-[var(--card-border)] bg-[var(--card)] p-5 shadow-[0_12px_40px_rgba(0,0,0,0.28)]">
       <div className="flex items-start justify-between gap-3">
         <div>
           <h2 className="font-display text-2xl text-[var(--ink)]">{squad.name}</h2>
@@ -168,7 +168,7 @@ function SquadCard({ squad }: { squad: LiveSquadCard }) {
             {squad.memberCount} members · {squad.rankLabel} · ${squad.reward}
           </p>
         </div>
-        <span className="rounded-full bg-[var(--leaf-soft)] px-2.5 py-1 text-xs font-bold text-[var(--leaf-deep)]">
+        <span className="rounded-full bg-[var(--lime)] px-2.5 py-1 text-xs font-bold text-[#15141f]">
           {weekPct}%
         </span>
       </div>

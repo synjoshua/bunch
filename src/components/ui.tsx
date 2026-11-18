@@ -22,8 +22,8 @@ export function Button({
         variant === "primary" &&
           "bg-[var(--ralli)] text-white shadow-[0_12px_28px_rgba(91,80,232,0.35)] hover:brightness-105",
         variant === "secondary" &&
-          "bg-white text-[var(--ink)] border border-[var(--line)] shadow-sm",
-        variant === "soft" && "bg-[var(--lavender)] text-[var(--ralli)]",
+          "bg-[var(--surface)] text-[var(--ink)] border border-[var(--line)] shadow-sm",
+        variant === "soft" && "bg-[var(--leaf-soft)] text-[var(--leaf-deep)]",
         variant === "ghost" && "bg-transparent text-[var(--ink-muted)]",
         className,
       )}
@@ -47,7 +47,7 @@ export function ProgressBar({
   return (
     <div
       className={cn(
-        "h-3.5 w-full overflow-hidden rounded-full bg-[var(--lavender)]/70 border border-[var(--line)]",
+        "h-3.5 w-full overflow-hidden rounded-full bg-[var(--leaf-soft)] border border-[var(--line)]",
         className,
       )}
     >
@@ -84,7 +84,7 @@ export function Avatar({
         size === "sm" && "h-8 w-8 text-[11px]",
         size === "md" && "h-10 w-10 text-xs",
         size === "lg" && "h-12 w-12 text-sm",
-        ring && "ring-2 ring-white ring-offset-2 ring-offset-[var(--surface)]",
+        ring && "ring-2 ring-[var(--ralli)] ring-offset-2 ring-offset-[var(--surface)]",
       )}
       style={{ backgroundColor: color }}
     >
@@ -107,8 +107,8 @@ export function SectionCard({
     <Comp
       onClick={onClick}
       className={cn(
-        "w-full rounded-[22px] bg-white/90 border border-white/70 shadow-[0_8px_30px_rgba(28,52,40,0.06)] text-left",
-        onClick && "transition hover:shadow-[0_10px_34px_rgba(28,52,40,0.1)]",
+        "w-full rounded-[22px] bg-[var(--card)] border border-[var(--card-border)] shadow-[0_8px_30px_rgba(0,0,0,0.25)] text-left",
+        onClick && "transition hover:border-[var(--ralli)]/50",
         className,
       )}
     >
