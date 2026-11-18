@@ -186,6 +186,16 @@ export const SAMPLE_MEALS = [
   },
 ];
 
+/** Extra food shots for splash / home atmosphere */
+export const FOOD_SHOTS = [
+  "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=500&h=500&fit=crop",
+  "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=500&h=500&fit=crop",
+];
+
 export function rankForPoints(points: number): RankInfo {
   let current = RANKS[0];
   for (const rank of RANKS) {

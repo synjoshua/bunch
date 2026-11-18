@@ -8,13 +8,12 @@ import {
   SectionCard,
 } from "@/components/ui";
 import { useBunch } from "@/lib/bunch-context";
-import { rankForPoints } from "@/lib/types";
+import { FOOD_SHOTS, SAMPLE_MEALS, rankForPoints } from "@/lib/types";
 import {
   ArrowRight,
   Gift,
   MessageCircle,
   Sparkles,
-  Utensils,
   Users,
 } from "lucide-react";
 
@@ -40,7 +39,7 @@ export function HomeScreen() {
   if (!squad || !you) {
     return (
       <div className="px-5 py-10 text-sm text-[var(--ink-muted)]">
-        Loading your squad…
+        Loading your kitchen…
       </div>
     );
   }
@@ -55,44 +54,53 @@ export function HomeScreen() {
   const weekPct = Math.round(
     (squad.weeklyGoalDays / Math.max(1, squad.weeklyGoalTarget)) * 100,
   );
+  const pantry = squad.mealIdeas.length
+    ? squad.mealIdeas.slice(0, 6)
+    : SAMPLE_MEALS.map((m, i) => ({
+        id: `sample-${i}`,
+        title: m.name,
+        image: m.image,
+        protein: m.protein,
+        authorName: "kitchen",
+      }));
 
   const next: NextStep = needsTeammates
     ? {
         step: 1,
-        title: "Get your squad together",
-        detail: `${squad.members.length}/4 seats filled in ${squad.name}.`,
-        cta: "Fill my squad",
+        title: "Fill the table",
+        detail: `${squad.members.length}/4 seats at ${squad.name}.`,
+        cta: "Add kitchen friends",
         action: () => void fillDemoTeammates(),
       }
     : !you.mealLogged
       ? {
           step: 2,
-          title: "Log lunch for the squad",
-          detail: `Hit ${you.proteinTarget}g — teammates see it live.`,
-          cta: "Log lunch now",
+          title: "Log today's plate",
+          detail: `Hit ${you.proteinTarget}g protein — the squad levels up with you.`,
+          cta: "Snap / log lunch",
           action: () => goTo("log"),
         }
       : !you.sharedQuestToday
         ? {
             step: 3,
-            title: "Help the Recipe Relay",
-            detail: `Quest sits at ${squad.mealIdeas.length}/${squad.questTarget}.`,
-            cta: "Open quest",
+            title: "Drop a recipe in the quest",
+            detail: `Recipe Relay is ${squad.mealIdeas.length}/${squad.questTarget} plates.`,
+            cta: "Open kitchen quest",
             action: () => goTo("quest"),
           }
         : !saidHi
           ? {
               step: 4,
-              title: "Say hi in squad chat",
-              detail: "One message keeps the social loop warm.",
-              cta: "Open chat",
+              title: "Talk food in chat",
+              detail: "Trade tips, hype check-ins, ask what's for dinner.",
+              cta: "Open squad chat",
               action: () => goTo("chat"),
             }
           : {
               step: 5,
-              title: "You're caught up",
-              detail: "Check rewards or keep the chat going.",
-              cta: "See rewards",
+              title: "Table's looking good",
+              detail: "Peek at rewards or keep trading meal ideas.",
+              cta: "See food rewards",
               action: () => goTo("rank"),
             };
 
@@ -102,7 +110,7 @@ export function HomeScreen() {
         <div className="flex items-center gap-3">
           <Avatar short={you.short} color={you.color} size="lg" ring />
           <div>
-            <p className="text-sm text-[var(--ink-muted)]">Hey, {you.name}</p>
+            <p className="text-sm text-[var(--ink-muted)]">Hungry, {you.name}?</p>
             <p className="font-display text-xl leading-none text-[var(--ink)]">
               {squad.name}
             </p>
@@ -111,102 +119,137 @@ export function HomeScreen() {
         <span className="xp-chip">{squad.rankPoints} XP</span>
       </div>
 
-      <p className="mt-4 text-sm text-[var(--ink-muted)]">
-        You have{" "}
-        <span className="font-extrabold text-[var(--ink)] underline decoration-[var(--lime)] decoration-2 underline-offset-4">
-          {Math.max(0, 5 - you.goalDaysDone)} goal-days
-        </span>{" "}
-        left this week · code {sessionCode}
+      {/* Food strip */}
+      <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
+        {(pantry as Array<{ id: string; title?: string; name?: string; image: string; protein?: number }>).map(
+          (item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => goTo("quest")}
+              className="relative h-20 w-28 shrink-0 overflow-hidden rounded-[18px] border border-white/10"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={item.image}
+                alt={item.title || item.name || "meal"}
+                className="h-full w-full object-cover"
+              />
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-1.5 py-1">
+                <p className="truncate text-[9px] font-bold text-white">
+                  {item.title || item.name}
+                </p>
+              </div>
+            </button>
+          ),
+        )}
+      </div>
+      <p className="mt-1.5 text-[11px] text-[var(--ink-faint)]">
+        Squad pantry · tap for Recipe Relay · code {sessionCode}
       </p>
 
-      {/* Hero next-step — lime organic panel */}
-      <section className="lime-blob wavy-top mt-5 p-5 shadow-[0_20px_50px_rgba(223,255,131,0.2)]">
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <p className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-[var(--ink-on-bright)]/70">
-              Do this next · {next.step}/5
-            </p>
-            <h2 className="mt-2 font-display text-[1.55rem] leading-tight text-[var(--ink-on-bright)]">
-              {next.title}
-            </h2>
-            <p className="muted mt-1.5 text-sm leading-relaxed">{next.detail}</p>
-          </div>
-          <AvatarStack members={squad.members} />
-        </div>
-        <div className="mt-4 flex items-center justify-between gap-3">
-          <div>
-            <p className="text-xs font-bold text-[var(--ink-on-bright)]/70">
-              Squad week
-            </p>
-            <p className="font-display text-3xl text-[var(--ink-on-bright)]">
-              {squad.weeklyGoalDays}
-              <span className="text-lg opacity-70">
-                /{squad.weeklyGoalTarget}
-              </span>
-            </p>
-          </div>
-          <p className="rounded-full bg-[var(--ink-on-bright)]/10 px-3 py-1 text-sm font-extrabold text-[var(--ink-on-bright)]">
-            {weekPct}%
+      <section className="lime-blob wavy-top mt-4 overflow-hidden p-0 shadow-[0_20px_50px_rgba(223,255,131,0.2)]">
+        <div className="relative h-24 overflow-hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={FOOD_SHOTS[0]}
+            alt=""
+            className="h-full w-full object-cover opacity-90"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[var(--lime)] via-[var(--lime)]/70 to-transparent" />
+          <p className="absolute bottom-2 left-4 text-[11px] font-extrabold uppercase tracking-[0.14em] text-[var(--ink-on-bright)]/80">
+            Mission {next.step}/5
           </p>
         </div>
-        <ProgressBar
-          className="mt-3 h-4 border-0 bg-[var(--ink-on-bright)]/15"
-          value={squad.weeklyGoalDays}
-          max={Math.max(1, squad.weeklyGoalTarget)}
-          striped
-        />
-        <Button
-          className="mt-4 w-full"
-          size="lg"
-          variant="primary"
-          organic
-          disabled={loading && needsTeammates}
-          onClick={next.action}
-        >
-          {next.cta}
-          <ArrowRight className="h-4 w-4" />
-        </Button>
+        <div className="px-4 pb-4 pt-1">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <h2 className="font-display text-[1.45rem] leading-tight text-[var(--ink-on-bright)]">
+                {next.title}
+              </h2>
+              <p className="muted mt-1 text-sm leading-relaxed">{next.detail}</p>
+            </div>
+            <AvatarStack members={squad.members} />
+          </div>
+          <div className="mt-3 flex items-end justify-between">
+            <div>
+              <p className="text-xs font-bold text-[var(--ink-on-bright)]/70">
+                Table progress
+              </p>
+              <p className="font-display text-3xl text-[var(--ink-on-bright)]">
+                {squad.weeklyGoalDays}
+                <span className="text-lg opacity-70">
+                  /{squad.weeklyGoalTarget}
+                </span>
+              </p>
+            </div>
+            <p className="rounded-full bg-[var(--ink-on-bright)]/10 px-3 py-1 text-sm font-extrabold text-[var(--ink-on-bright)]">
+              {weekPct}%
+            </p>
+          </div>
+          <ProgressBar
+            className="mt-2 h-4 border-0 bg-[var(--ink-on-bright)]/15"
+            value={squad.weeklyGoalDays}
+            max={Math.max(1, squad.weeklyGoalTarget)}
+            striped
+          />
+          <Button
+            className="mt-3 w-full"
+            size="lg"
+            variant="primary"
+            organic
+            disabled={loading && needsTeammates}
+            onClick={next.action}
+          >
+            {next.cta}
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        </div>
       </section>
 
-      {/* Bento social */}
       <div className="bento mt-4">
-        <SectionCard className="p-4" onClick={() => goTo("chat")}>
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[var(--lime)] text-[var(--ink-on-bright)]">
-            <MessageCircle className="h-5 w-5" />
+        <SectionCard className="overflow-hidden p-0" onClick={() => goTo("chat")} glass={false}>
+          <div className="relative h-16">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={FOOD_SHOTS[5]} alt="" className="h-full w-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[var(--card-solid)] to-transparent" />
+            <div className="absolute bottom-2 left-3 flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--lime)] text-[var(--ink-on-bright)]">
+              <MessageCircle className="h-4 w-4" />
+            </div>
           </div>
-          <p className="mt-3 font-display text-lg text-[var(--ink)]">Chat</p>
-          <p className="mt-1 line-clamp-2 text-xs text-[var(--ink-muted)]">
-            {lastChat
-              ? `${lastChat.authorName}: ${lastChat.text}`
-              : "Hype, tips, check-ins"}
-          </p>
-          <div className="mt-3">
-            <AvatarStack members={squad.members} />
+          <div className="p-3 pt-2">
+            <p className="font-display text-lg text-[var(--ink)]">Table chat</p>
+            <p className="mt-0.5 line-clamp-2 text-xs text-[var(--ink-muted)]">
+              {lastChat
+                ? `${lastChat.authorName}: ${lastChat.text}`
+                : "Ask what’s for dinner"}
+            </p>
           </div>
         </SectionCard>
 
-        <SectionCard className="p-4" onClick={() => goTo("quest")}>
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[var(--ralli-deep)] text-[var(--cream)]">
-            <Sparkles className="h-5 w-5" />
+        <SectionCard className="overflow-hidden p-0" onClick={() => goTo("quest")} glass={false}>
+          <div className="relative h-16">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={FOOD_SHOTS[1]} alt="" className="h-full w-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[var(--card-solid)] to-transparent" />
+            <div className="absolute bottom-2 left-3 flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--ralli-deep)] text-[var(--cream)]">
+              <Sparkles className="h-4 w-4" />
+            </div>
           </div>
-          <p className="mt-3 font-display text-lg text-[var(--ink)]">Quest</p>
-          <p className="mt-1 font-display text-2xl text-[var(--peach)]">
-            {squad.mealIdeas.length}/{squad.questTarget}
-          </p>
-          <ProgressBar
-            className="mt-2"
-            value={squad.mealIdeas.length}
-            max={squad.questTarget}
-            tone="sky"
-          />
+          <div className="p-3 pt-2">
+            <p className="font-display text-lg text-[var(--ink)]">Kitchen quest</p>
+            <p className="font-display text-xl text-[var(--peach)]">
+              {squad.mealIdeas.length}/{squad.questTarget}
+            </p>
+          </div>
         </SectionCard>
       </div>
 
-      <SectionCard className="mt-3 p-4">
+      <SectionCard className="mt-3 p-4" glass={false}>
         <div className="flex items-center justify-between">
-          <p className="text-sm font-bold text-[var(--ink)]">Who&apos;s in</p>
+          <p className="text-sm font-bold text-[var(--ink)]">At the table</p>
           <p className="text-xs text-[var(--ink-faint)]">
-            {checkedIn}/{squad.members.length} checked in
+            {checkedIn}/{squad.members.length} ate / checked in
             {sessionStats ? ` · ${sessionStats.humanCount} in class` : ""}
           </p>
         </div>
@@ -237,55 +280,47 @@ export function HomeScreen() {
             onClick={() => void fillDemoTeammates()}
           >
             <Users className="h-4 w-4" />
-            Add demo friends
+            Pull up more seats
           </Button>
         ) : null}
       </SectionCard>
 
-      <div className="bento mt-3">
-        <SectionCard className="p-4">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-[var(--teal)]">
-            <Utensils className="h-4 w-4" />
+      <div className="mt-3 grid grid-cols-2 gap-3">
+        <SectionCard className="overflow-hidden p-0" glass={false}>
+          <div className="relative h-14">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={SAMPLE_MEALS[0].image}
+              alt=""
+              className="h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[var(--card-solid)] to-black/20" />
           </div>
-          <p className="mt-3 text-xs text-[var(--ink-faint)]">Your day</p>
-          <p className="font-display text-xl text-[var(--ink)]">
-            {Math.min(you.personalProtein, you.proteinTarget)}
-            <span className="text-sm text-[var(--ink-muted)]">
-              /{you.proteinTarget}g
-            </span>
-          </p>
+          <div className="p-3 pt-1">
+            <p className="text-xs text-[var(--ink-faint)]">Your fuel</p>
+            <p className="font-display text-xl text-[var(--ink)]">
+              {Math.min(you.personalProtein, you.proteinTarget)}
+              <span className="text-sm text-[var(--ink-muted)]">
+                /{you.proteinTarget}g
+              </span>
+            </p>
+          </div>
         </SectionCard>
-        <SectionCard className="p-4" onClick={() => goTo("rank")}>
+        <SectionCard
+          className="p-4"
+          onClick={() => goTo("rank")}
+          glass={false}
+        >
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--lime)] text-[var(--ink-on-bright)]">
             <Gift className="h-4 w-4" />
           </div>
-          <p className="mt-3 text-xs text-[var(--ink-faint)]">Rewards</p>
+          <p className="mt-3 text-xs text-[var(--ink-faint)]">Grocery loot</p>
           <p className="font-display text-xl text-[var(--ink)]">{rank.label}</p>
-          <p className="text-[11px] text-[var(--ink-muted)]">${rank.reward} path</p>
+          <p className="text-[11px] text-[var(--ink-muted)]">
+            ${rank.reward} gift card path
+          </p>
         </SectionCard>
       </div>
-
-      {you.goalDayComplete && you.sharedQuestToday ? (
-        <section className="purple-wave wavy-bottom mt-4 p-4">
-          <p className="font-display text-lg">Nice work with {squad.name}</p>
-          <p className="mt-1 text-sm text-white/80">
-            Logged, quested, and visible to teammates. Keep the chat rolling.
-          </p>
-          <div className="mt-3 grid grid-cols-2 gap-2">
-            <Button variant="lime" size="sm" organic onClick={() => goTo("chat")}>
-              Chat
-            </Button>
-            <Button
-              variant="secondary"
-              size="sm"
-              organic
-              onClick={() => goTo("recap")}
-            >
-              Recap
-            </Button>
-          </div>
-        </section>
-      ) : null}
 
       <Button
         className="mt-5 w-full"
@@ -294,7 +329,7 @@ export function HomeScreen() {
         organic
         onClick={() => goTo(you.mealLogged ? "chat" : "log")}
       >
-        {you.mealLogged ? "Continue in chat" : "Log lunch"}
+        {you.mealLogged ? "Back to table chat" : "Log today’s plate"}
         {you.mealLogged ? (
           <MessageCircle className="h-4 w-4" />
         ) : (

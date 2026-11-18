@@ -49,9 +49,9 @@ body {
 body {
   color: var(--foreground);
   background:
-    radial-gradient(ellipse 80% 50% at 0% 0%, rgba(91, 80, 232, 0.45), transparent 55%),
-    radial-gradient(ellipse 60% 40% at 100% 10%, rgba(126, 240, 216, 0.12), transparent 50%),
-    radial-gradient(ellipse 50% 35% at 70% 100%, rgba(223, 255, 131, 0.1), transparent 45%),
+    radial-gradient(ellipse 70% 45% at 5% 0%, rgba(255, 174, 152, 0.22), transparent 55%),
+    radial-gradient(ellipse 55% 40% at 95% 8%, rgba(223, 255, 131, 0.14), transparent 50%),
+    radial-gradient(ellipse 50% 35% at 60% 100%, rgba(91, 80, 232, 0.22), transparent 45%),
     #100f18;
   font-family: var(--font-body), system-ui, sans-serif;
 }
@@ -99,9 +99,10 @@ body {
   border-radius: 40px;
   overflow: hidden;
   background:
-    radial-gradient(120% 80% at 10% -10%, rgba(91, 80, 232, 0.55), transparent 50%),
-    radial-gradient(90% 60% at 110% 20%, rgba(223, 255, 131, 0.12), transparent 45%),
-    linear-gradient(180deg, #1a1730 0%, #12101f 55%, #0e0d18 100%);
+    radial-gradient(120% 80% at 10% -10%, rgba(255, 174, 152, 0.28), transparent 50%),
+    radial-gradient(90% 60% at 110% 15%, rgba(223, 255, 131, 0.16), transparent 45%),
+    radial-gradient(80% 50% at 50% 100%, rgba(91, 80, 232, 0.2), transparent 55%),
+    linear-gradient(180deg, #1c1728 0%, #14121f 55%, #0e0d16 100%);
   box-shadow:
     0 40px 90px rgba(0, 0, 0, 0.55),
     0 0 0 1px rgba(255, 255, 255, 0.08),
@@ -275,14 +276,10 @@ body {
 }
 
 .glass-card {
-  background: linear-gradient(
-    155deg,
-    rgba(255, 255, 255, 0.1),
-    rgba(255, 255, 255, 0.03)
-  );
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(16px) saturate(1.2);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+  /* warmer solid “menu board” panels — less startup glass */
+  background: linear-gradient(160deg, #2a2544 0%, #1e1a33 100%);
+  border: 1px solid rgba(255, 185, 166, 0.14);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.32);
 }
 
 .lime-blob {

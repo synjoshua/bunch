@@ -21,8 +21,8 @@ export function LogMealScreen() {
   return (
     <div className="px-5 pb-10 pt-6 animate-rise">
       <ScreenHeader
-        title="Log lunch"
-        subtitle="Step 1 for today: add a meal. Sharing helps the squad quest."
+        title="Log your plate"
+        subtitle="Photo the food, estimate protein, optionally share to the quest."
         onBack={() => goTo("home")}
       />
 
@@ -152,7 +152,7 @@ export function LogMealScreen() {
             : "Save to my day"}
       </Button>
       <p className="mt-3 text-center text-xs text-[var(--ink-faint)]">
-        After this: Home will tell you the next step (quest or chat).
+        Next up: kitchen quest or table chat — Home shows the mission.
       </p>
     </div>
   );

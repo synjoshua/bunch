@@ -1,8 +1,8 @@
 # bunch
 
-Class prototype for **bunch** — social nutrition and accountability for friend squads.
+Class prototype for **bunch** — a co-op food game for friend squads.
 
-People join the same session code, get auto-matched into groups of about four, log meals toward personal protein goals, and help finish a shared weekly quest. Consistency drives squad rank and a sample end-of-season gift-card reward.
+People join the same table code, get matched into groups of about four, log real plates toward protein goals, drop recipes in a shared kitchen quest, and chat at the table. Consistency unlocks grocery gift-card loot.
 
 Built for a live classroom demo (~50 people at once).
 

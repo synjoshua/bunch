@@ -6,10 +6,10 @@ import { Send } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 const QUICK = [
-  "Just checked in — you got this!",
-  "Anyone have an easy high-protein lunch?",
-  "I'm on for Recipe Relay today",
-  "Who still needs their goal-day?",
+  "What are you eating?",
+  "Easy high-protein lunch ideas?",
+  "I just logged my plate",
+  "Who still needs a goal-day?",
 ];
 
 export function ChatScreen() {
@@ -34,8 +34,8 @@ export function ChatScreen() {
     <div className="flex h-full min-h-full flex-col animate-rise">
       <div className="px-5 pt-6">
         <ScreenHeader
-          title="Squad chat"
-          subtitle={`Talk with ${squad.name} — tips, hype, and check-ins`}
+          title="Table chat"
+          subtitle={`${squad.name} — trade recipes, hype plates, check in`}
           onBack={() => goTo("home")}
         />
         <div className="mb-3 flex -space-x-2">

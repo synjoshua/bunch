@@ -19,8 +19,8 @@ export function RecapScreen() {
   return (
     <div className="px-5 pb-8 pt-6 animate-rise">
       <ScreenHeader
-        title="Weekly recap"
-        subtitle={`Week ${squad.weekNumber} · why coming back matters`}
+        title="Week at the table"
+        subtitle={`Week ${squad.weekNumber} · plates logged, quests cooked`}
         onBack={() => goTo("home")}
       />
 

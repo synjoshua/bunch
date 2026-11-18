@@ -33,7 +33,7 @@ function Shell() {
         <nav className="phone-nav">
           <NavBtn
             active={screen === "home" || screen === "recap"}
-            label="Home"
+            label="Table"
             onClick={() => goTo("home")}
             icon={<Home className="h-4 w-4" />}
           />
@@ -45,20 +45,20 @@ function Shell() {
               <span className="relative">
                 <MessageCircle className="h-4 w-4" />
                 {chatCount > 0 && screen !== "chat" ? (
-                  <span className="absolute -right-1.5 -top-1 h-2 w-2 rounded-full bg-[var(--ralli-deep)]" />
+                  <span className="absolute -right-1.5 -top-1 h-2 w-2 rounded-full bg-[var(--peach)]" />
                 ) : null}
               </span>
             }
           />
           <NavBtn
             active={screen === "quest"}
-            label="Quest"
+            label="Cook"
             onClick={() => goTo("quest")}
             icon={<Sparkles className="h-4 w-4" />}
           />
           <NavBtn
             active={screen === "rank"}
-            label="Rewards"
+            label="Loot"
             onClick={() => goTo("rank")}
             icon={<Gift className="h-4 w-4" />}
           />
@@ -102,14 +102,14 @@ export function BunchApp() {
         <div className="stage-copy">
           <p className="font-display text-4xl text-[var(--lime)]">bunch</p>
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-[var(--ink-muted)]">
-            Social nutrition with glass cards, live chat, and a next-step coach
-            that always points the way.
+            A co-op food game: log real plates, share recipes, chat at the table,
+            and climb ranks with your squad.
           </p>
           <ol className="mt-5 hidden space-y-2 text-sm text-[var(--ink-muted)] md:block">
-            <li>1. Get started with your name</li>
-            <li>2. Follow the lime &quot;Do this next&quot; card</li>
-            <li>3. Chat + quest with your squad</li>
-            <li>4. Watch the room on /live</li>
+            <li>1. Sit down with your name</li>
+            <li>2. Follow the lime mission card</li>
+            <li>3. Log food, quest, and chat</li>
+            <li>4. Watch the room cook on /live</li>
           </ol>
         </div>
         <Shell />

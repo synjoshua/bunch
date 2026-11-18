@@ -2,7 +2,7 @@
 
 import { Button, ProgressBar, ScreenHeader, SectionCard } from "@/components/ui";
 import { useBunch } from "@/lib/bunch-context";
-import { RANKS, nextRank, rankForPoints } from "@/lib/types";
+import { FOOD_SHOTS, RANKS, nextRank, rankForPoints } from "@/lib/types";
 import { Check } from "lucide-react";
 
 export function RankScreen() {
@@ -17,19 +17,38 @@ export function RankScreen() {
   return (
     <div className="px-5 pb-8 pt-6 animate-rise">
       <ScreenHeader
-        title="Rank & rewards"
-        subtitle="Consistency unlocks the gift card size"
+        title="Grocery loot"
+        subtitle="Hit goal-days → bigger gift cards for food"
         onBack={() => goTo("home")}
       />
 
-      <SectionCard className="p-5">
-        <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--ink-faint)]">
-          {squad.name} rank
-        </p>
-        <div className="mt-2 flex items-end justify-between gap-3">
-          <h2 className="font-display text-4xl text-[var(--ink)]">{rank.label}</h2>
+      <div className="relative mb-3 h-32 overflow-hidden rounded-[28px] border border-white/10">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={FOOD_SHOTS[3]} alt="" className="h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#12101c] via-[#12101c]/50 to-transparent" />
+        <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
+          <div>
+            <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-[var(--lime)]">
+              {squad.name}
+            </p>
+            <p className="font-display text-3xl text-white">{rank.label}</p>
+          </div>
+          <p className="rounded-full bg-[var(--lime)] px-3 py-1 text-xs font-extrabold text-[var(--ink-on-bright)]">
+            {squad.rankPoints} XP
+          </p>
+        </div>
+      </div>
+
+      <SectionCard className="p-5" glass={false}>
+        <div className="flex items-end justify-between gap-3">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--ink-faint)]">
+              Food reward path
+            </p>
+            <h2 className="mt-1 font-display text-3xl text-[var(--ink)]">${rank.reward}</h2>
+          </div>
           <p className="text-right text-sm text-[var(--ink-muted)]">
-            {squad.rankPoints} rank pts
+            gift card tier
           </p>
         </div>
         {upcoming ? (
