@@ -4,20 +4,17 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
 } from "react";
 import {
-  INITIAL_MEAL_IDEAS,
-  INITIAL_MEMBERS,
-  PERSONAL_PROTEIN_TARGET,
-  QUEST_TARGET,
-  SAMPLE_LUNCH,
-  WEEKLY_GOAL_TARGET,
-  type MealIdea,
+  DEFAULT_SESSION_CODE,
+  SAMPLE_MEALS,
   type Member,
-} from "./demo-data";
+  type SquadView,
+} from "./types";
 
 export type Screen =
   | "join"
@@ -27,209 +24,294 @@ export type Screen =
   | "rank"
   | "recap";
 
+type SessionStats = {
+  humanCount: number;
+  squadCount: number;
+  capacityHint: string;
+};
+
 type NoriState = {
   screen: Screen;
-  joined: boolean;
-  members: Member[];
-  mealIdeas: MealIdea[];
-  weeklyGoalDays: number;
-  personalProtein: number;
-  goalDayComplete: boolean;
-  sharedToQuest: boolean;
-  mealLogged: boolean;
-  seasonWeeksHit: number;
-  personalWeeksParticipated: number;
-  rankPoints: number;
-  questsCompletedThisSeason: number;
+  loading: boolean;
+  error: string | null;
+  sessionCode: string;
+  memberId: string | null;
+  you: Member | null;
+  squad: SquadView | null;
+  sessionStats: SessionStats | null;
   goTo: (screen: Screen) => void;
-  joinSquad: () => void;
-  saveMeal: (opts: { shareToQuest: boolean; protein: number; name: string }) => void;
-  shareExistingIdea: () => void;
-  startNextWeek: () => void;
-  resetDemo: () => void;
+  joinSquad: (name: string, code?: string) => Promise<void>;
+  saveMeal: (opts: {
+    shareToQuest: boolean;
+    protein: number;
+    name: string;
+  }) => Promise<void>;
+  shareExistingIdea: () => Promise<void>;
+  fillDemoTeammates: () => Promise<void>;
+  startNextWeek: () => Promise<void>;
+  leaveSession: () => void;
+  refresh: () => Promise<void>;
 };
+
+const STORAGE_KEY = "nori-demo-identity";
 
 const NoriContext = createContext<NoriState | null>(null);
 
-const INITIAL_PROTEIN = 82;
-const INITIAL_WEEKLY = 14;
-const INITIAL_RANK_POINTS = 12;
-const INITIAL_SEASON_WEEKS = 2;
-const INITIAL_PERSONAL_WEEKS = 2;
-const INITIAL_QUESTS_DONE = 2;
+async function parseJson(res: Response) {
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "Request failed");
+  return data;
+}
 
 export function NoriProvider({ children }: { children: ReactNode }) {
   const [screen, setScreen] = useState<Screen>("join");
-  const [joined, setJoined] = useState(false);
-  const [members, setMembers] = useState(INITIAL_MEMBERS);
-  const [mealIdeas, setMealIdeas] = useState(INITIAL_MEAL_IDEAS);
-  const [weeklyGoalDays, setWeeklyGoalDays] = useState(INITIAL_WEEKLY);
-  const [personalProtein, setPersonalProtein] = useState(INITIAL_PROTEIN);
-  const [goalDayComplete, setGoalDayComplete] = useState(false);
-  const [sharedToQuest, setSharedToQuest] = useState(false);
-  const [mealLogged, setMealLogged] = useState(false);
-  const [seasonWeeksHit, setSeasonWeeksHit] = useState(INITIAL_SEASON_WEEKS);
-  const [personalWeeksParticipated, setPersonalWeeksParticipated] = useState(
-    INITIAL_PERSONAL_WEEKS,
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [sessionCode, setSessionCode] = useState(DEFAULT_SESSION_CODE);
+  const [memberId, setMemberId] = useState<string | null>(null);
+  const [you, setYou] = useState<Member | null>(null);
+  const [squad, setSquad] = useState<SquadView | null>(null);
+  const [sessionStats, setSessionStats] = useState<SessionStats | null>(null);
+
+  const applyState = useCallback(
+    (data: {
+      sessionCode: string;
+      you: Member;
+      squad: SquadView;
+      sessionStats: SessionStats;
+    }) => {
+      setSessionCode(data.sessionCode);
+      setYou(data.you);
+      setSquad(data.squad);
+      setSessionStats(data.sessionStats);
+      setMemberId(data.you.id);
+      setError(null);
+    },
+    [],
   );
-  const [rankPoints, setRankPoints] = useState(INITIAL_RANK_POINTS);
-  const [questsCompletedThisSeason, setQuestsCompletedThisSeason] = useState(
-    INITIAL_QUESTS_DONE,
-  );
+
+  const refresh = useCallback(async () => {
+    if (!memberId) return;
+    try {
+      const res = await fetch(
+        `/api/state?session=${encodeURIComponent(sessionCode)}&memberId=${encodeURIComponent(memberId)}`,
+      );
+      const data = await parseJson(res);
+      applyState(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not refresh");
+    }
+  }, [applyState, memberId, sessionCode]);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const saved = JSON.parse(raw) as {
+        sessionCode: string;
+        memberId: string;
+      };
+      if (!saved.memberId || !saved.sessionCode) return;
+      setSessionCode(saved.sessionCode);
+      setMemberId(saved.memberId);
+      setLoading(true);
+      fetch(
+        `/api/state?session=${encodeURIComponent(saved.sessionCode)}&memberId=${encodeURIComponent(saved.memberId)}`,
+      )
+        .then(parseJson)
+        .then((data) => {
+          applyState(data);
+          setScreen("home");
+        })
+        .catch(() => {
+          localStorage.removeItem(STORAGE_KEY);
+          setMemberId(null);
+        })
+        .finally(() => setLoading(false));
+    } catch {
+      // ignore
+    }
+  }, [applyState]);
+
+  useEffect(() => {
+    if (!memberId || screen === "join") return;
+    const id = window.setInterval(() => {
+      void refresh();
+    }, 2000);
+    return () => window.clearInterval(id);
+  }, [memberId, refresh, screen]);
 
   const goTo = useCallback((next: Screen) => setScreen(next), []);
 
-  const joinSquad = useCallback(() => {
-    setJoined(true);
-    setScreen("home");
-  }, []);
-
-  const saveMeal = useCallback(
-    (opts: { shareToQuest: boolean; protein: number; name: string }) => {
-      const nextProtein = Math.min(
-        PERSONAL_PROTEIN_TARGET + 40,
-        personalProtein + opts.protein,
-      );
-      setPersonalProtein(nextProtein);
-      setMealLogged(true);
-
-      const completedNow =
-        !goalDayComplete && nextProtein >= PERSONAL_PROTEIN_TARGET;
-      if (completedNow) {
-        setGoalDayComplete(true);
-        setWeeklyGoalDays((d) => Math.min(WEEKLY_GOAL_TARGET, d + 1));
-        setMembers((prev) =>
-          prev.map((m) =>
-            m.isYou
-              ? {
-                  ...m,
-                  checkedInToday: true,
-                  goalDaysDone: Math.min(m.goalDaysPlanned, m.goalDaysDone + 1),
-                }
-              : m,
-          ),
+  const joinSquad = useCallback(
+    async (name: string, code = DEFAULT_SESSION_CODE) => {
+      setLoading(true);
+      setError(null);
+      try {
+        const joinRes = await fetch("/api/join", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, sessionCode: code }),
+        });
+        const joined = await parseJson(joinRes);
+        localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify({
+            sessionCode: joined.sessionCode,
+            memberId: joined.memberId,
+          }),
         );
-      } else if (!goalDayComplete) {
-        setMembers((prev) =>
-          prev.map((m) => (m.isYou ? { ...m, checkedInToday: true } : m)),
+        setSessionCode(joined.sessionCode);
+        setMemberId(joined.memberId);
+        const stateRes = await fetch(
+          `/api/state?session=${encodeURIComponent(joined.sessionCode)}&memberId=${encodeURIComponent(joined.memberId)}`,
         );
+        const state = await parseJson(stateRes);
+        applyState(state);
+        setScreen("home");
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Join failed");
+      } finally {
+        setLoading(false);
       }
-
-      if (opts.shareToQuest && !sharedToQuest) {
-        setSharedToQuest(true);
-        const idea: MealIdea = {
-          id: `you-${Date.now()}`,
-          authorId: "you",
-          title: opts.name,
-          protein: opts.protein,
-          tip: SAMPLE_LUNCH.tip,
-          image: SAMPLE_LUNCH.image,
-          dayLabel: "Today",
-        };
-        setMealIdeas((prev) => [...prev, idea]);
-        if (mealIdeas.length + 1 >= QUEST_TARGET) {
-          setQuestsCompletedThisSeason((q) => Math.min(4, q + 1));
-        }
-      }
-
-      setScreen("home");
     },
-    [goalDayComplete, mealIdeas.length, personalProtein, sharedToQuest],
+    [applyState],
   );
 
-  const shareExistingIdea = useCallback(() => {
-    if (sharedToQuest) {
+  const saveMeal = useCallback(
+    async (opts: {
+      shareToQuest: boolean;
+      protein: number;
+      name: string;
+    }) => {
+      if (!memberId) return;
+      setLoading(true);
+      try {
+        const res = await fetch("/api/meal", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sessionCode,
+            memberId,
+            mealName: opts.name,
+            protein: opts.protein,
+            shareToQuest: opts.shareToQuest,
+          }),
+        });
+        const data = await parseJson(res);
+        applyState(data);
+        setScreen("home");
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Could not save meal");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [applyState, memberId, sessionCode],
+  );
+
+  const shareExistingIdea = useCallback(async () => {
+    if (!memberId) return;
+    setLoading(true);
+    try {
+      const res = await fetch("/api/quest", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionCode, memberId }),
+      });
+      const data = await parseJson(res);
+      applyState(data);
       setScreen("quest");
-      return;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not share idea");
+    } finally {
+      setLoading(false);
     }
-    setSharedToQuest(true);
-    const idea: MealIdea = {
-      id: `you-${Date.now()}`,
-      authorId: "you",
-      title: SAMPLE_LUNCH.name,
-      protein: SAMPLE_LUNCH.protein,
-      tip: SAMPLE_LUNCH.tip,
-      image: SAMPLE_LUNCH.image,
-      dayLabel: "Today",
-    };
-    setMealIdeas((prev) => [...prev, idea]);
-    setScreen("quest");
-  }, [sharedToQuest]);
+  }, [applyState, memberId, sessionCode]);
 
-  const startNextWeek = useCallback(() => {
-    const percent = weeklyGoalDays / WEEKLY_GOAL_TARGET;
-    const weekSuccess = percent >= 0.75;
-    if (weekSuccess) {
-      setSeasonWeeksHit((w) => Math.min(4, w + 1));
-      setRankPoints((p) => p + 4);
+  const fillDemoTeammates = useCallback(async () => {
+    if (!memberId) return;
+    setLoading(true);
+    try {
+      const res = await fetch("/api/fill-bots", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionCode, memberId }),
+      });
+      const data = await parseJson(res);
+      applyState(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not fill squad");
+    } finally {
+      setLoading(false);
     }
-    if (mealLogged || goalDayComplete) {
-      setPersonalWeeksParticipated((w) => Math.min(4, w + 1));
-    }
-    if (mealIdeas.length >= QUEST_TARGET) {
-      setQuestsCompletedThisSeason((q) => Math.min(4, q + 1));
-    }
-    setScreen("home");
-  }, [goalDayComplete, mealIdeas.length, mealLogged, weeklyGoalDays]);
+  }, [applyState, memberId, sessionCode]);
 
-  const resetDemo = useCallback(() => {
+  const startNextWeek = useCallback(async () => {
+    if (!memberId) return;
+    setLoading(true);
+    try {
+      const res = await fetch("/api/week", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionCode, memberId }),
+      });
+      const data = await parseJson(res);
+      applyState(data);
+      setScreen("home");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not advance week");
+    } finally {
+      setLoading(false);
+    }
+  }, [applyState, memberId, sessionCode]);
+
+  const leaveSession = useCallback(() => {
+    localStorage.removeItem(STORAGE_KEY);
+    setMemberId(null);
+    setYou(null);
+    setSquad(null);
+    setSessionStats(null);
     setScreen("join");
-    setJoined(false);
-    setMembers(INITIAL_MEMBERS);
-    setMealIdeas(INITIAL_MEAL_IDEAS);
-    setWeeklyGoalDays(INITIAL_WEEKLY);
-    setPersonalProtein(INITIAL_PROTEIN);
-    setGoalDayComplete(false);
-    setSharedToQuest(false);
-    setMealLogged(false);
-    setSeasonWeeksHit(INITIAL_SEASON_WEEKS);
-    setPersonalWeeksParticipated(INITIAL_PERSONAL_WEEKS);
-    setRankPoints(INITIAL_RANK_POINTS);
-    setQuestsCompletedThisSeason(INITIAL_QUESTS_DONE);
+    setError(null);
   }, []);
 
   const value = useMemo(
     () => ({
       screen,
-      joined,
-      members,
-      mealIdeas,
-      weeklyGoalDays,
-      personalProtein,
-      goalDayComplete,
-      sharedToQuest,
-      mealLogged,
-      seasonWeeksHit,
-      personalWeeksParticipated,
-      rankPoints,
-      questsCompletedThisSeason,
+      loading,
+      error,
+      sessionCode,
+      memberId,
+      you,
+      squad,
+      sessionStats,
       goTo,
       joinSquad,
       saveMeal,
       shareExistingIdea,
+      fillDemoTeammates,
       startNextWeek,
-      resetDemo,
+      leaveSession,
+      refresh,
     }),
     [
       screen,
-      joined,
-      members,
-      mealIdeas,
-      weeklyGoalDays,
-      personalProtein,
-      goalDayComplete,
-      sharedToQuest,
-      mealLogged,
-      seasonWeeksHit,
-      personalWeeksParticipated,
-      rankPoints,
-      questsCompletedThisSeason,
+      loading,
+      error,
+      sessionCode,
+      memberId,
+      you,
+      squad,
+      sessionStats,
       goTo,
       joinSquad,
       saveMeal,
       shareExistingIdea,
+      fillDemoTeammates,
       startNextWeek,
-      resetDemo,
+      leaveSession,
+      refresh,
     ],
   );
 
@@ -241,3 +323,5 @@ export function useNori() {
   if (!ctx) throw new Error("useNori must be used within NoriProvider");
   return ctx;
 }
+
+export const DEMO_LUNCH = SAMPLE_MEALS[0];

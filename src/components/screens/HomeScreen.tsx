@@ -1,35 +1,35 @@
 "use client";
 
 import { Avatar, Button, Pill, ProgressBar, SectionCard } from "@/components/ui";
-import {
-  PERSONAL_PROTEIN_TARGET,
-  QUEST_TARGET,
-  SEASON_LABEL,
-  SQUAD_NAME,
-  WEEKLY_GOAL_TARGET,
-  nextRank,
-  rankForPoints,
-} from "@/lib/demo-data";
 import { useNori } from "@/lib/nori-context";
-import { Gift, Sparkles, Utensils } from "lucide-react";
+import { nextRank, rankForPoints } from "@/lib/types";
+import { Gift, Sparkles, Utensils, Users } from "lucide-react";
 
 export function HomeScreen() {
   const {
-    members,
-    mealIdeas,
-    weeklyGoalDays,
-    personalProtein,
-    goalDayComplete,
-    sharedToQuest,
-    mealLogged,
-    rankPoints,
+    squad,
+    you,
+    sessionCode,
+    sessionStats,
     goTo,
+    fillDemoTeammates,
+    loading,
   } = useNori();
 
-  const rank = rankForPoints(rankPoints);
-  const upcoming = nextRank(rankPoints);
-  const questCount = mealIdeas.length;
-  const weekPct = Math.round((weeklyGoalDays / WEEKLY_GOAL_TARGET) * 100);
+  if (!squad || !you) {
+    return (
+      <div className="px-5 py-10 text-sm text-[var(--ink-muted)]">
+        Loading your squad…
+      </div>
+    );
+  }
+
+  const rank = rankForPoints(squad.rankPoints);
+  const upcoming = nextRank(squad.rankPoints);
+  const weekPct = Math.round(
+    (squad.weeklyGoalDays / Math.max(1, squad.weeklyGoalTarget)) * 100,
+  );
+  const needsTeammates = squad.members.length < 4;
 
   return (
     <div className="px-5 pb-8 pt-6 animate-rise">
@@ -39,7 +39,7 @@ export function HomeScreen() {
             nori
           </p>
           <p className="mt-1 text-xs font-medium text-[var(--ink-faint)]">
-            {SEASON_LABEL}
+            Session {sessionCode} · Week {squad.weekNumber} of 4
           </p>
         </div>
         <button
@@ -53,11 +53,19 @@ export function HomeScreen() {
         </button>
       </div>
 
-      <SectionCard className="mt-5 p-4">
+      {sessionStats ? (
+        <p className="mt-3 text-xs text-[var(--ink-muted)]">
+          Class live: {sessionStats.humanCount} people in{" "}
+          {sessionStats.squadCount} squad
+          {sessionStats.squadCount === 1 ? "" : "s"}
+        </p>
+      ) : null}
+
+      <SectionCard className="mt-4 p-4">
         <div className="flex items-start justify-between gap-3">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--ink-faint)]">
-              {SQUAD_NAME}
+              {squad.name}
             </p>
             <h2 className="mt-1 font-display text-xl text-[var(--ink)]">
               Weekly goal-days
@@ -69,9 +77,9 @@ export function HomeScreen() {
         </div>
         <div className="mt-3 flex items-end justify-between">
           <p className="font-display text-3xl text-[var(--ink)]">
-            {weeklyGoalDays}
+            {squad.weeklyGoalDays}
             <span className="text-lg text-[var(--ink-muted)]">
-              /{WEEKLY_GOAL_TARGET}
+              /{squad.weeklyGoalTarget}
             </span>
           </p>
           <p className="text-xs text-[var(--ink-muted)]">
@@ -80,12 +88,12 @@ export function HomeScreen() {
         </div>
         <ProgressBar
           className="mt-3"
-          value={weeklyGoalDays}
-          max={WEEKLY_GOAL_TARGET}
+          value={squad.weeklyGoalDays}
+          max={Math.max(1, squad.weeklyGoalTarget)}
         />
 
         <div className="mt-4 grid grid-cols-4 gap-2">
-          {members.map((m) => (
+          {squad.members.map((m) => (
             <div key={m.id} className="text-center">
               <div className="relative mx-auto w-fit">
                 <Avatar short={m.short} color={m.color} size="md" />
@@ -96,7 +104,7 @@ export function HomeScreen() {
                 />
               </div>
               <p className="mt-1.5 truncate text-[11px] font-medium text-[var(--ink)]">
-                {m.name}
+                {m.isYou ? "You" : m.name}
               </p>
               <p className="text-[10px] text-[var(--ink-faint)]">
                 {m.goalDaysDone}/{m.goalDaysPlanned}
@@ -104,6 +112,19 @@ export function HomeScreen() {
             </div>
           ))}
         </div>
+
+        {needsTeammates ? (
+          <Button
+            className="mt-4 w-full"
+            variant="soft"
+            size="sm"
+            disabled={loading}
+            onClick={() => void fillDemoTeammates()}
+          >
+            <Users className="h-4 w-4" />
+            Fill open seats with demo friends
+          </Button>
+        ) : null}
       </SectionCard>
 
       <SectionCard className="mt-3 p-4" onClick={() => goTo("quest")}>
@@ -115,16 +136,16 @@ export function HomeScreen() {
             <div className="flex items-center justify-between gap-2">
               <p className="font-semibold text-[var(--ink)]">Recipe Relay</p>
               <p className="text-sm font-bold text-[var(--sky)]">
-                {questCount}/{QUEST_TARGET}
+                {squad.mealIdeas.length}/{squad.questTarget}
               </p>
             </div>
             <p className="text-xs text-[var(--ink-muted)]">
-              Weekly squad quest · tap to open
+              Weekly squad quest · live for your group
             </p>
             <ProgressBar
               className="mt-2"
-              value={questCount}
-              max={QUEST_TARGET}
+              value={squad.mealIdeas.length}
+              max={squad.questTarget}
               tone="sky"
             />
           </div>
@@ -137,9 +158,7 @@ export function HomeScreen() {
             <Gift className="h-4 w-4" />
           </div>
           <p className="mt-3 text-xs text-[var(--ink-faint)]">Possible reward</p>
-          <p className="font-display text-xl text-[var(--ink)]">
-            ${rank.reward}
-          </p>
+          <p className="font-display text-xl text-[var(--ink)]">${rank.reward}</p>
           <p className="mt-0.5 text-[11px] leading-snug text-[var(--ink-muted)]">
             {upcoming
               ? `${upcoming.label} unlocks $${upcoming.reward}`
@@ -153,27 +172,28 @@ export function HomeScreen() {
           </div>
           <p className="mt-3 text-xs text-[var(--ink-faint)]">Your day</p>
           <p className="font-display text-xl text-[var(--ink)]">
-            {Math.min(personalProtein, PERSONAL_PROTEIN_TARGET)}
+            {Math.min(you.personalProtein, you.proteinTarget)}
             <span className="text-sm text-[var(--ink-muted)]">
-              /{PERSONAL_PROTEIN_TARGET}g
+              /{you.proteinTarget}g
             </span>
           </p>
           <p className="mt-0.5 text-[11px] leading-snug text-[var(--ink-muted)]">
-            {goalDayComplete
+            {you.goalDayComplete
               ? "Goal-day complete — squad +1"
-              : `${PERSONAL_PROTEIN_TARGET - personalProtein}g to finish today`}
+              : `${Math.max(0, you.proteinTarget - you.personalProtein)}g to finish today`}
           </p>
         </SectionCard>
       </div>
 
-      {goalDayComplete && sharedToQuest ? (
+      {you.goalDayComplete && you.sharedQuestToday ? (
         <SectionCard className="mt-3 p-4 bg-[var(--leaf-soft)]/70 border-[var(--leaf)]/20">
           <p className="text-sm font-semibold text-[var(--leaf-deep)]">
-            Nice — lunch helped the squad.
+            Nice — that helped {squad.name}.
           </p>
           <p className="mt-1 text-xs text-[var(--ink-muted)]">
-            Goal-days {weeklyGoalDays}/{WEEKLY_GOAL_TARGET} · Quest {questCount}/
-            {QUEST_TARGET}. Peek at the weekly recap when you&apos;re ready.
+            Goal-days {squad.weeklyGoalDays}/{squad.weeklyGoalTarget} · Quest{" "}
+            {squad.mealIdeas.length}/{squad.questTarget}. Teammates see this
+            update live.
           </p>
           <Button
             className="mt-3 w-full"
@@ -187,7 +207,7 @@ export function HomeScreen() {
       ) : null}
 
       <Button className="mt-5 w-full" size="lg" onClick={() => goTo("log")}>
-        {mealLogged ? "Log another meal" : "Log lunch"}
+        {you.mealLogged ? "Log another meal" : "Log lunch"}
       </Button>
     </div>
   );

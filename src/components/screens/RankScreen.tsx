@@ -1,27 +1,18 @@
 "use client";
 
 import { Button, ProgressBar, ScreenHeader, SectionCard } from "@/components/ui";
-import { RANKS, nextRank, rankForPoints } from "@/lib/demo-data";
 import { useNori } from "@/lib/nori-context";
+import { RANKS, nextRank, rankForPoints } from "@/lib/types";
 import { Check } from "lucide-react";
 
 export function RankScreen() {
-  const {
-    goTo,
-    rankPoints,
-    seasonWeeksHit,
-    personalWeeksParticipated,
-    questsCompletedThisSeason,
-    mealIdeas,
-  } = useNori();
+  const { goTo, squad, you } = useNori();
+  if (!squad || !you) return null;
 
-  const rank = rankForPoints(rankPoints);
-  const upcoming = nextRank(rankPoints);
-  const questBonusReady = questsCompletedThisSeason >= 3 || mealIdeas.length >= 12;
-  const projected =
-    rank.reward + (questsCompletedThisSeason >= 3 || mealIdeas.length >= 12 ? 1 : 0);
-  const squadEligiblePreview = seasonWeeksHit >= 2;
-  const personalEligiblePreview = personalWeeksParticipated >= 2;
+  const rank = rankForPoints(squad.rankPoints);
+  const upcoming = nextRank(squad.rankPoints);
+  const questBonusReady = squad.questsCompletedThisSeason >= 3;
+  const projected = rank.reward + (questBonusReady ? 1 : 0);
 
   return (
     <div className="px-5 pb-8 pt-6 animate-rise">
@@ -33,12 +24,12 @@ export function RankScreen() {
 
       <SectionCard className="p-5">
         <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--ink-faint)]">
-          Current squad rank
+          {squad.name} rank
         </p>
         <div className="mt-2 flex items-end justify-between gap-3">
           <h2 className="font-display text-4xl text-[var(--ink)]">{rank.label}</h2>
           <p className="text-right text-sm text-[var(--ink-muted)]">
-            {rankPoints} rank pts
+            {squad.rankPoints} rank pts
           </p>
         </div>
         {upcoming ? (
@@ -46,13 +37,13 @@ export function RankScreen() {
             <div className="flex justify-between text-xs text-[var(--ink-muted)]">
               <span>Next: {upcoming.label}</span>
               <span>
-                {rankPoints}/{upcoming.pointsNeeded} pts
+                {squad.rankPoints}/{upcoming.pointsNeeded} pts
               </span>
             </div>
             <ProgressBar
               className="mt-2"
-              value={rankPoints - rank.pointsNeeded}
-              max={upcoming.pointsNeeded - rank.pointsNeeded}
+              value={squad.rankPoints - rank.pointsNeeded}
+              max={Math.max(1, upcoming.pointsNeeded - rank.pointsNeeded)}
               tone="amber"
             />
           </div>
@@ -120,31 +111,30 @@ export function RankScreen() {
         <p className="mt-2 text-xs leading-relaxed text-[var(--ink-muted)]">
           Base ${rank.reward} from {rank.label}
           {questBonusReady
-            ? " · includes quest bonus path (+$1 if 3/4 quests finish)"
+            ? " · quest bonus included"
             : " · finish 3/4 quests for +$1"}
           . Not earned until season rules are met.
         </p>
 
         <div className="mt-4 space-y-2">
           <EligibilityRow
-            ok={squadEligiblePreview}
-            label={`Squad weeks on target · ${seasonWeeksHit}/4 (need 3)`}
+            ok={squad.seasonWeeksHit >= 2}
+            label={`Squad weeks on target · ${squad.seasonWeeksHit}/4 (need 3)`}
           />
           <EligibilityRow
-            ok={personalEligiblePreview}
-            label={`Your participation · ${personalWeeksParticipated}/4 (need 3)`}
+            ok={you.weeksParticipated >= 2}
+            label={`Your participation · ${you.weeksParticipated}/4 (need 3)`}
           />
           <EligibilityRow
-            ok={questsCompletedThisSeason >= 3}
-            label={`Quest bonus track · ${questsCompletedThisSeason}/4 weeks`}
+            ok={questBonusReady}
+            label={`Quest bonus track · ${squad.questsCompletedThisSeason}/4 weeks`}
           />
         </div>
       </SectionCard>
 
       <div className="mt-4 rounded-2xl bg-white/70 px-4 py-3 text-xs leading-relaxed text-[var(--ink-muted)] border border-white/80">
-        Weekly score = % of scheduled personal goal-days completed. Extra food,
-        surplus protein, or repeat photos do not add rank points. Private logs
-        are never penalized.
+        Weekly score = % of scheduled personal goal-days completed. Extra food
+        does not add rank points. Private logs are never penalized.
       </div>
 
       <Button className="mt-5 w-full" variant="secondary" onClick={() => goTo("recap")}>

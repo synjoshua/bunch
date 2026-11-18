@@ -11,10 +11,8 @@ import { Gift, Home, Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
 
 function Shell() {
-  const { screen, goTo, joined } = useNori();
-
-  const showNav =
-    joined && screen !== "join" && screen !== "log";
+  const { screen, goTo, memberId } = useNori();
+  const showNav = Boolean(memberId) && screen !== "join" && screen !== "log";
 
   return (
     <div className="phone-shell">
@@ -88,15 +86,15 @@ export function NoriApp() {
             nori
           </p>
           <p className="mt-2 max-w-sm text-sm leading-relaxed text-[var(--ink-muted)]">
-            Social nutrition prototype — log a meal, help your squad, finish the
-            quest, and see why consistency earns the reward.
+            Class demo for ~50 people. Everyone joins the same session code,
+            gets auto-matched into a squad, and progress syncs live.
           </p>
           <ol className="mt-5 hidden space-y-2 text-sm text-[var(--ink-muted)] md:block">
-            <li>1. Join Protein Pod</li>
-            <li>2. Log lunch (share to quest)</li>
-            <li>3. Watch goal-days & quest move</li>
-            <li>4. Check rank reward preview</li>
-            <li>5. Open the weekly recap</li>
+            <li>1. Enter your name + session code</li>
+            <li>2. Get placed in a squad of ~4</li>
+            <li>3. Log lunch and share to the quest</li>
+            <li>4. Watch teammates update in realtime</li>
+            <li>5. Projector board at /live</li>
           </ol>
         </div>
         <Shell />

@@ -177,3 +177,10 @@ body {
     display: none;
   }
 }
+
+.live-stage {
+  background:
+    radial-gradient(1000px 500px at 0% 0%, #f4faf6 0%, transparent 55%),
+    radial-gradient(800px 420px at 100% 10%, #dff0e6 0%, transparent 50%),
+    linear-gradient(165deg, #eef6f1 0%, #e3ede7 45%, #dce8e1 100%);
+}

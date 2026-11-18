@@ -1,32 +1,22 @@
 "use client";
 
 import { Button, ProgressBar, ScreenHeader, SectionCard } from "@/components/ui";
-import {
-  PERSONAL_PROTEIN_TARGET,
-  SAMPLE_LUNCH,
-} from "@/lib/demo-data";
-import { useNori } from "@/lib/nori-context";
+import { DEMO_LUNCH, useNori } from "@/lib/nori-context";
 import { Camera, Minus, Plus } from "lucide-react";
 import { useState } from "react";
 
 export function LogMealScreen() {
-  const { goTo, saveMeal, personalProtein, sharedToQuest, goalDayComplete } =
-    useNori();
-  const [name, setName] = useState(SAMPLE_LUNCH.name);
-  const [protein, setProtein] = useState(SAMPLE_LUNCH.protein);
-  const [share, setShare] = useState(!sharedToQuest);
-  const [saving, setSaving] = useState(false);
+  const { goTo, saveMeal, you, loading } = useNori();
+  const [name, setName] = useState(DEMO_LUNCH.name);
+  const [protein, setProtein] = useState(DEMO_LUNCH.protein);
+  const [share, setShare] = useState(true);
 
-  const projected = personalProtein + protein;
+  if (!you) return null;
+
+  const projected = you.personalProtein + protein;
   const willComplete =
-    !goalDayComplete && projected >= PERSONAL_PROTEIN_TARGET;
-
-  const onSave = () => {
-    setSaving(true);
-    window.setTimeout(() => {
-      saveMeal({ shareToQuest: share && !sharedToQuest, protein, name });
-    }, 350);
-  };
+    !you.goalDayComplete && projected >= you.proteinTarget;
+  const shareLocked = you.sharedQuestToday;
 
   return (
     <div className="px-5 pb-10 pt-6 animate-rise">
@@ -40,7 +30,7 @@ export function LogMealScreen() {
         <div className="relative aspect-[4/3] bg-[var(--leaf-soft)]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={SAMPLE_LUNCH.image}
+            src={DEMO_LUNCH.image}
             alt={name}
             className="h-full w-full object-cover"
           />
@@ -99,30 +89,31 @@ export function LogMealScreen() {
               </Button>
             </div>
             <p className="mt-2 text-xs text-[var(--ink-muted)]">
-              Today after save: {Math.min(projected, PERSONAL_PROTEIN_TARGET + 40)}
-              g / {PERSONAL_PROTEIN_TARGET}g
+              Today after save:{" "}
+              {Math.min(projected, you.proteinTarget + 40)}g / {you.proteinTarget}
+              g
               {willComplete ? " · completes your goal-day" : ""}
             </p>
           </div>
 
           <button
             type="button"
-            onClick={() => !sharedToQuest && setShare((s) => !s)}
-            disabled={sharedToQuest}
+            onClick={() => !shareLocked && setShare((s) => !s)}
+            disabled={shareLocked}
             className={`flex w-full items-start gap-3 rounded-2xl border px-3.5 py-3 text-left transition ${
-              share && !sharedToQuest
+              share && !shareLocked
                 ? "border-[var(--sky)] bg-[var(--sky-soft)]"
                 : "border-[var(--line)] bg-[var(--surface)]"
-            } ${sharedToQuest ? "opacity-60" : ""}`}
+            } ${shareLocked ? "opacity-60" : ""}`}
           >
             <span
               className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border ${
-                share || sharedToQuest
+                share || shareLocked
                   ? "border-[var(--sky)] bg-[var(--sky)] text-white"
                   : "border-[var(--line)] bg-white"
               }`}
             >
-              {(share || sharedToQuest) && (
+              {(share || shareLocked) && (
                 <span className="text-[11px] font-bold">✓</span>
               )}
             </span>
@@ -131,9 +122,9 @@ export function LogMealScreen() {
                 Share to squad quest
               </span>
               <span className="mt-0.5 block text-xs text-[var(--ink-muted)]">
-                {sharedToQuest
+                {shareLocked
                   ? "You already contributed today — one quest post per day."
-                  : "Counts toward Recipe Relay (max 1 post/day). Tip stays in the squad collection."}
+                  : "Counts toward Recipe Relay for everyone in your squad."}
               </span>
             </span>
           </button>
@@ -143,10 +134,16 @@ export function LogMealScreen() {
       <Button
         className="mt-5 w-full"
         size="lg"
-        disabled={saving || !name.trim()}
-        onClick={onSave}
+        disabled={loading || !name.trim()}
+        onClick={() =>
+          void saveMeal({
+            shareToQuest: share && !shareLocked,
+            protein,
+            name,
+          })
+        }
       >
-        {saving ? "Saving…" : "Save meal"}
+        {loading ? "Saving…" : "Save meal"}
       </Button>
       <p className="mt-3 text-center text-xs text-[var(--ink-faint)]">
         Extra protein past your target doesn&apos;t add rank points.

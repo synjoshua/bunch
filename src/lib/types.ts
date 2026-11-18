@@ -1,0 +1,195 @@
+export type RankId = "bronze" | "silver" | "gold" | "platinum";
+
+export type RankInfo = {
+  id: RankId;
+  label: string;
+  reward: number;
+  pointsNeeded: number;
+};
+
+export type MealIdea = {
+  id: string;
+  authorId: string;
+  authorName: string;
+  title: string;
+  protein: number;
+  tip: string;
+  image: string;
+  dayLabel: string;
+  createdAt: number;
+};
+
+export type Member = {
+  id: string;
+  name: string;
+  short: string;
+  color: string;
+  squadId: string | null;
+  isBot: boolean;
+  proteinTarget: number;
+  personalProtein: number;
+  goalDayComplete: boolean;
+  goalDaysDone: number;
+  goalDaysPlanned: number;
+  sharedQuestToday: boolean;
+  mealLogged: boolean;
+  weeksParticipated: number;
+  joinedAt: number;
+  lastSeenAt: number;
+};
+
+export type Squad = {
+  id: string;
+  name: string;
+  memberIds: string[];
+  mealIdeas: MealIdea[];
+  rankPoints: number;
+  seasonWeeksHit: number;
+  questsCompletedThisSeason: number;
+  weekNumber: number;
+  open: boolean;
+};
+
+export type Session = {
+  code: string;
+  createdAt: number;
+  members: Record<string, Member>;
+  squads: Record<string, Squad>;
+};
+
+export type SquadView = {
+  id: string;
+  name: string;
+  members: Array<{
+    id: string;
+    name: string;
+    short: string;
+    color: string;
+    isYou: boolean;
+    isBot: boolean;
+    checkedInToday: boolean;
+    goalDaysDone: number;
+    goalDaysPlanned: number;
+    personalProtein: number;
+    proteinTarget: number;
+    goalDayComplete: boolean;
+  }>;
+  weeklyGoalDays: number;
+  weeklyGoalTarget: number;
+  mealIdeas: MealIdea[];
+  questTarget: number;
+  rankPoints: number;
+  seasonWeeksHit: number;
+  questsCompletedThisSeason: number;
+  weekNumber: number;
+  open: boolean;
+};
+
+export type LiveSquadCard = {
+  id: string;
+  name: string;
+  memberCount: number;
+  memberNames: string[];
+  weeklyGoalDays: number;
+  weeklyGoalTarget: number;
+  questCount: number;
+  questTarget: number;
+  rankLabel: string;
+  reward: number;
+};
+
+export const RANKS: RankInfo[] = [
+  { id: "bronze", label: "Bronze", reward: 1, pointsNeeded: 0 },
+  { id: "silver", label: "Silver", reward: 2, pointsNeeded: 8 },
+  { id: "gold", label: "Gold", reward: 3, pointsNeeded: 16 },
+  { id: "platinum", label: "Platinum", reward: 5, pointsNeeded: 24 },
+];
+
+export const QUEST_TARGET = 12;
+export const GOAL_DAYS_PER_PERSON = 5;
+export const SQUAD_SIZE = 4;
+export const SQUAD_MAX = 5;
+export const DEFAULT_PROTEIN_TARGET = 120;
+export const DEFAULT_SESSION_CODE = "NORI";
+export const SEASON_WEEKS = 4;
+
+export const SQUAD_NAMES = [
+  "Protein Pod",
+  "Leaf League",
+  "Macro Mates",
+  "Bite Crew",
+  "Green Goalers",
+  "Plate Patrol",
+  "Fuel Friends",
+  "Snack Squad",
+  "Bowl Bunch",
+  "Nori Nest",
+  "Daily Dozen",
+  "Quest Quartet",
+  "Rank Raisers",
+  "Meal Movers",
+  "Consistency Club",
+];
+
+export const AVATAR_COLORS = [
+  "#2F6B4F",
+  "#C46B3A",
+  "#3A6EA5",
+  "#7A5C9E",
+  "#B4534B",
+  "#2F8F7B",
+  "#8A6D3B",
+  "#4C6FA8",
+];
+
+export const SAMPLE_MEALS = [
+  {
+    name: "Chicken quinoa bowl",
+    protein: 38,
+    tip: "Swap quinoa for farro if you want more chew.",
+    image:
+      "https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&h=400&fit=crop",
+  },
+  {
+    name: "Greek yogurt parfait",
+    protein: 28,
+    tip: "Add hemp seeds for +10g.",
+    image:
+      "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&h=300&fit=crop",
+  },
+  {
+    name: "Tofu scramble wrap",
+    protein: 31,
+    tip: "Extra-firm tofu holds better.",
+    image:
+      "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop",
+  },
+  {
+    name: "Turkey chili",
+    protein: 36,
+    tip: "Freezes well for busy weeks.",
+    image:
+      "https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=400&h=300&fit=crop",
+  },
+];
+
+export function rankForPoints(points: number): RankInfo {
+  let current = RANKS[0];
+  for (const rank of RANKS) {
+    if (points >= rank.pointsNeeded) current = rank;
+  }
+  return current;
+}
+
+export function nextRank(points: number): RankInfo | null {
+  const current = rankForPoints(points);
+  const idx = RANKS.findIndex((r) => r.id === current.id);
+  return RANKS[idx + 1] ?? null;
+}
+
+export function initials(name: string) {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return "??";
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[1][0]).toUpperCase();
+}

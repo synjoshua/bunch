@@ -1,36 +1,26 @@
 "use client";
 
 import { Button, ProgressBar, ScreenHeader, SectionCard } from "@/components/ui";
-import {
-  QUEST_TARGET,
-  WEEKLY_GOAL_TARGET,
-  rankForPoints,
-} from "@/lib/demo-data";
 import { useNori } from "@/lib/nori-context";
+import { rankForPoints } from "@/lib/types";
 
 export function RecapScreen() {
-  const {
-    goTo,
-    weeklyGoalDays,
-    mealIdeas,
-    goalDayComplete,
-    sharedToQuest,
-    rankPoints,
-    startNextWeek,
-    resetDemo,
-  } = useNori();
+  const { goTo, squad, you, startNextWeek, leaveSession, loading } = useNori();
+  if (!squad || !you) return null;
 
-  const weekPct = Math.round((weeklyGoalDays / WEEKLY_GOAL_TARGET) * 100);
+  const weekPct = Math.round(
+    (squad.weeklyGoalDays / Math.max(1, squad.weeklyGoalTarget)) * 100,
+  );
   const weekSuccess = weekPct >= 75;
-  const questDone = mealIdeas.length >= QUEST_TARGET;
+  const questDone = squad.mealIdeas.length >= squad.questTarget;
   const pointsThisWeek = weekSuccess ? 4 : weekPct >= 50 ? 2 : 0;
-  const rank = rankForPoints(rankPoints);
+  const rank = rankForPoints(squad.rankPoints);
 
   return (
     <div className="px-5 pb-8 pt-6 animate-rise">
       <ScreenHeader
         title="Weekly recap"
-        subtitle="Week 3 · why coming back matters"
+        subtitle={`Week ${squad.weekNumber} · why coming back matters`}
         onBack={() => goTo("home")}
       />
 
@@ -39,17 +29,17 @@ export function RecapScreen() {
           Goal-days completed
         </p>
         <p className="mt-2 font-display text-4xl text-[var(--ink)]">
-          {weeklyGoalDays}/{WEEKLY_GOAL_TARGET}
+          {squad.weeklyGoalDays}/{squad.weeklyGoalTarget}
         </p>
         <ProgressBar
           className="mt-3"
-          value={weeklyGoalDays}
-          max={WEEKLY_GOAL_TARGET}
+          value={squad.weeklyGoalDays}
+          max={Math.max(1, squad.weeklyGoalTarget)}
         />
         <p className="mt-3 text-sm text-[var(--ink-muted)]">
           {weekSuccess
             ? "On track for a successful week — rank points inbound."
-            : "Keep logging goal-days. Rank points follow consistency, not volume."}
+            : "Keep logging goal-days. Rank points follow consistency."}
         </p>
       </SectionCard>
 
@@ -60,18 +50,18 @@ export function RecapScreen() {
             +{pointsThisWeek}
           </p>
           <p className="mt-1 text-[11px] text-[var(--ink-muted)]">
-            Projected if the week closes like this · {rank.label} stays in play
+            Projected close · {rank.label}
           </p>
         </SectionCard>
         <SectionCard className="p-4">
           <p className="text-xs text-[var(--ink-faint)]">Quest result</p>
           <p className="mt-1 font-display text-2xl text-[var(--ink)]">
-            {mealIdeas.length}/{QUEST_TARGET}
+            {squad.mealIdeas.length}/{squad.questTarget}
           </p>
           <p className="mt-1 text-[11px] text-[var(--ink-muted)]">
             {questDone
               ? "Recipe Relay complete"
-              : sharedToQuest
+              : you.sharedQuestToday
                 ? "Your idea counted today"
                 : "Still room to contribute"}
           </p>
@@ -79,19 +69,21 @@ export function RecapScreen() {
       </div>
 
       <SectionCard className="mt-3 p-4">
-        <p className="text-sm font-semibold text-[var(--ink)]">This week&apos;s story</p>
+        <p className="text-sm font-semibold text-[var(--ink)]">
+          This week&apos;s story
+        </p>
         <ul className="mt-3 space-y-2.5 text-sm text-[var(--ink-muted)]">
           <li className="flex gap-2">
             <span className="text-[var(--leaf)]">1.</span>
-            {goalDayComplete
-              ? "You finished a personal goal-day — the squad moved to 15/20."
-              : "Log enough protein to finish your goal-day and bump the squad total."}
+            {you.goalDayComplete
+              ? "You finished a personal goal-day and moved the squad total."
+              : "Log enough protein to finish your goal-day for the squad."}
           </li>
           <li className="flex gap-2">
             <span className="text-[var(--leaf)]">2.</span>
-            {sharedToQuest
-              ? "Your shared meal advanced Recipe Relay and joined the collection."
-              : "Share one meal idea to help the quest without needing comments."}
+            {you.sharedQuestToday
+              ? "Your shared meal advanced Recipe Relay for everyone."
+              : "Share one meal idea so posting helps even without comments."}
           </li>
           <li className="flex gap-2">
             <span className="text-[var(--leaf)]">3.</span>
@@ -100,7 +92,12 @@ export function RecapScreen() {
         </ul>
       </SectionCard>
 
-      <Button className="mt-5 w-full" size="lg" onClick={startNextWeek}>
+      <Button
+        className="mt-5 w-full"
+        size="lg"
+        disabled={loading}
+        onClick={() => void startNextWeek()}
+      >
         Start next week
       </Button>
       <Button
@@ -112,10 +109,10 @@ export function RecapScreen() {
       </Button>
       <button
         type="button"
-        onClick={resetDemo}
+        onClick={leaveSession}
         className="mt-4 w-full text-center text-xs text-[var(--ink-faint)] underline-offset-2 hover:underline"
       >
-        Reset demo from the start
+        Leave and join as someone else
       </button>
     </div>
   );
